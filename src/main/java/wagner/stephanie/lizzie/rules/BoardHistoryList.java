@@ -6,6 +6,23 @@ package wagner.stephanie.lizzie.rules;
 public class BoardHistoryList {
     private BoardHistoryNode head;
 
+    public BoardHistoryNode getHead() {
+        return head;
+    }
+
+    public BoardHistoryNode getInitialNode() {
+        BoardHistoryNode initialNode = null;
+        if (head != null) {
+            BoardHistoryNode p = head;
+            while (p != null) {
+                initialNode = p;
+                p = p.previous();
+            }
+        }
+
+        return initialNode;
+    }
+
     /**
      * Initialize a new board history list, whose first node is data
      *

@@ -64,6 +64,8 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener {
             Lizzie.clearBoardAndState();
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
             Lizzie.loadGameByPrompting();
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
+            Lizzie.storeGameByPrompting();
         }
     }
 

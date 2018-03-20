@@ -210,4 +210,11 @@ public class Leelaz {
             ponder();
         }
     }
+
+    public void stopPonder() {
+        if (isPondering) {
+            sendCommand("name"); // ends pondering
+            isPondering = false;
+        }
+    }
 }

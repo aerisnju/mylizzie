@@ -26,7 +26,8 @@ public class LizzieFrame extends JFrame {
             "key 'P' = pass",
             "key 'S' = Show/hide move number",
             "key 'O' = Show settings dialog",
-            "key 'C' = Clear board"
+            "key 'C' = Clear board",
+            "key 'R' = Read SGF"
     };
     private static BoardRenderer boardRenderer = new BoardRenderer();
 

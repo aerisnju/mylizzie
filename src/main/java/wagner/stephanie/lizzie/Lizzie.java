@@ -22,7 +22,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Main class.
@@ -104,16 +107,34 @@ public class Lizzie {
             }
 
             clearBoardAndState();
+
+            // Process handicap
+            String handicap = game.getProperty("HA");
+            if (handicap != null) {
+                String preStoneString = game.getProperty("AB");
+                if (preStoneString != null) {
+                    List<int []> preStones = Arrays.stream(preStoneString.split(","))
+                            .map(String::trim)
+                            .map(Util::alphaToCoords)
+                            .collect(Collectors.toList());
+
+                    for (int[] preStone : preStones) {
+                        Lizzie.board.place(preStone[0], preStone[1]);
+                        Lizzie.board.pass();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Warning: Does not know handicap stones.", "Lizzie", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+
             do {
                 if (node.getMoveNo() < 0 || StringUtils.isEmpty(node.getMoveString())) {
                     continue;
                 }
                 int[] coords = node.getCoords();
                 if (coords[0] >= 19 || coords[0] < 0 || coords[1] >= 19 || coords[1] < 0) {
-                    System.out.printf("%s: Pass\n", node.getColor());
                     Lizzie.board.pass();
                 } else {
-                    System.out.printf("%s: %d %d\n", node.getColor(), coords[0], coords[1]);
                     Lizzie.board.place(coords[0], coords[1]);
                 }
             }

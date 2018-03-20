@@ -88,12 +88,17 @@ public class Lizzie {
             Game game = Sgf.createFromPath(gameFilePath);
             GameNode node = game.getRootNode();
 
-            if (!Objects.equals(game.getProperty("GM"), "1")) {
+            if (game.getProperty("GM") != null && !Objects.equals(game.getProperty("GM"), "1")) {
                 JOptionPane.showMessageDialog(frame, "Error: Not a go game.", "Lizzie", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            if (!Objects.equals(game.getProperty("SZ"), "19")) {
+            if (game.getProperty("MULTIGOGM") != null && !Objects.equals(game.getProperty("MULTIGOGM"), "1")) {
+                JOptionPane.showMessageDialog(frame, "Error: Not a go game.", "Lizzie", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (game.getProperty("SZ") != null && !Objects.equals(game.getProperty("SZ"), "19")) {
                 JOptionPane.showMessageDialog(frame, "Error: Board size is not 19x19.", "Lizzie", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -198,5 +203,4 @@ public class Lizzie {
             }
         }
     }
-
 }

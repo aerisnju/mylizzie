@@ -53,4 +53,9 @@ public class Lizzie {
 
         analysisDialog.setVisible(optionSetting.isAnalysisModeOn());
     }
+
+    public static void clearBoardAndState() {
+        leelaz.clearBoard();
+        board = new Board();
+    }
 }

@@ -25,7 +25,8 @@ public class LizzieFrame extends JFrame {
             "mouse wheel scroll = undo/redo",
             "key 'P' = pass",
             "key 'S' = Show/hide move number",
-            "key 'O' = Show settings dialog"
+            "key 'O' = Show settings dialog",
+            "key 'C' = Clear board"
     };
     private static BoardRenderer boardRenderer = new BoardRenderer();
 

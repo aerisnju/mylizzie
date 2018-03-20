@@ -200,4 +200,14 @@ public class Leelaz {
             return bestMoves;
         }
     }
+
+    public void clearBoard() {
+        if (isPondering) {
+            sendCommand("name"); // ends pondering
+        }
+        sendCommand("clear_board");
+        if (isPondering) {
+            ponder();
+        }
+    }
 }

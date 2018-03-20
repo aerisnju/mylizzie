@@ -2,7 +2,6 @@ package wagner.stephanie.lizzie.gui;
 
 import wagner.stephanie.lizzie.Lizzie;
 
-import javax.swing.plaf.basic.BasicSliderUI;
 import java.awt.event.*;
 
 public class Input implements MouseListener, KeyListener, MouseWheelListener {
@@ -61,6 +60,8 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener {
         } else if (e.getKeyCode() == KeyEvent.VK_O) {
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
             Lizzie.optionDialog.setVisible(true);
+        } else if (e.getKeyCode() == KeyEvent.VK_C) {
+            Lizzie.clearBoardAndState();
         }
     }
 

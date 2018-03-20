@@ -1,0 +1,154 @@
+JFDML JFormDesigner: "6.0.2.0.116" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": "Options"
+			"modal": true
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space u:::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelAutoHideMoveNumber:::p::p, space :::p, comp checkBoxAutoHideMoveNumber:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :p:12:p, comp checkBoxAnalysisModeOn:::p::p}}}}"
+					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelAutoHideMoveNumber::b:p::p, comp checkBoxAutoHideMoveNumber::b:p::p}, space :::p, par b {comp checkBoxAnalysisModeOn::b:p::p, comp labelAnalysisModeOn::b:p::p}, space ::74:x}}"
+				} ) {
+					name: "contentPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelVariationLimit"
+						"text": "Variation limit:"
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonV5"
+						"text": "5"
+						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonV10"
+						"text": "10"
+						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonV15"
+						"text": "15"
+						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonV30"
+						"text": "30"
+						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonUnlimited"
+						"text": "Unlimited"
+						"selected": true
+						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelAxisSetting"
+						"text": "Axis setting:"
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonA1Top"
+						"text": "A1 is on top(Yehu)"
+						"selected": true
+						"$buttonGroup": new FormReference( "buttonGroupAxisSetting" )
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonA1Bottom"
+						"text": "A1 is on bottom(Yike)"
+						"$buttonGroup": new FormReference( "buttonGroupAxisSetting" )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelBoardColor"
+						"text": "Board color:"
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonColorOriginal"
+						"text": "Original"
+						"$buttonGroup": new FormReference( "buttonGroupBoardColor" )
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonColorBright"
+						"text": "Bright"
+						"$buttonGroup": new FormReference( "buttonGroupBoardColor" )
+						"selected": true
+					} )
+					add( new FormComponent( "javax.swing.JRadioButton" ) {
+						name: "radioButtonColorPureWhite"
+						"text": "Pure white"
+						"$buttonGroup": new FormReference( "buttonGroupBoardColor" )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelAutoHideMoveNumber"
+						"text": "Move number:"
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "checkBoxAutoHideMoveNumber"
+						"text": "Auto hide when variation move activated"
+						"selected": true
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelAnalysisModeOn"
+						"text": "Analysis mode:"
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "checkBoxAnalysisModeOn"
+						"text": "On and show window"
+						"selected": true
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0:1.0, 80, 80"
+					"$rowSpecs": "0"
+					"$hGap": 5
+					"$vGap": 5
+				} ) {
+					name: "buttonBar"
+					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": "OK"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 0
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "cancelButton"
+						"text": "Cancel"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridy": 0
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 408, 300 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroupVariationLimit"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 316 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroupAxisSetting"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 375 )
+		} )
+		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
+			name: "buttonGroupBoardColor"
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 434 )
+		} )
+	}
+}

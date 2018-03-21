@@ -189,7 +189,7 @@ public class Lizzie {
         BoardHistoryNode initialNode = historyList.getInitialNode();
 
         GameNode previousNode = null;
-        for (BoardHistoryNode p = initialNode; p != null; p = p.next()) {
+        for (BoardHistoryNode p = initialNode.next(); p != null; p = p.next()) {
             GameNode gameNode = new GameNode(previousNode);
 
             if (previousNode == null) {
@@ -231,7 +231,7 @@ public class Lizzie {
             previousNode = gameNode;
         }
 
-        game.postProcess();
+        //game.postProcess();
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
         JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
@@ -241,15 +241,17 @@ public class Lizzie {
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             optionSetting.setLastChooserLocation(file.getParent());
+
+            if (!file.getPath().toLowerCase().endsWith(".sgf")) {
+                file = new File(file.getPath() + ".sgf");
+            }
             if (file.exists()) {
                 int ret = JOptionPane.showConfirmDialog(frame, "The SGF file is exists, do you want replace it?", "Warning", JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.CANCEL_OPTION) {
                     return;
                 }
             }
-            if (!file.getPath().toLowerCase().endsWith(".sgf")) {
-                file = new File(file.getPath() + ".sgf");
-            }
+
             try {
                 Sgf.writeToFile(game, file.toPath());
             } catch (Exception e) {

@@ -5,6 +5,7 @@ import com.toomasr.sgf4j.SgfParseException;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.gui.AnalysisFrame;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -108,22 +110,36 @@ public class Lizzie {
 
             clearBoardAndState();
 
-            // Process handicap
-            String handicap = game.getProperty("HA");
-            if (handicap != null) {
-                String preStoneString = game.getProperty("AB");
-                if (preStoneString != null) {
-                    List<int []> preStones = Arrays.stream(preStoneString.split(","))
-                            .map(String::trim)
-                            .map(Util::alphaToCoords)
-                            .collect(Collectors.toList());
+            // Process pre-placed stones
+            String prePlacedBlackStoneString = game.getProperty("AB");
+            String prePlacedWhiteStoneString = game.getProperty("AW");
+            List<int[]> prePlacedBlackStones = Collections.emptyList(), prePlacedWhiteStones = Collections.emptyList();
+            if (StringUtils.isNotEmpty(prePlacedBlackStoneString)) {
+                prePlacedBlackStones = Arrays.stream(prePlacedBlackStoneString.split(","))
+                        .map(String::trim)
+                        .map(Util::alphaToCoords)
+                        .collect(Collectors.toList());
+            }
+            if (StringUtils.isNotEmpty(prePlacedWhiteStoneString)) {
+                prePlacedWhiteStones = Arrays.stream(prePlacedBlackStoneString.split(","))
+                        .map(String::trim)
+                        .map(Util::alphaToCoords)
+                        .collect(Collectors.toList());
+            }
 
-                    for (int[] preStone : preStones) {
-                        Lizzie.board.place(preStone[0], preStone[1]);
+            if (CollectionUtils.isNotEmpty(prePlacedBlackStones) || CollectionUtils.isNotEmpty(prePlacedWhiteStones)) {
+                int maxLength = Math.max(prePlacedBlackStones.size(), prePlacedWhiteStones.size());
+                for (int i = 0; i < maxLength; ++i) {
+                    if (i < prePlacedBlackStones.size()) {
+                        Lizzie.board.place(prePlacedBlackStones.get(i)[0], prePlacedBlackStones.get(i)[1]);
+                    } else {
                         Lizzie.board.pass();
                     }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Warning: Does not know handicap stones.", "Lizzie", JOptionPane.WARNING_MESSAGE);
+                    if (i < prePlacedWhiteStones.size()) {
+                        Lizzie.board.place(prePlacedWhiteStones.get(i)[0], prePlacedWhiteStones.get(i)[1]);
+                    } else {
+                        Lizzie.board.pass();
+                    }
                 }
             }
 

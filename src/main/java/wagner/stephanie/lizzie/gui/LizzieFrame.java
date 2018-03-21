@@ -59,6 +59,7 @@ public class LizzieFrame extends JFrame {
         this.addMouseListener(input);
         this.addKeyListener(input);
         this.addMouseWheelListener(input);
+        this.addMouseMotionListener(input);
 
         // shut down leelaz, then shut down the program when the window is closed
         this.addWindowListener(new WindowAdapter() {
@@ -148,6 +149,16 @@ public class LizzieFrame extends JFrame {
 
         if (boardCoordinates != null) {
             Lizzie.board.place(boardCoordinates[0], boardCoordinates[1]);
+        }
+    }
+
+    public void onMouseMove(int x, int y) {
+        if (Lizzie.optionSetting.isAnalysisModeOn() && Lizzie.optionSetting.isMouseOverShowMove()) {
+            // check for board click
+            int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
+            if (boardCoordinates != null) {
+                Lizzie.analysisFrame.getAnalysisTableModel().selectOrDeselectMoveByCoord(boardCoordinates);
+            }
         }
     }
 }

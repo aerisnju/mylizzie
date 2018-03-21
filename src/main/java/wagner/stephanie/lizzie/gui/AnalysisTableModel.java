@@ -2,6 +2,7 @@ package wagner.stephanie.lizzie.gui;
 
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.MoveData;
+import wagner.stephanie.lizzie.rules.Board;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -59,6 +60,19 @@ public class AnalysisTableModel extends AbstractTableModel {
         }
 
         return index >= bestMoves.size() ? -1 : index;
+    }
+
+    public void selectOrDeselectMoveByCoord(int[] mouseCoords) {
+        MoveData mouseOnMove = null;
+        for (MoveData data : bestMoves) {
+            int[] coords = Board.convertNameToCoordinates(data.coordinate);
+            if (coords[0] == mouseCoords[0] && coords[1] == mouseCoords[1]) {
+                mouseOnMove = data;
+                break;
+            }
+        }
+
+        selectedMove = mouseOnMove;
     }
 
     public void refreshData() {

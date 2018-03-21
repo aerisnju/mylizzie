@@ -1,7 +1,6 @@
 package wagner.stephanie.lizzie.gui;
 
 import java.awt.*;
-import java.util.Objects;
 
 public class OptionSetting {
     private int variationLimit;
@@ -9,6 +8,7 @@ public class OptionSetting {
     private Color boardColor;
     private boolean autoHideMoveNumber;
     private boolean analysisModeOn;
+    private boolean mouseOverShowMove;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -23,10 +23,11 @@ public class OptionSetting {
 
     public OptionSetting() {
         variationLimit = Integer.MAX_VALUE;
-        a1OnTop = true;
+        a1OnTop = false;
         boardColor = new Color(0xf0, 0xd2, 0xa0);
         autoHideMoveNumber = true;
         analysisModeOn = true;
+        mouseOverShowMove = false;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -79,6 +80,14 @@ public class OptionSetting {
 
     public void setAnalysisModeOn(boolean analysisModeOn) {
         this.analysisModeOn = analysisModeOn;
+    }
+
+    public boolean isMouseOverShowMove() {
+        return mouseOverShowMove;
+    }
+
+    public void setMouseOverShowMove(boolean mouseOverShowMove) {
+        this.mouseOverShowMove = mouseOverShowMove;
     }
 
     public int getMainWindowPosX() {

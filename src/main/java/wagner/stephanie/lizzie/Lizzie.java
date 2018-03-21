@@ -1,5 +1,7 @@
 package wagner.stephanie.lizzie;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfParseException;
 import com.toomasr.sgf4j.parser.Game;
@@ -7,8 +9,6 @@ import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.gui.AnalysisFrame;
 import wagner.stephanie.lizzie.gui.LizzieFrame;
@@ -93,11 +93,12 @@ public class Lizzie {
 
     public static void loadGameByPrompting() {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
         chooser.setFileFilter(filter);
         chooser.setMultiSelectionEnabled(false);
         int state = chooser.showOpenDialog(frame);
         if (state == JFileChooser.APPROVE_OPTION) {
+            optionSetting.setLastChooserLocation(chooser.getSelectedFile().toPath().getParent().toString());
             loadGameByFile(chooser.getSelectedFile().toPath());
         }
     }
@@ -238,6 +239,7 @@ public class Lizzie {
         int result = chooser.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
+            optionSetting.setLastChooserLocation(file.getParent());
             if (file.exists()) {
                 int ret = JOptionPane.showConfirmDialog(frame, "The SGF file is exists, do you want replace it?", "Warning", JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.CANCEL_OPTION) {
@@ -254,7 +256,7 @@ public class Lizzie {
             }
         }
     }
-    
+
     public static void readGuiPosition() {
         readMainFramePosition();
         readAnalysisWindowPosition();

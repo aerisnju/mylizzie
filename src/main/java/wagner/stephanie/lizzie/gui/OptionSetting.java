@@ -19,6 +19,8 @@ public class OptionSetting {
     private int analysisWindowWidth;
     private int analysisWindowHeight;
 
+    private String lastChooserLocation;
+
     public OptionSetting() {
         variationLimit = Integer.MAX_VALUE;
         a1OnTop = true;
@@ -35,6 +37,8 @@ public class OptionSetting {
         analysisWindowPosY = -1;
         analysisWindowWidth = -1;
         analysisWindowHeight = -1;
+
+        lastChooserLocation = ".";
     }
 
     public int getVariationLimit() {
@@ -139,5 +143,13 @@ public class OptionSetting {
 
     public void setAnalysisWindowHeight(int analysisWindowHeight) {
         this.analysisWindowHeight = analysisWindowHeight;
+    }
+
+    public String getLastChooserLocation() {
+        return lastChooserLocation;
+    }
+
+    public void setLastChooserLocation(String lastChooserLocation) {
+        this.lastChooserLocation = lastChooserLocation;
     }
 }

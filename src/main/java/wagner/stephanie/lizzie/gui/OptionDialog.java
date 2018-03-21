@@ -88,7 +88,7 @@ public class OptionDialog extends JDialog {
         checkBoxAnalysisModeOn.setSelected(setting.isAnalysisModeOn());
     }
 
-    public OptionSetting readDialogSetting() {
+    public void readDialogSetting(OptionSetting setting) {
         int variationLimit;
 
         if (radioButtonV5.isSelected()) {
@@ -112,7 +112,11 @@ public class OptionDialog extends JDialog {
             boardColor = Color.WHITE;
         }
 
-        return new OptionSetting(variationLimit, radioButtonA1Top.isSelected(), boardColor, checkBoxAutoHideMoveNumber.isSelected(), checkBoxAnalysisModeOn.isSelected());
+        setting.setVariationLimit(variationLimit);
+        setting.setA1OnTop(radioButtonA1Top.isSelected());
+        setting.setBoardColor(boardColor);
+        setting.setAutoHideMoveNumber(checkBoxAutoHideMoveNumber.isSelected());
+        setting.setAnalysisModeOn(checkBoxAnalysisModeOn.isSelected());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -120,7 +124,7 @@ public class OptionDialog extends JDialog {
     }
 
     private void okButtonActionPerformed(ActionEvent e) {
-        Lizzie.optionSetting = readDialogSetting();
+        readDialogSetting(Lizzie.optionSetting);
         Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisModeOn());
         setVisible(false);
     }
@@ -223,79 +227,79 @@ public class OptionDialog extends JDialog {
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
-                    contentPanelLayout.createParallelGroup()
-                        .addGroup(contentPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(contentPanelLayout.createParallelGroup()
+                        contentPanelLayout.createParallelGroup()
                                 .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelVariationLimit)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV5)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV10)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV15)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV30)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonUnlimited))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelAxisSetting)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(radioButtonA1Top)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonA1Bottom))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelBoardColor)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonColorOriginal)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonColorBright)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonColorPureWhite))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelAutoHideMoveNumber)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(checkBoxAutoHideMoveNumber))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelAnalysisModeOn)
-                                    .addGap(12, 12, 12)
-                                    .addComponent(checkBoxAnalysisModeOn))))
+                                        .addContainerGap()
+                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addComponent(labelVariationLimit)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonV5)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonV10)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonV15)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonV30)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonUnlimited))
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addComponent(labelAxisSetting)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(radioButtonA1Top)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonA1Bottom))
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addComponent(labelBoardColor)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonColorOriginal)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonColorBright)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(radioButtonColorPureWhite))
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addComponent(labelAutoHideMoveNumber)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(checkBoxAutoHideMoveNumber))
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addComponent(labelAnalysisModeOn)
+                                                        .addGap(12, 12, 12)
+                                                        .addComponent(checkBoxAnalysisModeOn))))
                 );
                 contentPanelLayout.setVerticalGroup(
-                    contentPanelLayout.createParallelGroup()
-                        .addGroup(contentPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(contentPanelLayout.createParallelGroup()
-                                .addComponent(radioButtonUnlimited)
-                                .addComponent(radioButtonV30)
-                                .addComponent(radioButtonV15)
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(labelVariationLimit)
-                                    .addComponent(radioButtonV5))
-                                .addComponent(radioButtonV10))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelAxisSetting, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(radioButtonA1Top)
-                                .addComponent(radioButtonA1Bottom))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup()
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(radioButtonColorOriginal)
-                                    .addComponent(labelBoardColor))
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(radioButtonColorBright)
-                                    .addComponent(radioButtonColorPureWhite)))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelAutoHideMoveNumber)
-                                .addComponent(checkBoxAutoHideMoveNumber))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(checkBoxAnalysisModeOn)
-                                .addComponent(labelAnalysisModeOn))
-                            .addContainerGap(74, Short.MAX_VALUE))
+                        contentPanelLayout.createParallelGroup()
+                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addComponent(radioButtonUnlimited)
+                                                .addComponent(radioButtonV30)
+                                                .addComponent(radioButtonV15)
+                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelVariationLimit)
+                                                        .addComponent(radioButtonV5))
+                                                .addComponent(radioButtonV10))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelAxisSetting, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(radioButtonA1Top)
+                                                .addComponent(radioButtonA1Bottom))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(radioButtonColorOriginal)
+                                                        .addComponent(labelBoardColor))
+                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(radioButtonColorBright)
+                                                        .addComponent(radioButtonColorPureWhite)))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelAutoHideMoveNumber)
+                                                .addComponent(checkBoxAutoHideMoveNumber))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(checkBoxAnalysisModeOn)
+                                                .addComponent(labelAnalysisModeOn))
+                                        .addContainerGap(74, Short.MAX_VALUE))
                 );
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
@@ -304,22 +308,22 @@ public class OptionDialog extends JDialog {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
-                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
+                ((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{0, 85, 80};
+                ((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{1.0, 0.0, 0.0};
 
                 //---- okButton ----
                 okButton.setText("OK");
                 okButton.addActionListener(e -> okButtonActionPerformed(e));
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- cancelButton ----
                 cancelButton.setText("Cancel");
                 cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
                 buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }

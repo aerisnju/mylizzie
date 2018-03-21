@@ -183,6 +183,7 @@ public class Lizzie {
         game.addProperty("GM", "1"); // Go game
         game.addProperty("SZ", "19");
         game.addProperty("CA", "UTF-8");
+        game.addProperty("AP", "MyLizzie");
 
         BoardHistoryList historyList = board.getHistory();
         BoardHistoryNode initialNode = historyList.getInitialNode();
@@ -233,7 +234,7 @@ public class Lizzie {
         game.postProcess();
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
         chooser.setFileFilter(filter);
         chooser.setMultiSelectionEnabled(false);
         int result = chooser.showSaveDialog(frame);

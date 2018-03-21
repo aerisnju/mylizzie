@@ -11,8 +11,8 @@ new FormModel {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelLeelazCommandLine:::p::p, space :::p, comp textFieldLeelazCommandLine::::355:x, space :::p}, seq {par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space u:::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelAutoHideMoveNumber:::p::p, space :::p, comp checkBoxAutoHideMoveNumber:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :p:12:p, comp checkBoxAnalysisModeOn:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p}, comp labelNotes::l:p::p}, space :0:18:x}}}}"
-					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelAutoHideMoveNumber::b:p::p, comp checkBoxAutoHideMoveNumber::b:p::p}, space :::p, par l {par b {comp checkBoxAnalysisModeOn::b:p::p, comp labelAnalysisModeOn::b:p::p}, comp checkBoxMouseMoveShow::l:p::p}, space :::p, par b {comp textFieldLeelazCommandLine::b:p::p, comp labelLeelazCommandLine::b:p::p}, space ::81:x, comp labelNotes:::p::p, space :::p}}"
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelLeelazCommandLine:::p::p, space :::p, comp textFieldLeelazCommandLine:::p:376:p, space :::p, comp buttonResetCommandLine::::82:x, space :::p}, seq {par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space u:::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelAutoHideMoveNumber:::p::p, space :::p, comp checkBoxAutoHideMoveNumber:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :p:12:p, comp checkBoxAnalysisModeOn:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p}, comp labelNotes::l:p::p}, space :0:127:x}}}}"
+					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelAutoHideMoveNumber::b:p::p, comp checkBoxAutoHideMoveNumber::b:p::p}, space :::p, par l {par b {comp checkBoxAnalysisModeOn::b:p::p, comp labelAnalysisModeOn::b:p::p}, comp checkBoxMouseMoveShow::l:p::p}, space :::p, par b {comp labelLeelazCommandLine::b:p::p, comp textFieldLeelazCommandLine::b:p::p, comp buttonResetCommandLine::b:p::p}, space ::81:x, comp labelNotes:::p::p, space :::p}}"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -115,6 +115,11 @@ new FormModel {
 						"text": "Note: Changing Leelaz command line requires a lizzie restart!"
 						"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
 					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonResetCommandLine"
+						"text": "Reset"
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonResetCommandLineActionPerformed", true ) )
+					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
 				} )
@@ -150,7 +155,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 446, 355 )
+			"size": new java.awt.Dimension( 533, 355 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupVariationLimit"

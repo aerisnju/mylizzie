@@ -39,6 +39,7 @@ public class OptionDialog extends JDialog {
     private JLabel labelLeelazCommandLine;
     private JTextField textFieldLeelazCommandLine;
     private JLabel labelNotes;
+    private JButton buttonResetCommandLine;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -139,6 +140,10 @@ public class OptionDialog extends JDialog {
         setVisible(false);
     }
 
+    private void buttonResetCommandLineActionPerformed(ActionEvent e) {
+        textFieldLeelazCommandLine.setText(new OptionSetting().getLeelazCommandLine());
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         dialogPane = new JPanel();
@@ -164,6 +169,7 @@ public class OptionDialog extends JDialog {
         labelLeelazCommandLine = new JLabel();
         textFieldLeelazCommandLine = new JTextField();
         labelNotes = new JLabel();
+        buttonResetCommandLine = new JButton();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -251,6 +257,10 @@ public class OptionDialog extends JDialog {
                 labelNotes.setText("Note: Changing Leelaz command line requires a lizzie restart!");
                 labelNotes.setFont(labelNotes.getFont().deriveFont(labelNotes.getFont().getStyle() | Font.BOLD));
 
+                //---- buttonResetCommandLine ----
+                buttonResetCommandLine.setText("Reset");
+                buttonResetCommandLine.addActionListener(e -> buttonResetCommandLineActionPerformed(e));
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -261,7 +271,9 @@ public class OptionDialog extends JDialog {
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addComponent(labelLeelazCommandLine)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 376, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(buttonResetCommandLine, GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
                                     .addContainerGap())
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
@@ -302,7 +314,7 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMouseMoveShow))
                                         .addComponent(labelNotes))
-                                    .addGap(0, 18, Short.MAX_VALUE))))
+                                    .addGap(0, 127, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -341,8 +353,9 @@ public class OptionDialog extends JDialog {
                                 .addComponent(checkBoxMouseMoveShow))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(labelLeelazCommandLine)
                                 .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(labelLeelazCommandLine))
+                                .addComponent(buttonResetCommandLine))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())

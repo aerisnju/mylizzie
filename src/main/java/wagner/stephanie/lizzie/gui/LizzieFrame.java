@@ -39,11 +39,6 @@ public class LizzieFrame extends JFrame {
     public LizzieFrame() {
         super("Lizzie - Leela Zero Interface");
 
-        // on 1080p windows screens, this is a good width/height
-        setSize(657, 687);
-        setLocationRelativeTo(null); // start centered
-        setExtendedState(Frame.MAXIMIZED_BOTH); // start maximized
-
         setVisible(true);
 
         createBufferStrategy(2);
@@ -66,6 +61,10 @@ public class LizzieFrame extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 Lizzie.leelaz.shutdown();
+
+                Lizzie.readGuiPosition();
+                Lizzie.writeSettingFile();
+
                 System.exit(0);
             }
         });

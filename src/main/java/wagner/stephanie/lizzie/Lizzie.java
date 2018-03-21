@@ -49,7 +49,9 @@ public class Lizzie {
     static {
         readSettingFile();
         // Sometimes gson will fail to parse the file
-        if (optionSetting == null || optionSetting.getBoardColor() == null) {
+        if (optionSetting == null
+                || optionSetting.getBoardColor() == null
+                || StringUtils.isEmpty(optionSetting.getLeelazCommandLine())) {
             optionSetting = new OptionSetting();
         }
     }
@@ -70,7 +72,7 @@ public class Lizzie {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
-        leelaz = new Leelaz();
+        leelaz = new Leelaz(optionSetting.getLeelazCommandLine());
         leelaz.ponder();
 
         board = new Board();

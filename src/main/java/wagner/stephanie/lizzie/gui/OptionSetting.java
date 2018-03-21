@@ -9,6 +9,7 @@ public class OptionSetting {
     private boolean autoHideMoveNumber;
     private boolean analysisModeOn;
     private boolean mouseOverShowMove;
+    private String leelazCommandLine;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -28,6 +29,7 @@ public class OptionSetting {
         autoHideMoveNumber = true;
         analysisModeOn = true;
         mouseOverShowMove = false;
+        leelazCommandLine = "-g -t2 -wnetwork";
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -88,6 +90,14 @@ public class OptionSetting {
 
     public void setMouseOverShowMove(boolean mouseOverShowMove) {
         this.mouseOverShowMove = mouseOverShowMove;
+    }
+
+    public String getLeelazCommandLine() {
+        return leelazCommandLine;
+    }
+
+    public void setLeelazCommandLine(String leelazCommandLine) {
+        this.leelazCommandLine = leelazCommandLine;
     }
 
     public int getMainWindowPosX() {

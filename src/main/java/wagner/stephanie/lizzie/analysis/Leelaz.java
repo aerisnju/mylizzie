@@ -1,6 +1,7 @@
 package wagner.stephanie.lizzie.analysis;
 
 import wagner.stephanie.lizzie.rules.Stone;
+import wagner.stephanie.lizzie.util.ArgumentTokenizer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -35,7 +36,7 @@ public class Leelaz {
      *
      * @throws IOException
      */
-    public Leelaz() throws IOException {
+    public Leelaz(String commandline) throws IOException {
         isReadingPonderOutput = false;
         bestMoves = new ArrayList<>();
         bestMovesTemp = new ArrayList<>();
@@ -45,11 +46,13 @@ public class Leelaz {
 
         // list of commands for the leelaz process
         List<String> commands = new ArrayList<>();
-//        commands.add("./leelaz"); // linux, macosx
-        commands.add("leelaz.exe"); // windows
-        commands.add("-g");
-        commands.add("-t2");
-        commands.add("-wnetwork");
+        if (System.getProperty("os.name").toLowerCase().indexOf("windows") > 0) {
+            commands.add("leelaz.exe"); // windows
+        } else {
+            commands.add("./leelaz"); // linux, macosx
+        }
+
+        commands.addAll(ArgumentTokenizer.tokenize(commandline.trim()));
 
         // run leelaz.exe
         ProcessBuilder processBuilder = new ProcessBuilder(commands);

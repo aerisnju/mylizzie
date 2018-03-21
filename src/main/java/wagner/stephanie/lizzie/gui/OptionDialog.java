@@ -36,6 +36,9 @@ public class OptionDialog extends JDialog {
     private JLabel labelAnalysisModeOn;
     private JCheckBox checkBoxAnalysisModeOn;
     private JCheckBox checkBoxMouseMoveShow;
+    private JLabel labelLeelazCommandLine;
+    private JTextField textFieldLeelazCommandLine;
+    private JLabel labelNotes;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -89,6 +92,8 @@ public class OptionDialog extends JDialog {
         checkBoxAnalysisModeOn.setSelected(setting.isAnalysisModeOn());
 
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
+
+        textFieldLeelazCommandLine.setText(setting.getLeelazCommandLine());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -121,6 +126,7 @@ public class OptionDialog extends JDialog {
         setting.setAutoHideMoveNumber(checkBoxAutoHideMoveNumber.isSelected());
         setting.setAnalysisModeOn(checkBoxAnalysisModeOn.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
+        setting.setLeelazCommandLine(textFieldLeelazCommandLine.getText().trim());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -155,6 +161,9 @@ public class OptionDialog extends JDialog {
         labelAnalysisModeOn = new JLabel();
         checkBoxAnalysisModeOn = new JCheckBox();
         checkBoxMouseMoveShow = new JCheckBox();
+        labelLeelazCommandLine = new JLabel();
+        textFieldLeelazCommandLine = new JTextField();
+        labelNotes = new JLabel();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -219,7 +228,7 @@ public class OptionDialog extends JDialog {
                 labelAutoHideMoveNumber.setText("Move number:");
 
                 //---- checkBoxAutoHideMoveNumber ----
-                checkBoxAutoHideMoveNumber.setText("Auto hide when variation move activated");
+                checkBoxAutoHideMoveNumber.setText("Auto hide number when variation move activated");
                 checkBoxAutoHideMoveNumber.setSelected(true);
 
                 //---- labelAnalysisModeOn ----
@@ -232,6 +241,16 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxMouseMoveShow ----
                 checkBoxMouseMoveShow.setText("Mouse over show move");
 
+                //---- labelLeelazCommandLine ----
+                labelLeelazCommandLine.setText("Leelaz command line:");
+
+                //---- textFieldLeelazCommandLine ----
+                textFieldLeelazCommandLine.setText("-g -t2 -wnetwork");
+
+                //---- labelNotes ----
+                labelNotes.setText("Note: Changing Leelaz command line requires a lizzie restart!");
+                labelNotes.setFont(labelNotes.getFont().deriveFont(labelNotes.getFont().getStyle() | Font.BOLD));
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -240,41 +259,50 @@ public class OptionDialog extends JDialog {
                             .addContainerGap()
                             .addGroup(contentPanelLayout.createParallelGroup()
                                 .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelVariationLimit)
+                                    .addComponent(labelLeelazCommandLine)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV5)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV10)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV15)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonV30)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonUnlimited))
+                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                                    .addContainerGap())
                                 .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelAxisSetting)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(radioButtonA1Top)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonA1Bottom))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelBoardColor)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonColorOriginal)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonColorBright)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(radioButtonColorPureWhite))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelAutoHideMoveNumber)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(checkBoxAutoHideMoveNumber))
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelAnalysisModeOn)
-                                    .addGap(12, 12, 12)
-                                    .addComponent(checkBoxAnalysisModeOn)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(checkBoxMouseMoveShow))))
+                                    .addGroup(contentPanelLayout.createParallelGroup()
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelVariationLimit)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonV5)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonV10)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonV15)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonV30)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonUnlimited))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelAxisSetting)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(radioButtonA1Top)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonA1Bottom))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelBoardColor)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonColorOriginal)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonColorBright)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(radioButtonColorPureWhite))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelAutoHideMoveNumber)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxAutoHideMoveNumber))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelAnalysisModeOn)
+                                            .addGap(12, 12, 12)
+                                            .addComponent(checkBoxAnalysisModeOn)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxMouseMoveShow))
+                                        .addComponent(labelNotes))
+                                    .addGap(0, 18, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -311,7 +339,13 @@ public class OptionDialog extends JDialog {
                                     .addComponent(checkBoxAnalysisModeOn)
                                     .addComponent(labelAnalysisModeOn))
                                 .addComponent(checkBoxMouseMoveShow))
-                            .addContainerGap(74, Short.MAX_VALUE))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(labelLeelazCommandLine))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                            .addComponent(labelNotes)
+                            .addContainerGap())
                 );
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);

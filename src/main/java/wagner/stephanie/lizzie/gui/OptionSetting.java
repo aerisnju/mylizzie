@@ -1,5 +1,7 @@
 package wagner.stephanie.lizzie.gui;
 
+import org.apache.logging.log4j.core.util.Integers;
+
 import java.awt.*;
 
 public class OptionSetting {
@@ -10,6 +12,8 @@ public class OptionSetting {
     private boolean analysisModeOn;
     private boolean mouseOverShowMove;
     private String leelazCommandLine;
+    private boolean showMoveNumber;
+    private int numberOfLastMovesShown;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -30,6 +34,8 @@ public class OptionSetting {
         analysisModeOn = true;
         mouseOverShowMove = false;
         leelazCommandLine = "-g -t2 -wnetwork";
+        showMoveNumber = true;
+        numberOfLastMovesShown = Integer.MAX_VALUE;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -98,6 +104,22 @@ public class OptionSetting {
 
     public void setLeelazCommandLine(String leelazCommandLine) {
         this.leelazCommandLine = leelazCommandLine;
+    }
+
+    public boolean isShowMoveNumber() {
+        return showMoveNumber;
+    }
+
+    public void setShowMoveNumber(boolean showMoveNumber) {
+        this.showMoveNumber = showMoveNumber;
+    }
+
+    public int getNumberOfLastMovesShown() {
+        return numberOfLastMovesShown;
+    }
+
+    public void setNumberOfLastMovesShown(int numberOfLastMovesShown) {
+        this.numberOfLastMovesShown = numberOfLastMovesShown;
     }
 
     public int getMainWindowPosX() {

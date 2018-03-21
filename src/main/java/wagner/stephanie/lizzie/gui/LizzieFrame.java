@@ -34,8 +34,6 @@ public class LizzieFrame extends JFrame {
 
     private final BufferStrategy bs;
 
-    public boolean showMoveNumber = false;
-
     /**
      * Creates a window and refreshes the game state at FPS.
      */
@@ -83,8 +81,8 @@ public class LizzieFrame extends JFrame {
     }
 
     // Toggle show/hide move number
-    public void toggleShowMoveNumver() {
-        this.showMoveNumber = !this.showMoveNumber;
+    public void toggleShowMoveNumber() {
+        Lizzie.optionSetting.setShowMoveNumber(!Lizzie.optionSetting.isShowMoveNumber());
     }
 
 

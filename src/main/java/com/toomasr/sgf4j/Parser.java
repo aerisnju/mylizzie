@@ -160,6 +160,8 @@ public class Parser {
     // some go program info probably
     generalProps.add("GOGGPFF");
     generalProps.add("GOGGPAP");
+    // Zen specific
+    generalProps.add("ZT");
   }
 
   private static final Set<String> nodeProps = new HashSet<>();

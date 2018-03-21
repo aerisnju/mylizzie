@@ -4,6 +4,7 @@
 
 package wagner.stephanie.lizzie.gui;
 
+import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
 
 import javax.swing.*;
@@ -40,6 +41,11 @@ public class OptionDialog extends JDialog {
     private JTextField textFieldLeelazCommandLine;
     private JLabel labelNotes;
     private JButton buttonResetCommandLine;
+    private JLabel labelMoveNumber;
+    private JCheckBox checkBoxShowMoveNumber;
+    private JCheckBox checkBoxMoveNumberLimit;
+    private JTextField textFieldMoveNumberLimitCount;
+    private JLabel labelMoveNumberLimitLabelTail;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -95,6 +101,18 @@ public class OptionDialog extends JDialog {
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
 
         textFieldLeelazCommandLine.setText(setting.getLeelazCommandLine());
+
+        checkBoxShowMoveNumber.setSelected(setting.isShowMoveNumber());
+        if (setting.getNumberOfLastMovesShown() <= 0) {
+            setting.setNumberOfLastMovesShown(new OptionSetting().getNumberOfLastMovesShown());
+        }
+
+        if (setting.getNumberOfLastMovesShown() == Integer.MAX_VALUE) {
+            checkBoxMoveNumberLimit.setSelected(false);
+        } else {
+            checkBoxMoveNumberLimit.setSelected(true);
+            textFieldMoveNumberLimitCount.setText(String.valueOf(setting.getNumberOfLastMovesShown()));
+        }
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -127,7 +145,27 @@ public class OptionDialog extends JDialog {
         setting.setAutoHideMoveNumber(checkBoxAutoHideMoveNumber.isSelected());
         setting.setAnalysisModeOn(checkBoxAnalysisModeOn.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
-        setting.setLeelazCommandLine(textFieldLeelazCommandLine.getText().trim());
+        String newLeelazCommandLine = textFieldLeelazCommandLine.getText().trim();
+        if (StringUtils.isEmpty(newLeelazCommandLine)) {
+            setting.setLeelazCommandLine(new OptionSetting().getLeelazCommandLine());
+        } else {
+            setting.setLeelazCommandLine(newLeelazCommandLine);
+        }
+
+        setting.setShowMoveNumber(checkBoxShowMoveNumber.isSelected());
+        if (checkBoxMoveNumberLimit.isSelected()) {
+            try {
+                int moveNumberLimit = Integer.parseInt(textFieldMoveNumberLimitCount.getText());
+                if (moveNumberLimit <= 0) {
+                    moveNumberLimit = new OptionSetting().getNumberOfLastMovesShown();
+                }
+                setting.setNumberOfLastMovesShown(moveNumberLimit);
+            } catch (NumberFormatException e) {
+                setting.setNumberOfLastMovesShown(new OptionSetting().getNumberOfLastMovesShown());
+            }
+        } else {
+            setting.setNumberOfLastMovesShown(Integer.MAX_VALUE);
+        }
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -170,6 +208,11 @@ public class OptionDialog extends JDialog {
         textFieldLeelazCommandLine = new JTextField();
         labelNotes = new JLabel();
         buttonResetCommandLine = new JButton();
+        labelMoveNumber = new JLabel();
+        checkBoxShowMoveNumber = new JCheckBox();
+        checkBoxMoveNumberLimit = new JCheckBox();
+        textFieldMoveNumberLimitCount = new JTextField();
+        labelMoveNumberLimitLabelTail = new JLabel();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -214,7 +257,7 @@ public class OptionDialog extends JDialog {
                 radioButtonA1Top.setText("A1 is on top(Yehu)");
 
                 //---- radioButtonA1Bottom ----
-                radioButtonA1Bottom.setText("A1 is on bottom(Yike)");
+                radioButtonA1Bottom.setText("A1 is on bottom(Yike, Yicheng, Zen, .etc)");
                 radioButtonA1Bottom.setSelected(true);
 
                 //---- labelBoardColor ----
@@ -231,10 +274,10 @@ public class OptionDialog extends JDialog {
                 radioButtonColorPureWhite.setText("Pure white");
 
                 //---- labelAutoHideMoveNumber ----
-                labelAutoHideMoveNumber.setText("Move number:");
+                labelAutoHideMoveNumber.setText("Move number auto hide:");
 
                 //---- checkBoxAutoHideMoveNumber ----
-                checkBoxAutoHideMoveNumber.setText("Auto hide number when variation move activated");
+                checkBoxAutoHideMoveNumber.setText("Auto hide move number when variation move activated");
                 checkBoxAutoHideMoveNumber.setSelected(true);
 
                 //---- labelAnalysisModeOn ----
@@ -254,12 +297,28 @@ public class OptionDialog extends JDialog {
                 textFieldLeelazCommandLine.setText("-g -t2 -wnetwork");
 
                 //---- labelNotes ----
-                labelNotes.setText("Note: Changing Leelaz command line requires a lizzie restart!");
+                labelNotes.setText("Note: Restarting Lizzie is required after changing the leelaz command line");
                 labelNotes.setFont(labelNotes.getFont().deriveFont(labelNotes.getFont().getStyle() | Font.BOLD));
 
                 //---- buttonResetCommandLine ----
                 buttonResetCommandLine.setText("Reset");
                 buttonResetCommandLine.addActionListener(e -> buttonResetCommandLineActionPerformed(e));
+
+                //---- labelMoveNumber ----
+                labelMoveNumber.setText("Move number:");
+
+                //---- checkBoxShowMoveNumber ----
+                checkBoxShowMoveNumber.setText("Show");
+                checkBoxShowMoveNumber.setSelected(true);
+
+                //---- checkBoxMoveNumberLimit ----
+                checkBoxMoveNumberLimit.setText("Only show last");
+
+                //---- textFieldMoveNumberLimitCount ----
+                textFieldMoveNumberLimitCount.setText("30");
+
+                //---- labelMoveNumberLimitLabelTail ----
+                labelMoveNumberLimitLabelTail.setText("move(s).");
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
@@ -313,8 +372,18 @@ public class OptionDialog extends JDialog {
                                             .addComponent(checkBoxAnalysisModeOn)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMouseMoveShow))
-                                        .addComponent(labelNotes))
-                                    .addGap(0, 127, Short.MAX_VALUE))))
+                                        .addComponent(labelNotes)
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelMoveNumber)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxShowMoveNumber)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxMoveNumberLimit)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(labelMoveNumberLimitLabelTail)))
+                                    .addGap(0, 9, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -356,7 +425,14 @@ public class OptionDialog extends JDialog {
                                 .addComponent(labelLeelazCommandLine)
                                 .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(buttonResetCommandLine))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(labelMoveNumber)
+                                .addComponent(checkBoxShowMoveNumber)
+                                .addComponent(checkBoxMoveNumberLimit)
+                                .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(labelMoveNumberLimitLabelTail))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

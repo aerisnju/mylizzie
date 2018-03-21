@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_ERR">
+            <!--<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+            <PatternLayout pattern="%d{ISO8601} %5p (%t) [%c{2}:%L] - %m%n"/>
+        </Console>
+        <!--<RollingFile name="RollingFile" fileName="logs/sourcing.log"-->
+        <!--filePattern="logs/$${date:yyyy-MM}/sourcing-%d{MM-dd-yyyy}-%i.log.gz">-->
+        <!--<PatternLayout pattern="%d{ISO8601} %5p (%t) [%c{2}:%L] - %m%n"/>-->
+        <!--<Policies>-->
+        <!--&lt;!&ndash;<TimeBasedTriggeringPolicy/>&ndash;&gt;-->
+        <!--<SizeBasedTriggeringPolicy size="50 MB"/>-->
+        <!--</Policies>-->
+        <!--</RollingFile>-->
+    </Appenders>
+    <Loggers>
+        <Root level="warn">
+            <AppenderRef ref="Console"/>
+            <!--<AppenderRef ref="RollingFile"/>-->
+        </Root>
+    </Loggers>
+</Configuration>

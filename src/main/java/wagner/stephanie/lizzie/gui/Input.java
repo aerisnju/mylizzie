@@ -56,7 +56,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
             Lizzie.board.pass();
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            Lizzie.frame.toggleShowMoveNumver();
+            Lizzie.frame.toggleShowMoveNumber();
         } else if (e.getKeyCode() == KeyEvent.VK_O) {
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
             Lizzie.optionDialog.setVisible(true);

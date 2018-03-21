@@ -100,6 +100,10 @@ public class BoardRenderer {
         // draw the stones
         int stoneRadius = squareSize / 2 - 1;
         if (Lizzie.board != null) {
+            int[] lastMove = Lizzie.board.getLastMove();
+            int lastMoveNumber = Lizzie.board.getData().moveNumber;
+            int moveNumberLowerLimit = lastMoveNumber - Lizzie.optionSetting.getNumberOfLastMovesShown();
+
             for (int i = 0; i < Board.BOARD_SIZE; i++) {
                 for (int j = 0; j < Board.BOARD_SIZE; j++) {
                     // TODO for some reason these are always off center?!
@@ -123,32 +127,32 @@ public class BoardRenderer {
                     }
 
                     // Show move number if enable
-
-                    int[] lastMove = Lizzie.board.getLastMove();
-
-                    if (!(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.frame.showMoveNumber && Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)] > 0) {
+                    if (!(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.optionSetting.isShowMoveNumber() && Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)] > 0) {
                         if (!(lastMove != null && i == lastMove[0] && j == lastMove[1])) {
-                            g.setColor(Lizzie.board.getStones()[Board.getIndex(i, j)].equals(Stone.BLACK) ? Color.WHITE : Color.BLACK);
-                            String moveNumberString = String.valueOf(Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)]);
-                            int fontSize = (int) (stoneRadius * 1.5);
-                            Font font;
-                            do {
-                                font = new Font("Sans Serif", Font.PLAIN, fontSize--);
-                                g.setFont(font);
-                            } while (g.getFontMetrics(font).stringWidth(moveNumberString) > stoneRadius * 1.7);
-                            g.drawString(moveNumberString,
-                                    stoneX + stoneRadius - g.getFontMetrics(font).stringWidth(moveNumberString) / 2, stoneY + stoneRadius + (int) (fontSize / 2.0) - 1);
+                            int currentMoveNumber = Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)];
+                            if (currentMoveNumber > moveNumberLowerLimit) {
+                                String moveNumberString = String.valueOf(currentMoveNumber);
+                                g.setColor(Lizzie.board.getStones()[Board.getIndex(i, j)].equals(Stone.BLACK) ? Color.WHITE : Color.BLACK);
+
+                                int fontSize = (int) (stoneRadius * 1.5);
+                                Font font;
+                                do {
+                                    font = new Font("Sans Serif", Font.PLAIN, fontSize--);
+                                    g.setFont(font);
+                                } while (g.getFontMetrics(font).stringWidth(moveNumberString) > stoneRadius * 1.7);
+                                g.drawString(moveNumberString,
+                                        stoneX + stoneRadius - g.getFontMetrics(font).stringWidth(moveNumberString) / 2, stoneY + stoneRadius + (int) (fontSize / 2.0) - 1);
+                            }
                         }
                     }
                 }
             }
 
             // mark the last coordinate
-            int[] lastMove = Lizzie.board.getLastMove();
             if (lastMove != null) {
                 // If show move number is enable
                 // Last move color is different
-                if (!(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.frame.showMoveNumber) {
+                if (!(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.optionSetting.isShowMoveNumber()) {
                     int stoneX = x + scaledMargin + squareSize * lastMove[0] - stoneRadius;
                     int stoneY = y + scaledMargin + squareSize * lastMove[1] - stoneRadius;
                     g.setColor(Color.RED);

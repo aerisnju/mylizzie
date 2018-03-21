@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfParseException;
+import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
@@ -103,6 +104,24 @@ public class Lizzie {
         }
     }
 
+    private static class MoveReplayer {
+        private boolean nextIsBlack;
+
+        public MoveReplayer() {
+            nextIsBlack = true;
+        }
+
+        public void playMove(boolean isBlack, int x, int y) {
+            if (nextIsBlack == isBlack) {
+                Lizzie.board.place(x, y);
+                nextIsBlack = !nextIsBlack;
+            } else {
+                Lizzie.board.pass();
+                Lizzie.board.place(x, y);
+            }
+        }
+    }
+
     public static void loadGameByFile(Path gameFilePath) {
         try {
             Game game = Sgf.createFromPath(gameFilePath);
@@ -123,6 +142,8 @@ public class Lizzie {
                 return;
             }
 
+            MoveReplayer replayer = new MoveReplayer();
+
             clearBoardAndState();
 
             // Process pre-placed stones
@@ -136,7 +157,7 @@ public class Lizzie {
                         .collect(Collectors.toList());
             }
             if (StringUtils.isNotEmpty(prePlacedWhiteStoneString)) {
-                prePlacedWhiteStones = Arrays.stream(prePlacedBlackStoneString.split(","))
+                prePlacedWhiteStones = Arrays.stream(prePlacedWhiteStoneString.split(","))
                         .map(String::trim)
                         .map(Util::alphaToCoords)
                         .collect(Collectors.toList());
@@ -146,14 +167,10 @@ public class Lizzie {
                 int maxLength = Math.max(prePlacedBlackStones.size(), prePlacedWhiteStones.size());
                 for (int i = 0; i < maxLength; ++i) {
                     if (i < prePlacedBlackStones.size()) {
-                        Lizzie.board.place(prePlacedBlackStones.get(i)[0], prePlacedBlackStones.get(i)[1]);
-                    } else {
-                        Lizzie.board.pass();
+                        replayer.playMove(true, prePlacedBlackStones.get(i)[0], prePlacedBlackStones.get(i)[1]);
                     }
                     if (i < prePlacedWhiteStones.size()) {
-                        Lizzie.board.place(prePlacedWhiteStones.get(i)[0], prePlacedWhiteStones.get(i)[1]);
-                    } else {
-                        Lizzie.board.pass();
+                        replayer.playMove(false, prePlacedWhiteStones.get(i)[0], prePlacedWhiteStones.get(i)[1]);
                     }
                 }
             }
@@ -163,10 +180,8 @@ public class Lizzie {
                     continue;
                 }
                 int[] coords = node.getCoords();
-                if (coords[0] >= 19 || coords[0] < 0 || coords[1] >= 19 || coords[1] < 0) {
-                    Lizzie.board.pass();
-                } else {
-                    Lizzie.board.place(coords[0], coords[1]);
+                if (coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
+                    replayer.playMove(node.getColorAsEnum().equals(StoneState.BLACK), coords[0], coords[1]);
                 }
             }
             while ((node = node.getNextNode()) != null);

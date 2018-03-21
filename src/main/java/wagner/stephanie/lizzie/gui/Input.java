@@ -5,7 +5,7 @@ import wagner.stephanie.lizzie.Lizzie;
 import javax.swing.plaf.basic.BasicSliderUI;
 import java.awt.event.*;
 
-public class Input implements MouseListener, KeyListener, MouseWheelListener {
+public class Input implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener {
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -78,5 +78,18 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener {
                 Lizzie.board.previousMove();
             }
 //        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+
+        Lizzie.frame.onMouseMove(x, y);
     }
 }

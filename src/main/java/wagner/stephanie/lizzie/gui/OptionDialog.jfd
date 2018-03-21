@@ -11,8 +11,8 @@ new FormModel {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space u:::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelAutoHideMoveNumber:::p::p, space :::p, comp checkBoxAutoHideMoveNumber:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :p:12:p, comp checkBoxAnalysisModeOn:::p::p}}}}"
-					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelAutoHideMoveNumber::b:p::p, comp checkBoxAutoHideMoveNumber::b:p::p}, space :::p, par b {comp checkBoxAnalysisModeOn::b:p::p, comp labelAnalysisModeOn::b:p::p}, space ::74:x}}"
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space u:::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelAutoHideMoveNumber:::p::p, space :::p, comp checkBoxAutoHideMoveNumber:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :p:12:p, comp checkBoxAnalysisModeOn:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p}}}}"
+					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelAutoHideMoveNumber::b:p::p, comp checkBoxAutoHideMoveNumber::b:p::p}, space :::p, par l {par b {comp checkBoxAnalysisModeOn::b:p::p, comp labelAnalysisModeOn::b:p::p}, comp checkBoxMouseMoveShow::l:p::p}, space ::74:x}}"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -52,13 +52,13 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonA1Top"
 						"text": "A1 is on top(Yehu)"
-						"selected": true
 						"$buttonGroup": new FormReference( "buttonGroupAxisSetting" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonA1Bottom"
 						"text": "A1 is on bottom(Yike)"
 						"$buttonGroup": new FormReference( "buttonGroupAxisSetting" )
+						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelBoardColor"
@@ -95,8 +95,12 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxAnalysisModeOn"
-						"text": "On and show window"
+						"text": "On"
 						"selected": true
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "checkBoxMouseMoveShow"
+						"text": "Mouse over show move"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"

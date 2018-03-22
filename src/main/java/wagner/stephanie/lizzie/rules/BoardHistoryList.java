@@ -16,7 +16,7 @@ public class BoardHistoryList {
             BoardHistoryNode p = head;
             while (p != null) {
                 initialNode = p;
-                p = p.previous();
+                p = p.getPrevious();
             }
         }
 
@@ -38,7 +38,10 @@ public class BoardHistoryList {
      * @param data the data to add
      */
     public void add(BoardData data) {
-        head = head.add(new BoardHistoryNode(data));
+        BoardHistoryNode newNode = new BoardHistoryNode(data);
+
+        head.connectNextNode(newNode);
+        head = newNode;
     }
 
     /**
@@ -47,10 +50,10 @@ public class BoardHistoryList {
      * @return data of previous node, null if there is no previous node
      */
     public BoardData previous() {
-        if (head.previous() == null)
+        if (head.getPrevious() == null)
             return null;
         else
-            head = head.previous();
+            head = head.getPrevious();
 
         return head.getData();
     }
@@ -61,10 +64,10 @@ public class BoardHistoryList {
      * @return the data of next node, null if there is no next node
      */
     public BoardData next() {
-        if (head.next() == null)
+        if (head.getNext() == null)
             return null;
         else
-            head = head.next();
+            head = head.getNext();
 
         return head.getData();
     }
@@ -75,10 +78,10 @@ public class BoardHistoryList {
      * @return the data stored at the next index. null if not present
      */
     public BoardData getNext() {
-        if (head.next() == null)
+        if (head.getNext() == null)
             return null;
         else
-            return head.next().getData();
+            return head.getNext().getData();
     }
 
     /**
@@ -124,12 +127,12 @@ public class BoardHistoryList {
         BoardHistoryNode head = this.head;
 
         // check to see if this position has occurred before
-        while (head.previous() != null) {
+        while (head.getPrevious() != null) {
             // if two zobrist hashes are equal, and it's the same player to coordinate, they are the same position
             if (data.zobrist.equals(head.getData().zobrist) && data.blackToPlay == head.getData().blackToPlay)
                 return true;
 
-            head = head.previous();
+            head = head.getPrevious();
         }
 
         // no position matched this position, so it's valid

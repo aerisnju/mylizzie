@@ -29,8 +29,13 @@ public class LizzieFrame extends JFrame {
             "key 'C' = Clear board",
             "key 'R' = Read SGF",
             "key 'W' = Write SGF",
-            "key 'G' = Go to move"
+            "key 'G' = Go to move",
+            "key 'V' = Enter/Leave try playing state",
+            "key 'X' = Drop all successive moves"
+
     };
+    public static final String LIZZIE_TITLE = "Lizzie - Leela Zero Interface";
+    public static final String LIZZIE_TRY_PLAY_TITLE = "... Try playing ...";
     private static BoardRenderer boardRenderer = new BoardRenderer();
 
     private final BufferStrategy bs;
@@ -39,7 +44,7 @@ public class LizzieFrame extends JFrame {
      * Creates a window and refreshes the game state at FPS.
      */
     public LizzieFrame() {
-        super("Lizzie - Leela Zero Interface");
+        super(LIZZIE_TITLE);
 
         setVisible(true);
 
@@ -169,5 +174,13 @@ public class LizzieFrame extends JFrame {
                 Lizzie.board.gotoMove(moveNumber);
             }
         }
+    }
+
+    public void showTryPlayTitle() {
+        setTitle(LIZZIE_TRY_PLAY_TITLE);
+    }
+
+    public void restoreDefaultTitle() {
+        setTitle(LIZZIE_TITLE);
     }
 }

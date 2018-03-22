@@ -7,6 +7,7 @@ public class Board {
     public final static String alphabet = "ABCDEFGHJKLMNOPQRST";
 
     private BoardHistoryList history;
+    private BoardTryPlayState tryPlayState;
 
     public Board() {
         Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
@@ -17,6 +18,45 @@ public class Board {
         int[] lastMove = null;
 
         history = new BoardHistoryList(new BoardData(stones, lastMove, Stone.EMPTY, blackToPlay, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
+        tryPlayState = null;
+    }
+
+    public boolean isInTryPlayState() {
+        return tryPlayState != null;
+    }
+
+    public void enterTryPlayState() {
+        synchronized (this) {
+            if (!isInTryPlayState()) {
+                tryPlayState = new BoardTryPlayState(history.getHead(), history.getHead().getNext());
+                tryPlayState.cutMainStream();
+                Lizzie.frame.showTryPlayTitle();
+            }
+        }
+    }
+
+    public int getTryPlayStateBeginMoveNumber() {
+        synchronized (this) {
+            if (isInTryPlayState()) {
+                return tryPlayState.getMainStreamEnd().getData().moveNumber;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    public void leaveTryPlayState() {
+        synchronized (this) {
+            if (isInTryPlayState()) {
+                if (!tryPlayState.isMainStreamConnected()) {
+                    gotoMove(getTryPlayStateBeginMoveNumber());
+                    tryPlayState.restoreMainStream();
+                }
+
+                Lizzie.frame.restoreDefaultTitle();
+                tryPlayState = null;
+            }
+        }
     }
 
     public BoardHistoryList getHistory() {
@@ -56,7 +96,7 @@ public class Board {
      */
     public static String convertCoordinatesToName(int x, int y) {
         // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
-        return alphabet.charAt(x) + "" + (y+1);
+        return alphabet.charAt(x) + "" + (y + 1);
     }
 
     /**
@@ -69,7 +109,7 @@ public class Board {
     public static boolean isValid(int x, int y) {
         return x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE;
     }
-    
+
     /**
      * The pass. Thread safe
      *
@@ -77,42 +117,45 @@ public class Board {
      */
     private void pass(Stone color) {
         synchronized (this) {
-
-            // check to see if this move is being replayed in history
-            BoardData next = history.getNext();
-            if (next != null && next.lastMove == null) {
-                // this is the next move in history. Just increment history so that we don't erase the redo's
-                history.next();
-                Lizzie.leelaz.playMove(color, "pass");
-                Lizzie.leelaz.ponder();
+            // Forbid passing if the current move is before the move when try play state began
+            if (isInTryPlayState() && history.getMoveNumber() < getTryPlayStateBeginMoveNumber()) {
                 return;
             }
-            
+
+            // Forbid successive two passing
+            if (history.getLastMove() == null) {
+                return;
+            }
+
+            // If pass move happens in history middle, auto swith to try play mode
+            if (!isInTryPlayState() && getHistory().getHead().getNext() != null) {
+                enterTryPlayState();
+            }
+
             Stone[] stones = history.getStones().clone();
             Zobrist zobrist = history.getZobrist();
             int moveNumber = history.getMoveNumber() + 1;
             int[] moveNumberList = history.getMoveNumberList().clone();
-			
+
             // build the new game state
             BoardData newState = new BoardData(stones, null, color, !history.isBlacksTurn(), zobrist, moveNumber, moveNumberList);
-			
-			// update leelaz with pass
+
+            // update leelaz with pass
             Lizzie.leelaz.playMove(color, "pass");
             Lizzie.leelaz.ponder();
-			
+
             // update history with pass
             history.add(newState);
         }
     }
-    
+
     /**
      * overloaded method for pass(), chooses color in an alternating pattern
-     *
      */
     public void pass() {
         pass(history.isBlacksTurn() ? Stone.BLACK : Stone.WHITE);
     }
-    
+
     /**
      * Places a stone onto the board representation. Thread safe
      *
@@ -125,14 +168,14 @@ public class Board {
             if (!isValid(x, y) || history.getStones()[getIndex(x, y)] != Stone.EMPTY)
                 return;
 
-            // check to see if this coordinate is being replayed in history
-            BoardData next = history.getNext();
-            if (next != null && next.lastMove != null && next.lastMove[0] == x && next.lastMove[1] == y) {
-                // this is the next coordinate in history. Just increment history so that we don't erase the redo's
-                history.next();
-                Lizzie.leelaz.playMove(color, convertCoordinatesToName(x, y));
-                Lizzie.leelaz.ponder();
+            // Forbid placing a stone if the current move is before the move when try play state began
+            if (isInTryPlayState() && history.getMoveNumber() < getTryPlayStateBeginMoveNumber()) {
                 return;
+            }
+
+            // If stone placement happens in history middle, auto swith to try play mode
+            if (!isInTryPlayState() && getHistory().getHead().getNext() != null) {
+                enterTryPlayState();
             }
 
             // load a copy of the data at the current node of history
@@ -315,19 +358,17 @@ public class Board {
                 if (history.getData().lastMove == null) {
                     Lizzie.leelaz.playMove(history.getLastMoveColor(), "pass");
                     Lizzie.leelaz.ponder();
-                }
-                else
-                {
+                } else {
                     Lizzie.leelaz.playMove(history.getLastMoveColor(), convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]));
                     Lizzie.leelaz.ponder();
                 }
             }
         }
     }
-    
+
     public BoardData getData() {
-		return history.getData();
-	}
+        return history.getData();
+    }
 
     /**
      * Goes to the previous coordinate, thread safe
@@ -346,7 +387,7 @@ public class Board {
     }
 
     public void gotoMove(int moveNumber) {
-        if (moveNumber > 0) {
+        if (moveNumber >= 0) {
             int currentMoveNumber = history.getMoveNumber();
             int moveNumberDiff = moveNumber - currentMoveNumber;
 
@@ -371,6 +412,12 @@ public class Board {
     private void goBackward(int count) {
         for (int i = 0; i < count; ++i) {
             previousMove();
+        }
+    }
+
+    public void dropSuccessiveMoves() {
+        synchronized (this) {
+            history.getHead().disconnectNextNode();
         }
     }
 }

@@ -102,7 +102,15 @@ public class BoardRenderer {
         if (Lizzie.board != null) {
             int[] lastMove = Lizzie.board.getLastMove();
             int lastMoveNumber = Lizzie.board.getData().moveNumber;
-            int moveNumberLowerLimit = lastMoveNumber - Lizzie.optionSetting.getNumberOfLastMovesShown();
+            int moveNumberLowerLimit;
+            if (Lizzie.board.isInTryPlayState()) {
+                moveNumberLowerLimit = Lizzie.board.getTryPlayStateBeginMoveNumber();
+            } else {
+                moveNumberLowerLimit = lastMoveNumber - Lizzie.optionSetting.getNumberOfLastMovesShown();
+                if (moveNumberLowerLimit < 0) {
+                    moveNumberLowerLimit = 0;
+                }
+            }
 
             for (int i = 0; i < Board.BOARD_SIZE; i++) {
                 for (int j = 0; j < Board.BOARD_SIZE; j++) {
@@ -127,11 +135,18 @@ public class BoardRenderer {
                     }
 
                     // Show move number if enable
-                    if (!(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.optionSetting.isShowMoveNumber() && Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)] > 0) {
+                    // In try play state, move number is forced on
+                    if (Lizzie.board.isInTryPlayState() || !(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.optionSetting.isShowMoveNumber() && Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)] > 0) {
                         if (!(lastMove != null && i == lastMove[0] && j == lastMove[1])) {
                             int currentMoveNumber = Lizzie.board.getMoveNumberList()[Board.getIndex(i, j)];
                             if (currentMoveNumber > moveNumberLowerLimit) {
-                                String moveNumberString = String.valueOf(currentMoveNumber);
+                                String moveNumberString;
+                                if (Lizzie.board.isInTryPlayState()) {
+                                    moveNumberString = String.valueOf(currentMoveNumber - moveNumberLowerLimit);
+                                } else {
+                                    moveNumberString = String.valueOf(currentMoveNumber);
+                                }
+
                                 g.setColor(Lizzie.board.getStones()[Board.getIndex(i, j)].equals(Stone.BLACK) ? Color.WHITE : Color.BLACK);
 
                                 int fontSize = (int) (stoneRadius * 1.5);
@@ -152,19 +167,28 @@ public class BoardRenderer {
             if (lastMove != null) {
                 // If show move number is enable
                 // Last move color is different
-                if (!(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.optionSetting.isShowMoveNumber()) {
+                if (Lizzie.board.isInTryPlayState() || !(Lizzie.optionSetting.isAutoHideMoveNumber() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null) && Lizzie.optionSetting.isShowMoveNumber()) {
                     int stoneX = x + scaledMargin + squareSize * lastMove[0] - stoneRadius;
                     int stoneY = y + scaledMargin + squareSize * lastMove[1] - stoneRadius;
-                    g.setColor(Color.RED);
-                    String moveNumberString = String.valueOf(Lizzie.board.getMoveNumberList()[Board.getIndex(lastMove[0], lastMove[1])]);
-                    int fontSize = (int) (stoneRadius * 1.5);
-                    Font font;
-                    do {
-                        font = new Font("Sans Serif", Font.PLAIN, fontSize--);
-                        g.setFont(font);
-                    } while (g.getFontMetrics(font).stringWidth(moveNumberString) > stoneRadius * 1.7);
-                    g.drawString(moveNumberString,
-                            stoneX + stoneRadius - g.getFontMetrics(font).stringWidth(moveNumberString) / 2, stoneY + stoneRadius + (int) (fontSize / 2.0) - 1);
+
+                    int currentMoveNumber = Lizzie.board.getMoveNumberList()[Board.getIndex(lastMove[0], lastMove[1])];
+                    if (currentMoveNumber > moveNumberLowerLimit) {
+                        String moveNumberString;
+                        if (Lizzie.board.isInTryPlayState()) {
+                            moveNumberString = String.valueOf(currentMoveNumber - moveNumberLowerLimit);
+                        } else {
+                            moveNumberString = String.valueOf(currentMoveNumber);
+                        }
+                        int fontSize = (int) (stoneRadius * 1.5);
+                        Font font;
+                        do {
+                            font = new Font("Sans Serif", Font.PLAIN, fontSize--);
+                            g.setFont(font);
+                        } while (g.getFontMetrics(font).stringWidth(moveNumberString) > stoneRadius * 1.7);
+                        g.setColor(Color.RED);
+                        g.drawString(moveNumberString,
+                                stoneX + stoneRadius - g.getFontMetrics(font).stringWidth(moveNumberString) / 2, stoneY + stoneRadius + (int) (fontSize / 2.0) - 1);
+                    }
 
                 } else {
                     int circleRadius = squareSize / 4;
@@ -260,6 +284,13 @@ public class BoardRenderer {
             if (moveData != null) {
                 // Draw variations
                 int nextVariationNumber = 0;
+                if (Lizzie.board.isInTryPlayState()) {
+                    nextVariationNumber = Lizzie.board.getData().moveNumber - Lizzie.board.getTryPlayStateBeginMoveNumber();
+                    if (nextVariationNumber < 0) {
+                        nextVariationNumber = 0;
+                    }
+                }
+
                 Stone nextStone = Lizzie.board.getData().lastMoveColor;
                 for (String move : moveData.variation) {
                     ++nextVariationNumber;

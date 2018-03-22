@@ -209,7 +209,7 @@ public class Lizzie {
             BoardHistoryNode initialNode = historyList.getInitialNode();
 
             GameNode previousNode = null;
-            for (BoardHistoryNode p = initialNode.next(); p != null; p = p.next()) {
+            for (BoardHistoryNode p = initialNode.getNext(); p != null; p = p.getNext()) {
                 GameNode gameNode = new GameNode(previousNode);
 
                 if (previousNode == null) {

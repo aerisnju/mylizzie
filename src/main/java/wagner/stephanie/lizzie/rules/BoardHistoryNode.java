@@ -1,5 +1,7 @@
 package wagner.stephanie.lizzie.rules;
 
+import java.util.OptionalInt;
+
 /**
  * Node structure for a special doubly linked list
  */
@@ -22,13 +24,20 @@ public class BoardHistoryNode {
      * Sets up for a new node. Overwrites future history.
      *
      * @param node the node following this one
-     * @return the node that was just set
      */
-    public BoardHistoryNode add(BoardHistoryNode node) {
+    public void connectNextNode(BoardHistoryNode node) {
         next = node;
-        node.previous = this;
+        if (node != null) {
+            node.previous = this;
+        }
+    }
 
-        return node;
+    public void disconnectNextNode() {
+        BoardHistoryNode nextNode = next;
+        next = null;
+        if (nextNode != null) {
+            nextNode.previous = null;
+        }
     }
 
     /**
@@ -38,11 +47,81 @@ public class BoardHistoryNode {
         return data;
     }
 
-    public BoardHistoryNode previous() {
+    public BoardHistoryNode getPrevious() {
         return previous;
     }
 
-    public BoardHistoryNode next() {
+    public BoardHistoryNode getNext() {
         return next;
+    }
+
+    public void setPrevious(BoardHistoryNode previous) {
+        this.previous = previous;
+    }
+
+    public void setNext(BoardHistoryNode next) {
+        this.next = next;
+    }
+
+    public boolean isJustBefore(BoardHistoryNode anotherNode) {
+        if (next != anotherNode) {
+            return false;
+        }
+
+        return anotherNode != null && anotherNode.previous == this;
+    }
+
+    public boolean isJustAfter(BoardHistoryNode anotherNode) {
+        if (previous != anotherNode) {
+            return false;
+        }
+
+        return previous != null && anotherNode.next == this;
+    }
+
+    public OptionalInt distanceTo(BoardHistoryNode anotherNode) {
+        if (anotherNode == null) {
+            return OptionalInt.empty();
+        }
+
+        // Forward
+        int count = 0;
+        for (BoardHistoryNode node = this; node != null; node = node.next, ++count) {
+            if (node == anotherNode) {
+                return OptionalInt.of(count);
+            }
+        }
+
+        // Backaward
+        count = 0;
+        for (BoardHistoryNode node = this; node != null; node = node.previous, --count) {
+            if (node == anotherNode) {
+                return OptionalInt.of(count);
+            }
+        }
+
+        return OptionalInt.empty();
+    }
+
+    public int distanceToEnd() {
+        // Forward
+        int count = 0;
+        for (BoardHistoryNode node = this; node != null; node = node.next, ++count);
+        return count;
+    }
+
+    private int distanceToBegin() {
+        // Backaward
+        int count = 0;
+        for (BoardHistoryNode node = this; node != null; node = node.previous, --count);
+        return count;
+    }
+
+    public void exchangeDataWith(BoardHistoryNode anotherNode) {
+        if (anotherNode != null) {
+            BoardData temp = data;
+            data = anotherNode.data;
+            anotherNode.data = temp;
+        }
     }
 }

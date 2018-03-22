@@ -67,10 +67,13 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
             Lizzie.optionDialog.setVisible(true);
         } else if (e.getKeyCode() == KeyEvent.VK_C) {
+            Lizzie.board.leaveTryPlayState();
             Lizzie.clearBoardAndState();
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
+            Lizzie.board.leaveTryPlayState();
             Lizzie.loadGameByPrompting();
         } else if (e.getKeyCode() == KeyEvent.VK_W) {
+            Lizzie.board.leaveTryPlayState();
             Lizzie.storeGameByPrompting();
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
@@ -88,6 +91,15 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                     JOptionPane.showMessageDialog(Lizzie.frame, "Number format error.", "Lizzie", JOptionPane.ERROR_MESSAGE);
                 }
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_V) {
+            if (Lizzie.board.isInTryPlayState()) {
+                Lizzie.board.leaveTryPlayState();
+            } else {
+                Lizzie.board.enterTryPlayState();
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_X) {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.board.dropSuccessiveMoves();
         }
     }
 

@@ -2,6 +2,7 @@ package wagner.stephanie.lizzie.gui;
 
 import wagner.stephanie.lizzie.Lizzie;
 
+import javax.swing.*;
 import java.awt.event.*;
 
 public class Input implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener {
@@ -17,10 +18,15 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         int x = e.getX();
         int y = e.getY();
 
-        if (e.getButton() == MouseEvent.BUTTON1) // left mouse click
-            Lizzie.frame.onClicked(x, y);
-        else if (e.getButton() == MouseEvent.BUTTON3) // right mouse click
+        if (e.getButton() == MouseEvent.BUTTON3) { // right mouse click
             Lizzie.board.previousMove(); // interpret as undo
+        } else if (e.getButton() == MouseEvent.BUTTON1) { // left mouse click
+            if (e.getClickCount() == 2) {
+                Lizzie.frame.onDoubleClicked(x, y);
+            } else {
+                Lizzie.frame.onClicked(x, y);
+            }
+        }
     }
 
     @Override
@@ -66,6 +72,22 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.loadGameByPrompting();
         } else if (e.getKeyCode() == KeyEvent.VK_W) {
             Lizzie.storeGameByPrompting();
+        } else if (e.getKeyCode() == KeyEvent.VK_G) {
+            String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
+                    , "Enter move number you want to go:\ne.g. 78 - Jump to move No. 78\n-15 - move backward 15 steps\n+15 move forward 15 steps.", "Lizzie", JOptionPane.QUESTION_MESSAGE);
+            if (inputMoveNumberString != null && !(inputMoveNumberString = inputMoveNumberString.trim()).isEmpty()) {
+                try {
+                    int moveNumber = Integer.parseInt(inputMoveNumberString);
+                    if (inputMoveNumberString.startsWith("+") || inputMoveNumberString.startsWith("-")) {
+                        Lizzie.board.gotoMoveByDiff(moveNumber);
+                    } else {
+                        // Cannot be minus number
+                        Lizzie.board.gotoMove(moveNumber);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(Lizzie.frame, "Number format error.", "Lizzie", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
 
@@ -77,11 +99,11 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
     public void mouseWheelMoved(MouseWheelEvent e) {
         Lizzie.analysisFrame.getAnalysisTableModel().setSelectedMove(null);
 //        for (int i= 0; i < Math.abs(e.getWheelRotation()); i++) {
-            if (e.getWheelRotation() > 0) {
-                Lizzie.board.nextMove();
-            } else if (e.getWheelRotation() < 0) {
-                Lizzie.board.previousMove();
-            }
+        if (e.getWheelRotation() > 0) {
+            Lizzie.board.nextMove();
+        } else if (e.getWheelRotation() < 0) {
+            Lizzie.board.previousMove();
+        }
 //        }
     }
 

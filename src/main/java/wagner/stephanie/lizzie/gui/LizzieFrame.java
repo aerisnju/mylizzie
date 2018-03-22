@@ -28,7 +28,8 @@ public class LizzieFrame extends JFrame {
             "key 'O' = Show settings dialog",
             "key 'C' = Clear board",
             "key 'R' = Read SGF",
-            "key 'W' = Write SGF"
+            "key 'W' = Write SGF",
+            "key 'G' = Go to move"
     };
     private static BoardRenderer boardRenderer = new BoardRenderer();
 
@@ -84,7 +85,6 @@ public class LizzieFrame extends JFrame {
     public void toggleShowMoveNumber() {
         Lizzie.optionSetting.setShowMoveNumber(!Lizzie.optionSetting.isShowMoveNumber());
     }
-
 
     /**
      * Draws the game board and interface
@@ -156,6 +156,17 @@ public class LizzieFrame extends JFrame {
             int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
             if (boardCoordinates != null) {
                 Lizzie.analysisFrame.getAnalysisTableModel().selectOrDeselectMoveByCoord(boardCoordinates);
+            }
+        }
+    }
+
+    public void onDoubleClicked(int x, int y) {
+        int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
+
+        if (boardCoordinates != null) {
+            int moveNumber = Lizzie.board.getMoveNumber(boardCoordinates[0], boardCoordinates[1]);
+            if (moveNumber > 0) {
+                Lizzie.board.gotoMove(moveNumber);
             }
         }
     }

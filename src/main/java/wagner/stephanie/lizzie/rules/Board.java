@@ -340,4 +340,37 @@ public class Board {
             }
         }
     }
+
+    public int getMoveNumber(int x, int y) {
+        return history.getMoveNumberList()[getIndex(x, y)];
+    }
+
+    public void gotoMove(int moveNumber) {
+        if (moveNumber > 0) {
+            int currentMoveNumber = history.getMoveNumber();
+            int moveNumberDiff = moveNumber - currentMoveNumber;
+
+            gotoMoveByDiff(moveNumberDiff);
+        }
+    }
+
+    public void gotoMoveByDiff(int moveDiff) {
+        if (moveDiff > 0) {
+            goForward(moveDiff);
+        } else if (moveDiff < 0) {
+            goBackward(-moveDiff);
+        }
+    }
+
+    private void goForward(int count) {
+        for (int i = 0; i < count; ++i) {
+            nextMove();
+        }
+    }
+
+    private void goBackward(int count) {
+        for (int i = 0; i < count; ++i) {
+            previousMove();
+        }
+    }
 }

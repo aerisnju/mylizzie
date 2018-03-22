@@ -84,7 +84,7 @@ public class Lizzie {
 
         setGuiPosition();
 
-        analysisDialog.setVisible(optionSetting.isAnalysisModeOn());
+        analysisDialog.setVisible(optionSetting.isAnalysisWindowShow());
     }
 
     public static void clearBoardAndState() {

@@ -87,7 +87,7 @@ public class AnalysisFrame extends JPanel {
             @Override
             public void componentHidden(ComponentEvent e) {
                 newContentPane.getAnalysisTableModel().setSelectedMove(null);
-                Lizzie.optionSetting.setAnalysisModeOn(false);
+                Lizzie.optionSetting.setAnalysisWindowShow(false);
             }
         });
 

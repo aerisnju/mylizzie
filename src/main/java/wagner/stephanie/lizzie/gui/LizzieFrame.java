@@ -151,7 +151,7 @@ public class LizzieFrame extends JFrame {
     }
 
     public void onMouseMove(int x, int y) {
-        if (Lizzie.optionSetting.isAnalysisModeOn() && Lizzie.optionSetting.isMouseOverShowMove()) {
+        if (Lizzie.optionSetting.isMouseOverShowMove()) {
             // check for board click
             int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
             if (boardCoordinates != null) {

@@ -1,7 +1,5 @@
 package wagner.stephanie.lizzie.gui;
 
-import org.apache.logging.log4j.core.util.Integers;
-
 import java.awt.*;
 
 public class OptionSetting {
@@ -10,7 +8,7 @@ public class OptionSetting {
     private Color boardColor;
     private boolean autoHideMoveNumber;
     private boolean autoHideAnalysisSuggession;
-    private boolean analysisModeOn;
+    private boolean analysisWindowShow;
     private boolean mouseOverShowMove;
     private String leelazCommandLine;
     private boolean showMoveNumber;
@@ -33,7 +31,7 @@ public class OptionSetting {
         boardColor = new Color(0xf0, 0xd2, 0xa0);
         autoHideMoveNumber = true;
         autoHideAnalysisSuggession = true;
-        analysisModeOn = true;
+        analysisWindowShow = true;
         mouseOverShowMove = false;
         leelazCommandLine = "-g -t2 -wnetwork";
         showMoveNumber = true;
@@ -92,12 +90,12 @@ public class OptionSetting {
         this.autoHideAnalysisSuggession = autoHideAnalysisSuggession;
     }
 
-    public boolean isAnalysisModeOn() {
-        return analysisModeOn;
+    public boolean isAnalysisWindowShow() {
+        return analysisWindowShow;
     }
 
-    public void setAnalysisModeOn(boolean analysisModeOn) {
-        this.analysisModeOn = analysisModeOn;
+    public void setAnalysisWindowShow(boolean analysisWindowShow) {
+        this.analysisWindowShow = analysisWindowShow;
     }
 
     public boolean isMouseOverShowMove() {

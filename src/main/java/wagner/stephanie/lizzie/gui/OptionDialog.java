@@ -35,7 +35,7 @@ public class OptionDialog extends JDialog {
     private JLabel labelAutoHide;
     private JCheckBox checkBoxAutoHideMoveNumber;
     private JLabel labelAnalysisModeOn;
-    private JCheckBox checkBoxAnalysisModeOn;
+    private JCheckBox checkBoxAnalysisWindowShow;
     private JCheckBox checkBoxMouseMoveShow;
     private JLabel labelLeelazCommandLine;
     private JTextField textFieldLeelazCommandLine;
@@ -99,7 +99,7 @@ public class OptionDialog extends JDialog {
 
         checkBoxAutoHideAnalysisSuggession.setSelected(setting.isAutoHideAnalysisSuggession());
 
-        checkBoxAnalysisModeOn.setSelected(setting.isAnalysisModeOn());
+        checkBoxAnalysisWindowShow.setSelected(setting.isAnalysisWindowShow());
 
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
 
@@ -147,7 +147,7 @@ public class OptionDialog extends JDialog {
         setting.setBoardColor(boardColor);
         setting.setAutoHideMoveNumber(checkBoxAutoHideMoveNumber.isSelected());
         setting.setAutoHideAnalysisSuggession(checkBoxAutoHideAnalysisSuggession.isSelected());
-        setting.setAnalysisModeOn(checkBoxAnalysisModeOn.isSelected());
+        setting.setAnalysisWindowShow(checkBoxAnalysisWindowShow.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
         String newLeelazCommandLine = textFieldLeelazCommandLine.getText().trim();
         if (StringUtils.isEmpty(newLeelazCommandLine)) {
@@ -178,7 +178,7 @@ public class OptionDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         readDialogSetting(Lizzie.optionSetting);
-        Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisModeOn());
+        Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisWindowShow());
         setVisible(false);
     }
 
@@ -206,7 +206,7 @@ public class OptionDialog extends JDialog {
         labelAutoHide = new JLabel();
         checkBoxAutoHideMoveNumber = new JCheckBox();
         labelAnalysisModeOn = new JLabel();
-        checkBoxAnalysisModeOn = new JCheckBox();
+        checkBoxAnalysisWindowShow = new JCheckBox();
         checkBoxMouseMoveShow = new JCheckBox();
         labelLeelazCommandLine = new JLabel();
         textFieldLeelazCommandLine = new JTextField();
@@ -288,9 +288,9 @@ public class OptionDialog extends JDialog {
                 //---- labelAnalysisModeOn ----
                 labelAnalysisModeOn.setText("Analysis mode:");
 
-                //---- checkBoxAnalysisModeOn ----
-                checkBoxAnalysisModeOn.setText("On");
-                checkBoxAnalysisModeOn.setSelected(true);
+                //---- checkBoxAnalysisWindowShow ----
+                checkBoxAnalysisWindowShow.setText("Show move list");
+                checkBoxAnalysisWindowShow.setSelected(true);
 
                 //---- checkBoxMouseMoveShow ----
                 checkBoxMouseMoveShow.setText("Mouse over show move");
@@ -380,7 +380,7 @@ public class OptionDialog extends JDialog {
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAnalysisModeOn)
                                             .addGap(12, 12, 12)
-                                            .addComponent(checkBoxAnalysisModeOn)
+                                            .addComponent(checkBoxAnalysisWindowShow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMouseMoveShow))
                                         .addComponent(labelNotes)
@@ -429,7 +429,7 @@ public class OptionDialog extends JDialog {
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup()
                                 .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(checkBoxAnalysisModeOn)
+                                    .addComponent(checkBoxAnalysisWindowShow)
                                     .addComponent(labelAnalysisModeOn))
                                 .addComponent(checkBoxMouseMoveShow))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)

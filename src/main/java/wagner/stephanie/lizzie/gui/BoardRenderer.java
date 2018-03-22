@@ -181,7 +181,8 @@ public class BoardRenderer {
         // draw Leelaz suggestions
         // TODO clean up this MESS
         List<MoveData> bestMoves = Lizzie.leelaz.getBestMoves();
-        if (!bestMoves.isEmpty()) {
+        if (!bestMoves.isEmpty()
+                && !(Lizzie.optionSetting.isAutoHideAnalysisSuggession() && Lizzie.analysisFrame != null && Lizzie.analysisFrame.getAnalysisTableModel().getSelectedMove() != null)) {
             final double MIN_ACCEPTABLE_PLAYOUTS = 0.0;
 
             int maxPlayouts = 0;

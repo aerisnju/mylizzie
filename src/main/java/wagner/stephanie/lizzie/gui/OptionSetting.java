@@ -9,6 +9,7 @@ public class OptionSetting {
     private boolean a1OnTop;
     private Color boardColor;
     private boolean autoHideMoveNumber;
+    private boolean autoHideAnalysisSuggession;
     private boolean analysisModeOn;
     private boolean mouseOverShowMove;
     private String leelazCommandLine;
@@ -31,6 +32,7 @@ public class OptionSetting {
         a1OnTop = false;
         boardColor = new Color(0xf0, 0xd2, 0xa0);
         autoHideMoveNumber = true;
+        autoHideAnalysisSuggession = true;
         analysisModeOn = true;
         mouseOverShowMove = false;
         leelazCommandLine = "-g -t2 -wnetwork";
@@ -80,6 +82,14 @@ public class OptionSetting {
 
     public void setAutoHideMoveNumber(boolean autoHideMoveNumber) {
         this.autoHideMoveNumber = autoHideMoveNumber;
+    }
+
+    public boolean isAutoHideAnalysisSuggession() {
+        return autoHideAnalysisSuggession;
+    }
+
+    public void setAutoHideAnalysisSuggession(boolean autoHideAnalysisSuggession) {
+        this.autoHideAnalysisSuggession = autoHideAnalysisSuggession;
     }
 
     public boolean isAnalysisModeOn() {

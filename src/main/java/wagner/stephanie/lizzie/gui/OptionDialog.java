@@ -32,7 +32,7 @@ public class OptionDialog extends JDialog {
     private JRadioButton radioButtonColorOriginal;
     private JRadioButton radioButtonColorBright;
     private JRadioButton radioButtonColorPureWhite;
-    private JLabel labelAutoHideMoveNumber;
+    private JLabel labelAutoHide;
     private JCheckBox checkBoxAutoHideMoveNumber;
     private JLabel labelAnalysisModeOn;
     private JCheckBox checkBoxAnalysisModeOn;
@@ -46,6 +46,7 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxMoveNumberLimit;
     private JTextField textFieldMoveNumberLimitCount;
     private JLabel labelMoveNumberLimitLabelTail;
+    private JCheckBox checkBoxAutoHideAnalysisSuggession;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -96,6 +97,8 @@ public class OptionDialog extends JDialog {
 
         checkBoxAutoHideMoveNumber.setSelected(setting.isAutoHideMoveNumber());
 
+        checkBoxAutoHideAnalysisSuggession.setSelected(setting.isAutoHideAnalysisSuggession());
+
         checkBoxAnalysisModeOn.setSelected(setting.isAnalysisModeOn());
 
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
@@ -143,6 +146,7 @@ public class OptionDialog extends JDialog {
         setting.setA1OnTop(radioButtonA1Top.isSelected());
         setting.setBoardColor(boardColor);
         setting.setAutoHideMoveNumber(checkBoxAutoHideMoveNumber.isSelected());
+        setting.setAutoHideAnalysisSuggession(checkBoxAutoHideAnalysisSuggession.isSelected());
         setting.setAnalysisModeOn(checkBoxAnalysisModeOn.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
         String newLeelazCommandLine = textFieldLeelazCommandLine.getText().trim();
@@ -199,7 +203,7 @@ public class OptionDialog extends JDialog {
         radioButtonColorOriginal = new JRadioButton();
         radioButtonColorBright = new JRadioButton();
         radioButtonColorPureWhite = new JRadioButton();
-        labelAutoHideMoveNumber = new JLabel();
+        labelAutoHide = new JLabel();
         checkBoxAutoHideMoveNumber = new JCheckBox();
         labelAnalysisModeOn = new JLabel();
         checkBoxAnalysisModeOn = new JCheckBox();
@@ -213,6 +217,7 @@ public class OptionDialog extends JDialog {
         checkBoxMoveNumberLimit = new JCheckBox();
         textFieldMoveNumberLimitCount = new JTextField();
         labelMoveNumberLimitLabelTail = new JLabel();
+        checkBoxAutoHideAnalysisSuggession = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -273,11 +278,11 @@ public class OptionDialog extends JDialog {
                 //---- radioButtonColorPureWhite ----
                 radioButtonColorPureWhite.setText("Pure white");
 
-                //---- labelAutoHideMoveNumber ----
-                labelAutoHideMoveNumber.setText("Move number auto hide:");
+                //---- labelAutoHide ----
+                labelAutoHide.setText("Auto hide when show variation:");
 
                 //---- checkBoxAutoHideMoveNumber ----
-                checkBoxAutoHideMoveNumber.setText("Auto hide move number when variation move activated");
+                checkBoxAutoHideMoveNumber.setText("Move number");
                 checkBoxAutoHideMoveNumber.setSelected(true);
 
                 //---- labelAnalysisModeOn ----
@@ -319,6 +324,10 @@ public class OptionDialog extends JDialog {
 
                 //---- labelMoveNumberLimitLabelTail ----
                 labelMoveNumberLimitLabelTail.setText("move(s).");
+
+                //---- checkBoxAutoHideAnalysisSuggession ----
+                checkBoxAutoHideAnalysisSuggession.setText("Analysis suggessions");
+                checkBoxAutoHideAnalysisSuggession.setSelected(true);
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
@@ -363,9 +372,11 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonColorPureWhite))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelAutoHideMoveNumber)
+                                            .addComponent(labelAutoHide)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxAutoHideMoveNumber))
+                                            .addComponent(checkBoxAutoHideMoveNumber)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxAutoHideAnalysisSuggession))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAnalysisModeOn)
                                             .addGap(12, 12, 12)
@@ -383,7 +394,7 @@ public class OptionDialog extends JDialog {
                                             .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(labelMoveNumberLimitLabelTail)))
-                                    .addGap(0, 9, Short.MAX_VALUE))))
+                                    .addGap(0, 19, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -412,8 +423,9 @@ public class OptionDialog extends JDialog {
                                     .addComponent(radioButtonColorPureWhite)))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelAutoHideMoveNumber)
-                                .addComponent(checkBoxAutoHideMoveNumber))
+                                .addComponent(labelAutoHide)
+                                .addComponent(checkBoxAutoHideMoveNumber)
+                                .addComponent(checkBoxAutoHideAnalysisSuggession))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup()
                                 .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)

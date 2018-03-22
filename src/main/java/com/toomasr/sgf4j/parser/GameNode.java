@@ -6,8 +6,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.toomasr.sgf4j.board.StoneState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameNode implements Comparable<GameNode>, Cloneable {
+  private static final Logger log = LoggerFactory.getLogger(GameNode.class);
+
   private final Set<GameNode> children = new TreeSet<>();
   private final Map<String, String> properties = new HashMap<>();
 
@@ -99,10 +103,11 @@ public class GameNode implements Comparable<GameNode>, Cloneable {
     }
 
     if (children.contains(node)) {
-      throw new RuntimeException("Node '" + node + "' already exists for " + this);
+      log.warn("Node '" + node + "' already exists for " + this);
+//      throw new RuntimeException("Node '" + node + "' already exists for " + this);
+    } else {
+      children.add(node);
     }
-
-    children.add(node);
   }
 
   public boolean hasChildren() {

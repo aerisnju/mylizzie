@@ -383,6 +383,9 @@ public class Parser {
   private static String prepareToken(String token) {
     token = token.replaceAll("\\\\\\[", "@@@@@");
     token = token.replaceAll("\\\\\\]", "#####");
+
+    // Fix []\r[] line breaks in some SGF files
+    token = REGEX_REMOVE_LINE_BREAK.matcher(token).replaceAll("][");
     return token;
   }
 
@@ -391,4 +394,6 @@ public class Parser {
     token = token.replaceAll("#####", "\\\\\\]");
     return token;
   }
+
+  private static final Pattern REGEX_REMOVE_LINE_BREAK = Pattern.compile("\\][\r\n]+\\[", Pattern.DOTALL);
 }

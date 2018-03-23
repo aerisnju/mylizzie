@@ -351,7 +351,6 @@ public class OptionDialog extends JDialog {
 
                 //---- checkBoxAutoEnterTryPlayingMode ----
                 checkBoxAutoEnterTryPlayingMode.setText("Automatically enter when placing stone in middle game.");
-                checkBoxAutoEnterTryPlayingMode.setSelected(true);
 
                 //---- labelMainWindow ----
                 labelMainWindow.setText("Main window:");

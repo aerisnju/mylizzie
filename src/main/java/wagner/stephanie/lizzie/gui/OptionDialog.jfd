@@ -153,7 +153,6 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxAutoEnterTryPlayingMode"
 						"text": "Automatically enter when placing stone in middle game."
-						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelMainWindow"

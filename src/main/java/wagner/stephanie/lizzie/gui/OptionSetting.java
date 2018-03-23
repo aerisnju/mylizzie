@@ -38,7 +38,7 @@ public class OptionSetting {
         leelazCommandLine = "-g -t2 -wnetwork";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
-        autoEnterTryPlayingMode = true;
+        autoEnterTryPlayingMode = false;
         mainWindowAlwaysOnTop = false;
 
         mainWindowPosX = -1;

@@ -309,43 +309,46 @@ public class BoardRenderer {
 
                     int[] coords = Board.convertNameToCoordinates(move);
                     int i = coords[0], j = coords[1];
-                    int stoneX = x + scaledMargin + squareSize * i - stoneRadius;
-                    int stoneY = y + scaledMargin + squareSize * j - stoneRadius;
+                    if (Board.isValid(i, j)) {
+                        int stoneX = x + scaledMargin + squareSize * i - stoneRadius;
+                        int stoneY = y + scaledMargin + squareSize * j - stoneRadius;
 
-                    switch (nextStone) {
-                        case BLACK:
-                            g.setColor(new Color(0, 0, 0, 175));
-                            g.fillOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
-                            break;
-                        case WHITE:
-                            g.setColor(new Color(255, 255, 255, 175));
-                            g.fillOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
-                            break;
-                        default:
-                            break;
-                    }
+                        switch (nextStone) {
+                            case BLACK:
+                                g.setColor(new Color(0, 0, 0, 175));
+                                g.fillOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
+                                break;
+                            case WHITE:
+                                g.setColor(new Color(255, 255, 255, 175));
+                                g.fillOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
+                                break;
+                            default:
+                                break;
+                        }
 
-                    g.setColor(new Color(30, 144, 255, 175));
-                    g.setStroke(new BasicStroke(3));
-                    g.drawOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
-                    g.setStroke(new BasicStroke(1));
+                        g.setColor(new Color(30, 144, 255, 175));
+                        g.setStroke(new BasicStroke(3));
+                        g.drawOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
+                        g.setStroke(new BasicStroke(1));
 
-                    // Draw variation move number
-                    g.setColor(nextStone.equals(Stone.BLACK) ? new Color(255, 255, 255, 175) : new Color(0, 0, 0, 175));
+                        // Draw variation move number
+                        g.setColor(nextStone.equals(Stone.BLACK) ? new Color(255, 255, 255, 175) : new Color(0, 0, 0, 175));
 
-                    String moveNumberString = String.valueOf(nextVariationNumber);
+                        String moveNumberString = String.valueOf(nextVariationNumber);
 
-                    int fontSize = (int) (stoneRadius * 1.5);
-                    Font font;
-                    do {
-                        font = new Font("Sans Serif", Font.BOLD, fontSize--);
+                        int fontSize = (int) (stoneRadius * 1.5);
+                        Font font;
+                        do {
+                            font = new Font("Sans Serif", Font.BOLD, fontSize--);
+                            g.setFont(font);
+                        } while (g.getFontMetrics(font).stringWidth(moveNumberString) > stoneRadius * 1.7);
+                        fontSize = (int) (fontSize * 0.8);
+                        font = new Font("Sans Serif", Font.BOLD, fontSize);
                         g.setFont(font);
-                    } while (g.getFontMetrics(font).stringWidth(moveNumberString) > stoneRadius * 1.7);
-                    fontSize = (int) (fontSize * 0.8);
-                    font = new Font("Sans Serif", Font.BOLD, fontSize);
-                    g.setFont(font);
-                    g.drawString(moveNumberString,
-                            stoneX + stoneRadius - g.getFontMetrics(font).stringWidth(moveNumberString) / 2, stoneY + stoneRadius + (int) (fontSize / 2.0) - 1);
+                        g.drawString(moveNumberString,
+                                stoneX + stoneRadius - g.getFontMetrics(font).stringWidth(moveNumberString) / 2, stoneY + stoneRadius + (int) (fontSize / 2.0) - 1);
+
+                    }
                 }
             }
         }

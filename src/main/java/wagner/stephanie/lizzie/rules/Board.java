@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.rules;
 
+import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
 
 public class Board {
@@ -81,10 +82,23 @@ public class Board {
      * @return an array containing x, followed by y
      */
     public static int[] convertNameToCoordinates(String namedCoordinate) {
-        // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
-        int x = alphabet.indexOf(namedCoordinate.charAt(0));
-        int y = Integer.parseInt(namedCoordinate.substring(1)) - 1;
-        return new int[]{x, y};
+        if (StringUtils.equalsIgnoreCase(namedCoordinate, "pass")) {
+            return new int[]{BOARD_SIZE, BOARD_SIZE};
+        } else {
+            // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
+            int x = alphabet.indexOf(namedCoordinate.charAt(0));
+            if (x < 0) {
+                return new int[]{BOARD_SIZE, BOARD_SIZE};
+            }
+            int y;
+            try {
+                y = Integer.parseInt(namedCoordinate.substring(1)) - 1;
+            } catch (NumberFormatException e) {
+                return new int[]{BOARD_SIZE, BOARD_SIZE};
+            }
+
+            return new int[]{x, y};
+        }
     }
 
     /**
@@ -95,8 +109,12 @@ public class Board {
      * @return a string representing the coordinate
      */
     public static String convertCoordinatesToName(int x, int y) {
-        // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
-        return alphabet.charAt(x) + "" + (y + 1);
+        if (isValid(x, y)) {
+            // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
+            return alphabet.charAt(x) + "" + (y + 1);
+        } else {
+            return "Pass";
+        }
     }
 
     /**

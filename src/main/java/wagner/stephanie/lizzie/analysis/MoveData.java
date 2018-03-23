@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.analysis;
 
+import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
@@ -55,7 +56,11 @@ public class MoveData {
         int[] coords = Board.convertNameToCoordinates(move);
         int x = coords[0], y = coords[1];
 
-        return Board.alphabet.substring(x, x + 1) + (19 - y);
+        if (Board.isValid(x, y)) {
+            return Board.alphabet.substring(x, x + 1) + (19 - y);
+        } else {
+            return "Pass";
+        }
     }
 
     @Override

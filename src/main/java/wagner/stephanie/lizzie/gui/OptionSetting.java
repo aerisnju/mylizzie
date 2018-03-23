@@ -14,6 +14,7 @@ public class OptionSetting {
     private boolean showMoveNumber;
     private int numberOfLastMovesShown;
     private boolean autoEnterTryPlayingMode;
+    private boolean mainWindowAlwaysOnTop;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -38,6 +39,7 @@ public class OptionSetting {
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
         autoEnterTryPlayingMode = true;
+        mainWindowAlwaysOnTop = false;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -138,6 +140,14 @@ public class OptionSetting {
 
     public void setAutoEnterTryPlayingMode(boolean autoEnterTryPlayingMode) {
         this.autoEnterTryPlayingMode = autoEnterTryPlayingMode;
+    }
+
+    public boolean isMainWindowAlwaysOnTop() {
+        return mainWindowAlwaysOnTop;
+    }
+
+    public void setMainWindowAlwaysOnTop(boolean mainWindowAlwaysOnTop) {
+        this.mainWindowAlwaysOnTop = mainWindowAlwaysOnTop;
     }
 
     public int getMainWindowPosX() {

@@ -122,6 +122,8 @@ public class OptionDialog extends JDialog {
         }
 
         checkBoxAutoEnterTryPlayingMode.setSelected(setting.isAutoEnterTryPlayingMode());
+
+        checkBoxMainWindowAlwaysOnTop.setSelected(setting.isMainWindowAlwaysOnTop());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -178,6 +180,8 @@ public class OptionDialog extends JDialog {
         }
 
         setting.setAutoEnterTryPlayingMode(checkBoxAutoEnterTryPlayingMode.isSelected());
+
+        setting.setMainWindowAlwaysOnTop(checkBoxMainWindowAlwaysOnTop.isSelected());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -187,6 +191,7 @@ public class OptionDialog extends JDialog {
     private void okButtonActionPerformed(ActionEvent e) {
         readDialogSetting(Lizzie.optionSetting);
         Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisWindowShow());
+        Lizzie.frame.setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         setVisible(false);
     }
 

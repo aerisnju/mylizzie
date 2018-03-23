@@ -227,47 +227,49 @@ public class BoardRenderer {
                     continue;
                 }
                 int[] coordinates = Board.convertNameToCoordinates(move.coordinate);
-                int suggestionX = x + scaledMargin + squareSize * coordinates[0] - stoneRadius;
-                int suggestionY = y + scaledMargin + squareSize * coordinates[1] - stoneRadius;
+                if (Board.isValid(coordinates[0], coordinates[1])) {
+                    int suggestionX = x + scaledMargin + squareSize * coordinates[0] - stoneRadius;
+                    int suggestionY = y + scaledMargin + squareSize * coordinates[1] - stoneRadius;
 
-                // -0.32 = Greenest, 0 = Reddest
-                float hue = (float) (-0.32 * Math.max(0, Math.log(percentPlayouts) / 3 + 1));
-                float saturation = 0.75f; //saturation
-                float brightness = 0.85f; //brightness
-                int alpha = (int) (MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * Math.max(0, Math.log(percentPlayouts) / 5 + 1));
+                    // -0.32 = Greenest, 0 = Reddest
+                    float hue = (float) (-0.32 * Math.max(0, Math.log(percentPlayouts) / 3 + 1));
+                    float saturation = 0.75f; //saturation
+                    float brightness = 0.85f; //brightness
+                    int alpha = (int) (MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * Math.max(0, Math.log(percentPlayouts) / 5 + 1));
 
-                Color hsbColor = Color.getHSBColor(hue, saturation, brightness);
-                Color color = new Color(hsbColor.getRed(), hsbColor.getBlue(), hsbColor.getGreen(), alpha);
+                    Color hsbColor = Color.getHSBColor(hue, saturation, brightness);
+                    Color color = new Color(hsbColor.getRed(), hsbColor.getBlue(), hsbColor.getGreen(), alpha);
 
-                g.setColor(color);
-                g.fillOval(suggestionX, suggestionY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
-                int strokeWidth = 0;
-                // highlight the top recommended move
-                if (i == 0) {
-                    strokeWidth = 2;
-                    g.setColor(Color.BLUE.brighter());
-                    g.setStroke(new BasicStroke(strokeWidth));
-                } else {
-                    g.setColor(color.darker());
-                }
-                g.drawOval(suggestionX + strokeWidth / 2, suggestionY + strokeWidth / 2, stoneRadius * 2 + 1 - strokeWidth, stoneRadius * 2 + 1 - strokeWidth);
-                g.setStroke(new BasicStroke(1));
+                    g.setColor(color);
+                    g.fillOval(suggestionX, suggestionY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
+                    int strokeWidth = 0;
+                    // highlight the top recommended move
+                    if (i == 0) {
+                        strokeWidth = 2;
+                        g.setColor(Color.BLUE.brighter());
+                        g.setStroke(new BasicStroke(strokeWidth));
+                    } else {
+                        g.setColor(color.darker());
+                    }
+                    g.drawOval(suggestionX + strokeWidth / 2, suggestionY + strokeWidth / 2, stoneRadius * 2 + 1 - strokeWidth, stoneRadius * 2 + 1 - strokeWidth);
+                    g.setStroke(new BasicStroke(1));
 
-                if (alpha > 64) {
-                    g.setColor(Color.BLACK);
-                    Font font = new Font("Sans Serif", Font.BOLD, (int) (stoneRadius * 0.85));
-                    g.setFont(font);
-                    String winrateString = String.format("%.0f", move.winrate) + "%";
-                    g.drawString(winrateString, suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(winrateString) / 2, suggestionY + stoneRadius);
-                    String playouts;
-                    int fontSize = (int) (stoneRadius * 0.8);
-                    do {
-                        font = new Font("Sans Serif", Font.PLAIN, fontSize--);
+                    if (alpha > 64) {
+                        g.setColor(Color.BLACK);
+                        Font font = new Font("Sans Serif", Font.BOLD, (int) (stoneRadius * 0.85));
                         g.setFont(font);
-                        playouts = "" + move.playouts;
-                    } while (g.getFontMetrics(font).stringWidth(playouts) > stoneRadius * 1.7);
+                        String winrateString = String.format("%.0f", move.winrate) + "%";
+                        g.drawString(winrateString, suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(winrateString) / 2, suggestionY + stoneRadius);
+                        String playouts;
+                        int fontSize = (int) (stoneRadius * 0.8);
+                        do {
+                            font = new Font("Sans Serif", Font.PLAIN, fontSize--);
+                            g.setFont(font);
+                            playouts = "" + move.playouts;
+                        } while (g.getFontMetrics(font).stringWidth(playouts) > stoneRadius * 1.7);
 
-                    g.drawString("" + move.playouts, suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(playouts) / 2, suggestionY + stoneRadius + font.getSize());
+                        g.drawString("" + move.playouts, suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(playouts) / 2, suggestionY + stoneRadius + font.getSize());
+                    }
                 }
             }
         }

@@ -94,9 +94,7 @@ public class Leelaz {
                 bestMoves = bestMovesTemp;
             } else {
                 if (isReadingPonderOutput) {
-                    // ignore passes
-                    if (!line.startsWith("pass"))
-                        bestMovesTemp.add(new MoveData(line));
+                    bestMovesTemp.add(new MoveData(line));
                 } else {
                     System.out.print(line);
                 }

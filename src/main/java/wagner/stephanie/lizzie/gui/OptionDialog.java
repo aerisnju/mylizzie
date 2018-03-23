@@ -49,6 +49,8 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxAutoHideAnalysisSuggession;
     private JLabel labelTryPlayingMode;
     private JCheckBox checkBoxAutoEnterTryPlayingMode;
+    private JLabel labelMainWindow;
+    private JCheckBox checkBoxMainWindowAlwaysOnTop;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -226,6 +228,8 @@ public class OptionDialog extends JDialog {
         checkBoxAutoHideAnalysisSuggession = new JCheckBox();
         labelTryPlayingMode = new JLabel();
         checkBoxAutoEnterTryPlayingMode = new JCheckBox();
+        labelMainWindow = new JLabel();
+        checkBoxMainWindowAlwaysOnTop = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -344,6 +348,12 @@ public class OptionDialog extends JDialog {
                 checkBoxAutoEnterTryPlayingMode.setText("Automatically enter when placing stone in middle game.");
                 checkBoxAutoEnterTryPlayingMode.setSelected(true);
 
+                //---- labelMainWindow ----
+                labelMainWindow.setText("Main window:");
+
+                //---- checkBoxMainWindowAlwaysOnTop ----
+                checkBoxMainWindowAlwaysOnTop.setText("Always on top");
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -354,9 +364,9 @@ public class OptionDialog extends JDialog {
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addComponent(labelLeelazCommandLine)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 376, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 388, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(buttonResetCommandLine, GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                                    .addComponent(buttonResetCommandLine, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                                     .addContainerGap())
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
@@ -412,8 +422,12 @@ public class OptionDialog extends JDialog {
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelTryPlayingMode)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxAutoEnterTryPlayingMode)))
-                                    .addGap(0, 19, Short.MAX_VALUE))))
+                                            .addComponent(checkBoxAutoEnterTryPlayingMode))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelMainWindow)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxMainWindowAlwaysOnTop)))
+                                    .addGap(0, 49, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -454,8 +468,8 @@ public class OptionDialog extends JDialog {
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)
-                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(buttonResetCommandLine))
+                                .addComponent(buttonResetCommandLine)
+                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelMoveNumber)
@@ -467,7 +481,11 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelTryPlayingMode)
                                 .addComponent(checkBoxAutoEnterTryPlayingMode))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(labelMainWindow)
+                                .addComponent(checkBoxMainWindowAlwaysOnTop))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

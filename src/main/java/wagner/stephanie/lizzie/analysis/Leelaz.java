@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Leelaz {
     private static final long MINUTE = 60 * 1000; // number of milliseconds in a minute
-    private static final long MAX_PONDER_TIME_MILLIS = 10 * MINUTE; // 10 minutes
+    private static final long MAX_PONDER_TIME_MILLIS = 15 * MINUTE;
 
     private Process process;
 

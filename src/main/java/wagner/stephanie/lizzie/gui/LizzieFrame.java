@@ -65,6 +65,8 @@ public class LizzieFrame extends JFrame {
         this.addMouseWheelListener(input);
         this.addMouseMotionListener(input);
 
+        this.setAlwaysOnTop(true);
+
         // shut down leelaz, then shut down the program when the window is closed
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {

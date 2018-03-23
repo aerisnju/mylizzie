@@ -47,6 +47,8 @@ public class OptionDialog extends JDialog {
     private JTextField textFieldMoveNumberLimitCount;
     private JLabel labelMoveNumberLimitLabelTail;
     private JCheckBox checkBoxAutoHideAnalysisSuggession;
+    private JLabel labelTryPlayingMode;
+    private JCheckBox checkBoxAutoEnterTryPlayingMode;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -116,6 +118,8 @@ public class OptionDialog extends JDialog {
             checkBoxMoveNumberLimit.setSelected(true);
             textFieldMoveNumberLimitCount.setText(String.valueOf(setting.getNumberOfLastMovesShown()));
         }
+
+        checkBoxAutoEnterTryPlayingMode.setSelected(setting.isAutoEnterTryPlayingMode());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -170,6 +174,8 @@ public class OptionDialog extends JDialog {
         } else {
             setting.setNumberOfLastMovesShown(Integer.MAX_VALUE);
         }
+
+        setting.setAutoEnterTryPlayingMode(checkBoxAutoEnterTryPlayingMode.isSelected());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -218,6 +224,8 @@ public class OptionDialog extends JDialog {
         textFieldMoveNumberLimitCount = new JTextField();
         labelMoveNumberLimitLabelTail = new JLabel();
         checkBoxAutoHideAnalysisSuggession = new JCheckBox();
+        labelTryPlayingMode = new JLabel();
+        checkBoxAutoEnterTryPlayingMode = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -329,6 +337,13 @@ public class OptionDialog extends JDialog {
                 checkBoxAutoHideAnalysisSuggession.setText("Analysis suggessions");
                 checkBoxAutoHideAnalysisSuggession.setSelected(true);
 
+                //---- labelTryPlayingMode ----
+                labelTryPlayingMode.setText("Try playing mode:");
+
+                //---- checkBoxAutoEnterTryPlayingMode ----
+                checkBoxAutoEnterTryPlayingMode.setText("Automatically enter when placing stone in middle game.");
+                checkBoxAutoEnterTryPlayingMode.setSelected(true);
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -393,7 +408,11 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelMoveNumberLimitLabelTail)))
+                                            .addComponent(labelMoveNumberLimitLabelTail))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelTryPlayingMode)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxAutoEnterTryPlayingMode)))
                                     .addGap(0, 19, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
@@ -444,7 +463,11 @@ public class OptionDialog extends JDialog {
                                 .addComponent(checkBoxMoveNumberLimit)
                                 .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(labelMoveNumberLimitLabelTail))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(labelTryPlayingMode)
+                                .addComponent(checkBoxAutoEnterTryPlayingMode))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

@@ -13,6 +13,7 @@ public class OptionSetting {
     private String leelazCommandLine;
     private boolean showMoveNumber;
     private int numberOfLastMovesShown;
+    private boolean autoEnterTryPlayingMode;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -36,6 +37,7 @@ public class OptionSetting {
         leelazCommandLine = "-g -t2 -wnetwork";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
+        autoEnterTryPlayingMode = true;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -128,6 +130,14 @@ public class OptionSetting {
 
     public void setNumberOfLastMovesShown(int numberOfLastMovesShown) {
         this.numberOfLastMovesShown = numberOfLastMovesShown;
+    }
+
+    public boolean isAutoEnterTryPlayingMode() {
+        return autoEnterTryPlayingMode;
+    }
+
+    public void setAutoEnterTryPlayingMode(boolean autoEnterTryPlayingMode) {
+        this.autoEnterTryPlayingMode = autoEnterTryPlayingMode;
     }
 
     public int getMainWindowPosX() {

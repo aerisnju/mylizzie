@@ -128,7 +128,7 @@ public class Board {
             }
 
             // If pass move happens in history middle, auto swith to try play mode
-            if (!isInTryPlayState() && getHistory().getHead().getNext() != null) {
+            if (Lizzie.optionSetting.isAutoEnterTryPlayingMode() && !isInTryPlayState() && getHistory().getHead().getNext() != null) {
                 enterTryPlayState();
             }
 
@@ -174,7 +174,7 @@ public class Board {
             }
 
             // If stone placement happens in history middle, auto swith to try play mode
-            if (!isInTryPlayState() && getHistory().getHead().getNext() != null) {
+            if (Lizzie.optionSetting.isAutoEnterTryPlayingMode() && !isInTryPlayState() && getHistory().getHead().getNext() != null) {
                 enterTryPlayState();
             }
 

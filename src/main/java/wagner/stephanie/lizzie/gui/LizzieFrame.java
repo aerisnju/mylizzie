@@ -70,12 +70,8 @@ public class LizzieFrame extends JFrame {
         // shut down leelaz, then shut down the program when the window is closed
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                Lizzie.leelaz.setNormalExit(true);
                 Lizzie.leelaz.shutdown();
-
-                Lizzie.readGuiPosition();
-                Lizzie.writeSettingFile();
-
-                System.exit(0);
             }
         });
     }

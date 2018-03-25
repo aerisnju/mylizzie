@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.analysis;
 
+import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Stone;
 import wagner.stephanie.lizzie.util.ArgumentTokenizer;
 
@@ -7,6 +8,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +34,15 @@ public class Leelaz {
     private boolean isPondering;
     private long startPonderTime;
 
+    private boolean normalExit;
+
     /**
      * Initializes the leelaz process and starts reading output
      *
      * @throws IOException
      */
     public Leelaz(String commandline) throws IOException {
+        normalExit = false;
         isReadingPonderOutput = false;
         bestMoves = new ArrayList<>();
         bestMovesTemp = new ArrayList<>();
@@ -64,6 +70,14 @@ public class Leelaz {
 
         // start a thread to continuously read Leelaz output
         new Thread(this::read).start();
+    }
+
+    public boolean isNormalExit() {
+        return normalExit;
+    }
+
+    public void setNormalExit(boolean normalExit) {
+        this.normalExit = normalExit;
     }
 
     /**
@@ -120,11 +134,22 @@ public class Leelaz {
             System.out.println("Leelaz process ended.");
 
             shutdown();
-            System.exit(-1);
+
+            cleanupAndExit();
         } catch (Exception e) {
             e.printStackTrace();
-            System.exit(-1);
+            cleanupAndExit();
         }
+    }
+
+    private void cleanupAndExit() {
+        if (!isNormalExit()) {
+            Lizzie.storeGameByFile(Paths.get("restore.sgf"));
+        }
+        Lizzie.readGuiPosition();
+        Lizzie.writeSettingFile();
+
+        System.exit(isNormalExit() ? 0 : -1);
     }
 
     /**

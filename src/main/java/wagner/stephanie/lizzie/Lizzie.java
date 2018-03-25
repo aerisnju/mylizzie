@@ -194,7 +194,7 @@ public class Lizzie {
         }
     }
 
-    public static void storeGameByPrompting() {
+    public static void storeGameByFile(Path filePath) {
         try {
             Game game = new Game();
 
@@ -251,31 +251,33 @@ public class Lizzie {
                 previousNode = gameNode;
             }
 
-            //game.postProcess();
-
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
-            JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
-            chooser.setFileFilter(filter);
-            chooser.setMultiSelectionEnabled(false);
-            int result = chooser.showSaveDialog(frame);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                optionSetting.setLastChooserLocation(file.getParent());
-
-                if (!file.getPath().toLowerCase().endsWith(".sgf")) {
-                    file = new File(file.getPath() + ".sgf");
-                }
-                if (file.exists()) {
-                    int ret = JOptionPane.showConfirmDialog(frame, "The SGF file is exists, do you want replace it?", "Warning", JOptionPane.OK_CANCEL_OPTION);
-                    if (ret == JOptionPane.CANCEL_OPTION) {
-                        return;
-                    }
-                }
-
-                Sgf.writeToFile(game, file.toPath());
-            }
+            Sgf.writeToFile(game, filePath);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "Error: cannot save sgf: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void storeGameByPrompting() {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
+        JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
+        chooser.setFileFilter(filter);
+        chooser.setMultiSelectionEnabled(false);
+        int result = chooser.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            optionSetting.setLastChooserLocation(file.getParent());
+
+            if (!file.getPath().toLowerCase().endsWith(".sgf")) {
+                file = new File(file.getPath() + ".sgf");
+            }
+            if (file.exists()) {
+                int ret = JOptionPane.showConfirmDialog(frame, "The SGF file is exists, do you want replace it?", "Warning", JOptionPane.OK_CANCEL_OPTION);
+                if (ret == JOptionPane.CANCEL_OPTION) {
+                    return;
+                }
+            }
+
+            storeGameByFile(file.toPath());
         }
     }
 

@@ -180,6 +180,6 @@ public class BoardHistoryList extends AbstractCollection<BoardData> {
 
     @Override
     public int size() {
-        return initialNode.distanceToEnd() + 1;
+        return initialNode.distanceToEnd();
     }
 }

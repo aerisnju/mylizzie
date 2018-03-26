@@ -5,13 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
-import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.analysis.MoveData;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Board implements Closeable {
     public static final int BOARD_SIZE = 19;
@@ -219,7 +218,7 @@ public class Board implements Closeable {
             }
 
             // Forbid successive two passing
-            if (history.getLastMove() == null) {
+            if (history.getLastMove() == null && !Objects.equals(history.getLastMoveColor(), Stone.EMPTY)) {
                 return;
             }
 

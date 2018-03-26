@@ -24,8 +24,13 @@ public class OptionSetting {
     private int analysisWindowPosY;
     private int analysisWindowWidth;
     private int analysisWindowHeight;
+    private int winrateHistogramWindowPosX;
+    private int winrateHistogramWindowPosY;
+    private int winrateHistogramWindowWidth;
+    private int winrateHistogramWindowHeight;
 
     private String lastChooserLocation;
+    private boolean winrateHistogramWindowShow;
 
     public OptionSetting() {
         variationLimit = Integer.MAX_VALUE;
@@ -51,7 +56,13 @@ public class OptionSetting {
         analysisWindowWidth = -1;
         analysisWindowHeight = -1;
 
+        winrateHistogramWindowPosX = -1;
+        winrateHistogramWindowPosY = -1;
+        winrateHistogramWindowWidth = -1;
+        winrateHistogramWindowHeight = -1;
+
         lastChooserLocation = ".";
+        winrateHistogramWindowShow = true;
     }
 
     public int getVariationLimit() {
@@ -214,11 +225,51 @@ public class OptionSetting {
         this.analysisWindowHeight = analysisWindowHeight;
     }
 
+    public int getWinrateHistogramWindowPosX() {
+        return winrateHistogramWindowPosX;
+    }
+
+    public void setWinrateHistogramWindowPosX(int winrateHistogramWindowPosX) {
+        this.winrateHistogramWindowPosX = winrateHistogramWindowPosX;
+    }
+
+    public int getWinrateHistogramWindowPosY() {
+        return winrateHistogramWindowPosY;
+    }
+
+    public void setWinrateHistogramWindowPosY(int winrateHistogramWindowPosY) {
+        this.winrateHistogramWindowPosY = winrateHistogramWindowPosY;
+    }
+
+    public int getWinrateHistogramWindowWidth() {
+        return winrateHistogramWindowWidth;
+    }
+
+    public void setWinrateHistogramWindowWidth(int winrateHistogramWindowWidth) {
+        this.winrateHistogramWindowWidth = winrateHistogramWindowWidth;
+    }
+
+    public int getWinrateHistogramWindowHeight() {
+        return winrateHistogramWindowHeight;
+    }
+
+    public void setWinrateHistogramWindowHeight(int winrateHistogramWindowHeight) {
+        this.winrateHistogramWindowHeight = winrateHistogramWindowHeight;
+    }
+
     public String getLastChooserLocation() {
         return lastChooserLocation;
     }
 
     public void setLastChooserLocation(String lastChooserLocation) {
         this.lastChooserLocation = lastChooserLocation;
+    }
+
+    public boolean isWinrateHistogramWindowShow() {
+        return winrateHistogramWindowShow;
+    }
+
+    public void setWinrateHistogramWindowShow(boolean winrateHistogramWindowShow) {
+        this.winrateHistogramWindowShow = winrateHistogramWindowShow;
     }
 }

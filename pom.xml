@@ -6,7 +6,7 @@
 
     <groupId>org.github</groupId>
     <artifactId>mylizzie</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-ALPHA</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -180,6 +180,13 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>16.0.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.0</version>
         </dependency>
     </dependencies>
 </project>

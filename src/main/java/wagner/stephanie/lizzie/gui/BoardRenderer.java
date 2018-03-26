@@ -101,7 +101,7 @@ public class BoardRenderer {
         int stoneRadius = squareSize / 2 - 1;
         if (Lizzie.board != null) {
             int[] lastMove = Lizzie.board.getLastMove();
-            int lastMoveNumber = Lizzie.board.getData().moveNumber;
+            int lastMoveNumber = Lizzie.board.getData().getMoveNumber();
             int moveNumberLowerLimit;
             if (Lizzie.board.isInTryPlayState()) {
                 moveNumberLowerLimit = Lizzie.board.getTryPlayStateBeginMoveNumber();
@@ -211,10 +211,10 @@ public class BoardRenderer {
 
             int maxPlayouts = 0;
             for (MoveData move : bestMoves) {
-                if (move.playouts < MIN_ACCEPTABLE_PLAYOUTS)
+                if (move.getPlayouts() < MIN_ACCEPTABLE_PLAYOUTS)
                     continue;
-                if (move.playouts > maxPlayouts)
-                    maxPlayouts = move.playouts;
+                if (move.getPlayouts() > maxPlayouts)
+                    maxPlayouts = move.getPlayouts();
             }
 
             final int MIN_ALPHA = 32;
@@ -222,11 +222,11 @@ public class BoardRenderer {
 
             for (int i = 0; i < bestMoves.size(); i++) {
                 MoveData move = bestMoves.get(i);
-                double percentPlayouts = (Math.max(0, (double) move.playouts) / Math.max(1, maxPlayouts));
+                double percentPlayouts = (Math.max(0, (double) move.getPlayouts()) / Math.max(1, maxPlayouts));
                 if (percentPlayouts < MIN_ACCEPTABLE_PLAYOUTS) {
                     continue;
                 }
-                int[] coordinates = Board.convertNameToCoordinates(move.coordinate);
+                int[] coordinates = Board.convertNameToCoordinates(move.getCoordinate());
                 if (Board.isValid(coordinates[0], coordinates[1])) {
                     int suggestionX = x + scaledMargin + squareSize * coordinates[0] - stoneRadius;
                     int suggestionY = y + scaledMargin + squareSize * coordinates[1] - stoneRadius;
@@ -258,17 +258,17 @@ public class BoardRenderer {
                         g.setColor(Color.BLACK);
                         Font font = new Font("Sans Serif", Font.BOLD, (int) (stoneRadius * 0.85));
                         g.setFont(font);
-                        String winrateString = String.format("%.0f", move.winrate) + "%";
+                        String winrateString = String.format("%.0f", move.getWinrate()) + "%";
                         g.drawString(winrateString, suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(winrateString) / 2, suggestionY + stoneRadius);
                         String playouts;
                         int fontSize = (int) (stoneRadius * 0.8);
                         do {
                             font = new Font("Sans Serif", Font.PLAIN, fontSize--);
                             g.setFont(font);
-                            playouts = "" + move.playouts;
+                            playouts = "" + move.getPlayouts();
                         } while (g.getFontMetrics(font).stringWidth(playouts) > stoneRadius * 1.7);
 
-                        g.drawString("" + move.playouts, suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(playouts) / 2, suggestionY + stoneRadius + font.getSize());
+                        g.drawString("" + move.getPlayouts(), suggestionX + stoneRadius - g.getFontMetrics(font).stringWidth(playouts) / 2, suggestionY + stoneRadius + font.getSize());
                     }
                 }
             }
@@ -287,14 +287,14 @@ public class BoardRenderer {
                 // Draw variations
                 int nextVariationNumber = 0;
                 if (Lizzie.board.isInTryPlayState()) {
-                    nextVariationNumber = Lizzie.board.getData().moveNumber - Lizzie.board.getTryPlayStateBeginMoveNumber();
+                    nextVariationNumber = Lizzie.board.getData().getMoveNumber() - Lizzie.board.getTryPlayStateBeginMoveNumber();
                     if (nextVariationNumber < 0) {
                         nextVariationNumber = 0;
                     }
                 }
 
-                Stone nextStone = Lizzie.board.getData().lastMoveColor;
-                for (String move : moveData.variation) {
+                Stone nextStone = Lizzie.board.getData().getLastMoveColor();
+                for (String move : moveData.getVariation()) {
                     ++nextVariationNumber;
 
                     // Limit move number according to limit

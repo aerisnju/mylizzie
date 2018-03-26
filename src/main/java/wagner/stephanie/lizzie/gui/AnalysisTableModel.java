@@ -1,31 +1,25 @@
 package wagner.stephanie.lizzie.gui;
 
+import com.google.common.collect.ImmutableList;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.MoveData;
 import wagner.stephanie.lizzie.rules.Board;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class AnalysisTableModel extends AbstractTableModel {
-    public static final List<String> COLUMN_NAMES = new ArrayList<>();
-    public static final List<Class> COLUMN_CLASSES = new ArrayList<>();
-
-    static {
-        COLUMN_NAMES.add("Move");
-        COLUMN_NAMES.add("Win");
-        COLUMN_NAMES.add("PO");
-        COLUMN_NAMES.add("PV");
-
-        COLUMN_CLASSES.add(String.class);
-        COLUMN_CLASSES.add(Double.class);
-        COLUMN_CLASSES.add(Integer.class);
-        COLUMN_CLASSES.add(String.class);
-    }
+    private static final List<String> COLUMN_NAMES = ImmutableList.of("Move", "Win", "PO", "PV");
+    private static final List<Class> COLUMN_CLASSES = ImmutableList.of(String.class, Double.class, Integer.class, String.class);
 
     private List<MoveData> bestMoves;
+    private MoveData selectedMove;
+
+    public AnalysisTableModel() {
+        bestMoves = null;
+        selectedMove = null;
+    }
 
     public MoveData getSelectedMove() {
         return selectedMove;
@@ -39,12 +33,6 @@ public class AnalysisTableModel extends AbstractTableModel {
         setSelectedMove(bestMoves.get(index));
     }
 
-    private MoveData selectedMove;
-
-    public AnalysisTableModel() {
-        bestMoves = null;
-    }
-
     public int getSelectedMoveIndex() {
         if (selectedMove == null) {
             return -1;
@@ -52,7 +40,7 @@ public class AnalysisTableModel extends AbstractTableModel {
 
         int index = 0;
         for (MoveData data : bestMoves) {
-            if (data.coordinate.equals(selectedMove.coordinate)) {
+            if (data.getCoordinate().equals(selectedMove.getCoordinate())) {
                 break;
             } else {
                 ++index;
@@ -65,7 +53,7 @@ public class AnalysisTableModel extends AbstractTableModel {
     public void selectOrDeselectMoveByCoord(int[] mouseCoords) {
         MoveData mouseOnMove = null;
         for (MoveData data : bestMoves) {
-            int[] coords = Board.convertNameToCoordinates(data.coordinate);
+            int[] coords = Board.convertNameToCoordinates(data.getCoordinate());
             if (coords[0] == mouseCoords[0] && coords[1] == mouseCoords[1]) {
                 mouseOnMove = data;
                 break;
@@ -135,9 +123,9 @@ public class AnalysisTableModel extends AbstractTableModel {
             case 0:
                 return data.getMoveDisplayString();
             case 1:
-                return data.winrate;
+                return data.getWinrate();
             case 2:
-                return data.playouts;
+                return data.getPlayouts();
             case 3:
                 return data.getVariationDisplayString();
             default:

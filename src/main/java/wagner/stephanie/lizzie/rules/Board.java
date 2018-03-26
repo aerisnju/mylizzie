@@ -1,25 +1,72 @@
 package wagner.stephanie.lizzie.rules;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import wagner.stephanie.lizzie.Lizzie;
+import wagner.stephanie.lizzie.analysis.BestMoveObserver;
+import wagner.stephanie.lizzie.analysis.Leelaz;
+import wagner.stephanie.lizzie.analysis.MoveData;
 
-public class Board {
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+public class Board implements Closeable {
     public static final int BOARD_SIZE = 19;
     public final static String alphabet = "ABCDEFGHJKLMNOPQRST";
 
     private BoardHistoryList history;
     private BoardTryPlayState tryPlayState;
+    private BoardStateChangeObserverCollection observerCollection;
+    private BestMoveObserver bestMoveObserver;
 
     public Board() {
         Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
-        for (int i = 0; i < stones.length; i++)
-            stones[i] = Stone.EMPTY;
+        Arrays.setAll(stones, value -> Stone.EMPTY);
 
-        boolean blackToPlay = true;
-        int[] lastMove = null;
-
-        history = new BoardHistoryList(new BoardData(stones, lastMove, Stone.EMPTY, blackToPlay, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
+        history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
         tryPlayState = null;
+
+        observerCollection = new BoardStateChangeObserverCollection();
+
+        bestMoveObserver = new BestMoveObserver() {
+            @Override
+            public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
+                if (CollectionUtils.isNotEmpty(newBestMoves) && boardStateCount == getData().getMoveNumber()) {
+                    BoardData boardData = getData();
+                    MoveData moveData = newBestMoves.get(0);
+
+                    boardData.tryUpdateWinrate(moveData.getWinrate(), moveData.getPlayouts(), boardData.isBlackToPlay());
+                }
+            }
+
+            @Override
+            public void engineRestarted() {
+
+            }
+        };
+
+        Lizzie.leelaz.registerBestMoveObserver(bestMoveObserver);
+    }
+
+    public BoardStateChangeObserverCollection getObserverCollection() {
+        return observerCollection;
+    }
+
+    public void setObserverCollection(BoardStateChangeObserverCollection observerCollection) {
+        this.observerCollection = observerCollection;
+    }
+
+    public void registerBoardStateChangeObserver(BoardStateChangeObserver observer) {
+        observerCollection.add(observer);
+
+        observer.mainStreamAppended(history.getInitialNode(), history.getHead());
+    }
+
+    public void unregisterBoardStateChangeObserver(BoardStateChangeObserver observer) {
+        observerCollection.remove(observer);
     }
 
     public boolean isInTryPlayState() {
@@ -32,6 +79,10 @@ public class Board {
                 tryPlayState = new BoardTryPlayState(history.getHead(), history.getHead().getNext());
                 tryPlayState.cutMainStream();
                 Lizzie.frame.showTryPlayTitle();
+
+                if (tryPlayState.getNextPartBegin() != null) {
+                    observerCollection.mainStreamCut(tryPlayState.getMainStreamEnd(), history.getHead());
+                }
             }
         }
     }
@@ -39,7 +90,7 @@ public class Board {
     public int getTryPlayStateBeginMoveNumber() {
         synchronized (this) {
             if (isInTryPlayState()) {
-                return tryPlayState.getMainStreamEnd().getData().moveNumber;
+                return tryPlayState.getMainStreamEnd().getData().getMoveNumber();
             } else {
                 return 0;
             }
@@ -52,10 +103,16 @@ public class Board {
                 if (!tryPlayState.isMainStreamConnected()) {
                     gotoMove(getTryPlayStateBeginMoveNumber());
                     tryPlayState.restoreMainStream();
+
+                    observerCollection.mainStreamCut(tryPlayState.getMainStreamEnd(), history.getHead());
                 }
 
                 Lizzie.frame.restoreDefaultTitle();
+                BoardHistoryNode nextBegin = tryPlayState.getNextPartBegin();
                 tryPlayState = null;
+                if (nextBegin != null) {
+                    observerCollection.mainStreamAppended(nextBegin, history.getHead());
+                }
             }
         }
     }
@@ -101,6 +158,14 @@ public class Board {
         }
     }
 
+    public static int[] convertDisplayNameToCoordinates(String namedCoordinate) {
+        int[] result = convertNameToCoordinates(namedCoordinate);
+        if (isValid(result[0], result[1]) && !Lizzie.optionSetting.isA1OnTop()) {
+            result[1] = BOARD_SIZE - 1 - result[1];
+        }
+        return result;
+    }
+
     /**
      * Converts a x and y coordinate to a named coordinate eg C16, T5, K10, etc
      *
@@ -112,6 +177,19 @@ public class Board {
         if (isValid(x, y)) {
             // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
             return alphabet.charAt(x) + "" + (y + 1);
+        } else {
+            return "Pass";
+        }
+    }
+
+    public static String convertCoordinatesToDisplayName(int x, int y) {
+        if (isValid(x, y)) {
+            // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
+            if (Lizzie.optionSetting.isA1OnTop()) {
+                return alphabet.charAt(x) + "" + (y + 1);
+            } else {
+                return alphabet.charAt(x) + "" + (BOARD_SIZE - y);
+            }
         } else {
             return "Pass";
         }
@@ -163,7 +241,12 @@ public class Board {
             Lizzie.leelaz.ponder();
 
             // update history with pass
+            if (history.getHead().getNext() != null) {
+                history.getHead().disconnectNextNode();
+                observerCollection.mainStreamCut(history.getHead(), history.getHead());
+            }
             history.add(newState);
+            observerCollection.mainStreamAppended(history.getHead(), history.getHead());
         }
     }
 
@@ -236,7 +319,12 @@ public class Board {
             Lizzie.leelaz.ponder();
 
             // update history with this coordinate
+            if (history.getHead().getNext() != null) {
+                history.getHead().disconnectNextNode();
+                observerCollection.mainStreamCut(history.getHead(), history.getHead());
+            }
             history.add(newState);
+            observerCollection.mainStreamAppended(history.getHead(), history.getHead());
         }
     }
 
@@ -371,15 +459,18 @@ public class Board {
      */
     public void nextMove() {
         synchronized (this) {
+            BoardHistoryNode oldHead = history.getHead();
             if (history.next() != null) {
                 // update leelaz board position, before updating to next node
-                if (history.getData().lastMove == null) {
+                if (history.getData().getLastMove() == null) {
                     Lizzie.leelaz.playMove(history.getLastMoveColor(), "pass");
                     Lizzie.leelaz.ponder();
                 } else {
                     Lizzie.leelaz.playMove(history.getLastMoveColor(), convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]));
                     Lizzie.leelaz.ponder();
                 }
+
+                observerCollection.headMoved(oldHead, history.getHead());
             }
         }
     }
@@ -393,9 +484,12 @@ public class Board {
      */
     public void previousMove() {
         synchronized (this) {
+            BoardHistoryNode oldHead = history.getHead();
             if (history.previous() != null) {
                 Lizzie.leelaz.undo();
                 Lizzie.leelaz.ponder();
+
+                observerCollection.headMoved(oldHead, history.getHead());
             }
         }
     }
@@ -436,6 +530,21 @@ public class Board {
     public void dropSuccessiveMoves() {
         synchronized (this) {
             history.getHead().disconnectNextNode();
+            observerCollection.mainStreamCut(history.getHead(), history.getHead());
         }
+    }
+
+    @Override
+    public void close() {
+        if (bestMoveObserver != null) {
+            Lizzie.leelaz.unregisterBestMoveObserver(bestMoveObserver);
+            bestMoveObserver = null;
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+        super.finalize();
     }
 }

@@ -1,6 +1,5 @@
 package wagner.stephanie.lizzie.analysis;
 
-import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
@@ -14,10 +13,10 @@ import java.util.stream.Collectors;
  * holds the data from Leelaz's pondering mode
  */
 public class MoveData {
-    public String coordinate;
-    public int playouts;
-    public double winrate;
-    public List<String> variation;
+    private String coordinate;
+    private int playouts;
+    private double winrate;
+    private List<String> variation;
 
     /**
      * Parses a leelaz ponder output line
@@ -35,11 +34,43 @@ public class MoveData {
         variation.addAll(Arrays.asList(data).subList(8, data.length));
     }
 
+    public String getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
+    }
+
+    public int getPlayouts() {
+        return playouts;
+    }
+
+    public void setPlayouts(int playouts) {
+        this.playouts = playouts;
+    }
+
+    public double getWinrate() {
+        return winrate;
+    }
+
+    public void setWinrate(double winrate) {
+        this.winrate = winrate;
+    }
+
+    public List<String> getVariation() {
+        return variation;
+    }
+
+    public void setVariation(List<String> variation) {
+        this.variation = variation;
+    }
+
     public String getMoveDisplayString() {
         if (Lizzie.optionSetting.isA1OnTop()) {
             return coordinate;
         } else {
-            return transformAxisForMove(coordinate);
+            return flipAxisForMove(coordinate);
         }
     }
 
@@ -47,17 +78,17 @@ public class MoveData {
         if (Lizzie.optionSetting.isA1OnTop()) {
             return String.join(" ", variation);
         } else {
-            List<String> newVarAxis = variation.stream().map(MoveData::transformAxisForMove).collect(Collectors.toList());
+            List<String> newVarAxis = variation.stream().map(MoveData::flipAxisForMove).collect(Collectors.toList());
             return String.join(" ", newVarAxis);
         }
     }
 
-    private static String transformAxisForMove(String move) {
+    private static String flipAxisForMove(String move) {
         int[] coords = Board.convertNameToCoordinates(move);
         int x = coords[0], y = coords[1];
 
         if (Board.isValid(x, y)) {
-            return Board.alphabet.substring(x, x + 1) + (19 - y);
+            return Board.alphabet.substring(x, x + 1) + (Board.BOARD_SIZE - y);
         } else {
             return "Pass";
         }

@@ -8,7 +8,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +35,19 @@ public class Leelaz {
 
     private boolean normalExit;
 
+    private BestMoveObserverCollection observerCollection;
+
+    private int boardStateCount;
+
     /**
      * Initializes the leelaz process and starts reading output
      *
      * @throws IOException
      */
     public Leelaz(String commandline) throws IOException {
+        observerCollection = new BestMoveObserverCollection();
+        boardStateCount = 0;
+
         normalExit = false;
         isReadingPonderOutput = false;
         bestMoves = new ArrayList<>();
@@ -70,6 +76,23 @@ public class Leelaz {
 
         // start a thread to continuously read Leelaz output
         new Thread(this::read).start();
+    }
+
+    public BestMoveObserverCollection getObserverCollection() {
+        return observerCollection;
+    }
+
+    public void setObserverCollection(BestMoveObserverCollection observerCollection) {
+        this.observerCollection = observerCollection;
+    }
+
+    public void registerBestMoveObserver(BestMoveObserver observer) {
+        observerCollection.add(observer);
+        observer.bestMovesUpdated(boardStateCount, bestMoves);
+    }
+
+    public void unregisterBestMoveObserver(BestMoveObserver observer) {
+        observerCollection.remove(observer);
     }
 
     public boolean isNormalExit() {
@@ -106,6 +129,8 @@ public class Leelaz {
             } else if (line.startsWith("~end")) {
                 isReadingPonderOutput = false;
                 bestMoves = bestMovesTemp;
+
+                observerCollection.bestMovesUpdated(boardStateCount, bestMoves);
             } else {
                 if (isReadingPonderOutput) {
                     bestMovesTemp.add(new MoveData(line));
@@ -146,8 +171,6 @@ public class Leelaz {
         if (!isNormalExit()) {
             Lizzie.storeGameByFile(Paths.get("restore.sgf"));
         }
-        Lizzie.readGuiPosition();
-        Lizzie.writeSettingFile();
 
         System.exit(isNormalExit() ? 0 : -1);
     }
@@ -186,6 +209,8 @@ public class Leelaz {
 
             sendCommand("play " + colorString + " " + move);
             bestMoves = new ArrayList<>();
+
+            ++boardStateCount;
         }
     }
 
@@ -193,6 +218,8 @@ public class Leelaz {
         synchronized (this) {
             sendCommand("undo");
             bestMoves = new ArrayList<>();
+
+            --boardStateCount;
         }
     }
 
@@ -232,6 +259,7 @@ public class Leelaz {
             sendCommand("name"); // ends pondering
         }
         sendCommand("clear_board");
+        boardStateCount = 0;
         if (isPondering) {
             ponder();
         }

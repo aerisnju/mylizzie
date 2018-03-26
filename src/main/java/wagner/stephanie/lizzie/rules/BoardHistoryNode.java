@@ -1,11 +1,14 @@
 package wagner.stephanie.lizzie.rules;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
 import java.util.OptionalInt;
 
 /**
  * Node structure for a special doubly linked list
  */
-public class BoardHistoryNode {
+public class BoardHistoryNode implements Iterable<BoardData> {
     private BoardHistoryNode previous;
     private BoardHistoryNode next;
 
@@ -123,5 +126,11 @@ public class BoardHistoryNode {
             data = anotherNode.data;
             anotherNode.data = temp;
         }
+    }
+
+    @NotNull
+    @Override
+    public Iterator<BoardData> iterator() {
+        return new BoardHistoryList.BoardDataIterator(this);
     }
 }

@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
  */
 public class OptionDialog extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
+    // Generated using JFormDesigner non-commercial license
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JLabel labelVariationLimit;
@@ -201,6 +202,7 @@ public class OptionDialog extends JDialog {
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
+        // Generated using JFormDesigner non-commercial license
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         labelVariationLimit = new JLabel();

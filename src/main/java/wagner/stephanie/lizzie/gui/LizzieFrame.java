@@ -31,7 +31,9 @@ public class LizzieFrame extends JFrame {
             "key 'W' = Write SGF",
             "key 'G' = Go to move",
             "key 'V' = Enter/Leave try playing state",
-            "key 'X' = Drop all successive moves"
+            "key 'X' = Drop all successive moves",
+            "key 'A' = Show/hide analysis window",
+            "key 'H' = Show/hide winrate histogram window"
 
     };
     public static final String LIZZIE_TITLE = "Lizzie - Leela Zero Interface";
@@ -71,6 +73,8 @@ public class LizzieFrame extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 Lizzie.leelaz.setNormalExit(true);
+                Lizzie.readGuiPosition();
+                Lizzie.writeSettingFile();
                 Lizzie.leelaz.shutdown();
             }
         });

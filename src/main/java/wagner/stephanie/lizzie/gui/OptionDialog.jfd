@@ -202,12 +202,12 @@ new FormModel {
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupVariationLimit"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 316 )
+			"location": new java.awt.Point( 178, 432 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupAxisSetting"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 375 )
+			"location": new java.awt.Point( 360, 432 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupBoardColor"

@@ -9,14 +9,8 @@ import com.toomasr.sgf4j.parser.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.analysis.Leelaz;
-import wagner.stephanie.lizzie.gui.AnalysisFrame;
-import wagner.stephanie.lizzie.gui.LizzieFrame;
-import wagner.stephanie.lizzie.gui.OptionDialog;
-import wagner.stephanie.lizzie.gui.OptionSetting;
-import wagner.stephanie.lizzie.rules.Board;
-import wagner.stephanie.lizzie.rules.BoardHistoryList;
-import wagner.stephanie.lizzie.rules.BoardHistoryNode;
-import wagner.stephanie.lizzie.rules.Stone;
+import wagner.stephanie.lizzie.gui.*;
+import wagner.stephanie.lizzie.rules.*;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -43,6 +37,7 @@ public class Lizzie {
     public static Board board;
     public static OptionDialog optionDialog;
     public static OptionSetting optionSetting;
+    public static WinrateHistogramDialog winrateHistogramDialog;
 
     static {
         readSettingFile();
@@ -82,14 +77,22 @@ public class Lizzie {
         optionDialog = new OptionDialog(frame);
         optionDialog.setDialogSetting(optionSetting);
 
+        winrateHistogramDialog = new WinrateHistogramDialog(frame);
+
         setGuiPosition();
 
         analysisDialog.setVisible(optionSetting.isAnalysisWindowShow());
+        winrateHistogramDialog.setVisible(optionSetting.isWinrateHistogramWindowShow());
     }
 
     public static void clearBoardAndState() {
+        board.close();
         leelaz.clearBoard();
+        BoardStateChangeObserverCollection observerCollection = board.getObserverCollection();
         board = new Board();
+        board.setObserverCollection(observerCollection);
+        observerCollection.boardCleared();
+        observerCollection.mainStreamAppended(board.getHistory().getInitialNode(), board.getHistory().getHead());
     }
 
     public static void loadGameByPrompting() {
@@ -217,16 +220,16 @@ public class Lizzie {
                 }
 
                 // Move node
-                if (Objects.equals(p.getData().lastMoveColor, Stone.BLACK) || Objects.equals(p.getData().lastMoveColor, Stone.WHITE)) {
+                if (Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) || Objects.equals(p.getData().getLastMoveColor(), Stone.WHITE)) {
                     int x, y;
 
-                    if (p.getData().lastMove == null) {
+                    if (p.getData().getLastMove() == null) {
                         // Pass
                         x = 19;
                         y = 19;
                     } else {
-                        x = p.getData().lastMove[0];
-                        y = p.getData().lastMove[1];
+                        x = p.getData().getLastMove()[0];
+                        y = p.getData().getLastMove()[1];
 
                         if (x < 0 || x >= 19 || y < 0 || y >= 19) {
                             x = 19;
@@ -234,14 +237,14 @@ public class Lizzie {
                         }
                     }
 
-                    String moveKey = Objects.equals(p.getData().lastMoveColor, Stone.BLACK) ? "B" : "W";
+                    String moveKey = Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) ? "B" : "W";
                     String moveValue = Util.coordToAlpha.get(x) + Util.coordToAlpha.get(y);
 
                     gameNode.addProperty(moveKey, moveValue);
                 }
 
-                if (p.getData().moveNumber > 0) {
-                    gameNode.setMoveNo(p.getData().moveNumber);
+                if (p.getData().getMoveNumber() > 0) {
+                    gameNode.setMoveNo(p.getData().getMoveNumber());
                 }
 
                 if (previousNode != null) {
@@ -284,6 +287,7 @@ public class Lizzie {
     public static void readGuiPosition() {
         readMainFramePosition();
         readAnalysisWindowPosition();
+        readWinrateHistogramWindowPosition();
     }
 
     public static void readAnalysisWindowPosition() {
@@ -300,9 +304,17 @@ public class Lizzie {
         optionSetting.setMainWindowHeight(frame.getHeight());
     }
 
+    public static void readWinrateHistogramWindowPosition() {
+        optionSetting.setWinrateHistogramWindowPosX(winrateHistogramDialog.getX());
+        optionSetting.setWinrateHistogramWindowPosY(winrateHistogramDialog.getY());
+        optionSetting.setWinrateHistogramWindowWidth(winrateHistogramDialog.getWidth());
+        optionSetting.setWinrateHistogramWindowHeight(winrateHistogramDialog.getHeight());
+    }
+
     public static void setGuiPosition() {
-        setMainWindowPositino();
+        setMainWindowPosition();
         setAnalysisWindowPosition();
+        setWinrateHistogramWindowPosition();
     }
 
     public static void setAnalysisWindowPosition() {
@@ -314,12 +326,21 @@ public class Lizzie {
         }
     }
 
-    public static void setMainWindowPositino() {
+    public static void setMainWindowPosition() {
         if (optionSetting.getMainWindowPosX() >= 10 && optionSetting.getMainWindowPosY() >= 10) {
             frame.setLocation(optionSetting.getMainWindowPosX(), optionSetting.getMainWindowPosY());
         }
         if (optionSetting.getMainWindowWidth() >= 10 && optionSetting.getMainWindowHeight() >= 10) {
             frame.setSize(optionSetting.getMainWindowWidth(), optionSetting.getMainWindowHeight());
+        }
+    }
+
+    public static void setWinrateHistogramWindowPosition() {
+        if (optionSetting.getWinrateHistogramWindowPosX() >= 10 && optionSetting.getWinrateHistogramWindowPosY() >= 10) {
+            winrateHistogramDialog.setLocation(optionSetting.getWinrateHistogramWindowPosX(), optionSetting.getWinrateHistogramWindowPosY());
+        }
+        if (optionSetting.getWinrateHistogramWindowWidth() >= 10 && optionSetting.getWinrateHistogramWindowHeight() >= 10) {
+            winrateHistogramDialog.setSize(optionSetting.getWinrateHistogramWindowWidth(), optionSetting.getWinrateHistogramWindowHeight());
         }
     }
 

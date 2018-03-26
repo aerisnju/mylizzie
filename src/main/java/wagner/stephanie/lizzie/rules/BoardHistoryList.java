@@ -1,9 +1,40 @@
 package wagner.stephanie.lizzie.rules;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.AbstractCollection;
+import java.util.Iterator;
+
 /**
  * Linked list data structure to store board history
  */
-public class BoardHistoryList {
+public class BoardHistoryList extends AbstractCollection<BoardData> {
+    public static class BoardDataIterator implements Iterator<BoardData> {
+        private BoardHistoryNode currentNode;
+
+        BoardDataIterator(BoardHistoryNode currentNode) {
+            this.currentNode = currentNode;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return currentNode != null;
+        }
+
+        @Override
+        public BoardData next() {
+            if (hasNext()) {
+                BoardHistoryNode resultNode = currentNode;
+                currentNode = currentNode.getNext();
+                return resultNode.getData();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private BoardHistoryNode initialNode;
+
     private BoardHistoryNode head;
 
     public BoardHistoryNode getHead() {
@@ -11,15 +42,6 @@ public class BoardHistoryList {
     }
 
     public BoardHistoryNode getInitialNode() {
-        BoardHistoryNode initialNode = null;
-        if (head != null) {
-            BoardHistoryNode p = head;
-            while (p != null) {
-                initialNode = p;
-                p = p.getPrevious();
-            }
-        }
-
         return initialNode;
     }
 
@@ -29,7 +51,8 @@ public class BoardHistoryList {
      * @param data the data to be stored for the first entry
      */
     public BoardHistoryList(BoardData data) {
-        head = new BoardHistoryNode(data);
+        initialNode = new BoardHistoryNode(data);
+        head = initialNode;
     }
 
     /**
@@ -37,11 +60,14 @@ public class BoardHistoryList {
      *
      * @param data the data to add
      */
-    public void add(BoardData data) {
+    @Override
+    public boolean add(BoardData data) {
         BoardHistoryNode newNode = new BoardHistoryNode(data);
 
         head.connectNextNode(newNode);
         head = newNode;
+
+        return true;
     }
 
     /**
@@ -84,6 +110,13 @@ public class BoardHistoryList {
             return head.getNext().getData();
     }
 
+    public BoardData getPrevious() {
+        if (head.getPrevious() == null)
+            return null;
+        else
+            return head.getPrevious().getData();
+    }
+
     /**
      * @return the data of the current node
      */
@@ -92,31 +125,31 @@ public class BoardHistoryList {
     }
 
     public Stone[] getStones() {
-        return head.getData().stones;
+        return head.getData().getStonesOnBoard();
     }
 
     public int[] getLastMove() {
-        return head.getData().lastMove;
+        return head.getData().getLastMove();
     }
 
     public Stone getLastMoveColor() {
-        return head.getData().lastMoveColor;
+        return head.getData().getLastMoveColor();
     }
 
     public boolean isBlacksTurn() {
-        return head.getData().blackToPlay;
+        return head.getData().isBlackToPlay();
     }
 
     public Zobrist getZobrist() {
-        return head.getData().zobrist.clone();
+        return head.getData().getZobrist().clone();
     }
 
     public int getMoveNumber() {
-        return head.getData().moveNumber;
+        return head.getData().getMoveNumber();
     }
 
     public int[] getMoveNumberList() {
-        return head.getData().moveNumberList;
+        return head.getData().getMoveNumberListOnBoard();
     }
 
     /**
@@ -129,7 +162,7 @@ public class BoardHistoryList {
         // check to see if this position has occurred before
         while (head.getPrevious() != null) {
             // if two zobrist hashes are equal, and it's the same player to coordinate, they are the same position
-            if (data.zobrist.equals(head.getData().zobrist) && data.blackToPlay == head.getData().blackToPlay)
+            if (data.getZobrist().equals(head.getData().getZobrist()) && data.isBlackToPlay() == head.getData().isBlackToPlay())
                 return true;
 
             head = head.getPrevious();
@@ -137,5 +170,16 @@ public class BoardHistoryList {
 
         // no position matched this position, so it's valid
         return false;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<BoardData> iterator() {
+        return new BoardDataIterator(initialNode);
+    }
+
+    @Override
+    public int size() {
+        return initialNode.distanceToEnd() + 1;
     }
 }

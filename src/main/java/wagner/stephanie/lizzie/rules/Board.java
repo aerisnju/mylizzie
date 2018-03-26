@@ -50,6 +50,10 @@ public class Board implements Closeable {
         Lizzie.leelaz.registerBestMoveObserver(bestMoveObserver);
     }
 
+    public void clear() {
+        history.clear();
+    }
+
     public BoardStateChangeObserverCollection getObserverCollection() {
         return observerCollection;
     }

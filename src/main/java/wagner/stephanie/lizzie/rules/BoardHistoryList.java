@@ -179,6 +179,12 @@ public class BoardHistoryList extends AbstractCollection<BoardData> {
     }
 
     @Override
+    public void clear() {
+        head = initialNode;
+        initialNode.disconnectNextNode();
+    }
+
+    @Override
     public int size() {
         return initialNode.distanceToEnd();
     }

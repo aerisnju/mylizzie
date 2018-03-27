@@ -90,9 +90,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
                         histogramEntry.setBlackWindiff(histogramEntry.getBlackWinrate() - histogramEntryList.get(boardStateCount - 1).getBlackWinrate());
                     }
 
-                    if (Math.abs(histogramEntry.getBlackWindiff()) >= SIGNIFICANT_OSCILLATION_THRESHOLD) {
-                        rebuildFilteredHistogramData();
-                    }
+                    rebuildFilteredHistogramData();
                 }
 
                 fireTableDataChanged();

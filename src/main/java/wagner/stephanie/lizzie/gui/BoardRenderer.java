@@ -328,7 +328,7 @@ public class BoardRenderer {
                                 break;
                         }
 
-                        g.setColor(new Color(30, 144, 255, 175));
+                        g.setColor(new Color(30, 144, 255, 100));
                         g.setStroke(new BasicStroke(3));
                         g.drawOval(stoneX, stoneY, stoneRadius * 2 + 1, stoneRadius * 2 + 1);
                         g.setStroke(new BasicStroke(1));

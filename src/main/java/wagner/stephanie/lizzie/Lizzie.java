@@ -256,7 +256,11 @@ public class Lizzie {
 
             Sgf.writeToFile(game, filePath);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Error: cannot save sgf: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            if (StringUtils.isEmpty(e.getMessage())) {
+                JOptionPane.showMessageDialog(frame, "Error: cannot save sgf: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Error: cannot save sgf", "Lizzie", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

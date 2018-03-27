@@ -7,6 +7,7 @@ import wagner.stephanie.lizzie.rules.Stone;
 import wagner.stephanie.lizzie.util.ArgumentTokenizer;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -180,6 +181,7 @@ public class Leelaz implements Closeable {
 
     private void cleanupAndExit() {
         if (!isNormalExit()) {
+            JOptionPane.showMessageDialog(null, "Waring: leelaz process is terminated unexpectedly. Please check!", "Lizzie", JOptionPane.ERROR_MESSAGE);
             Lizzie.storeGameByFile(Paths.get("restore.sgf"));
             close();
         }

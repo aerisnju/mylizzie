@@ -27,13 +27,14 @@ import java.util.ResourceBundle;
 public class WinrateHistogramDialog extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner non-commercial license
-    private JPanel panelWinrateHistogram;
-    private JScrollPane scrollPaneWinrateHistory;
-    private JTable tableWinrateHistory;
     private JPanel panelWinrateHistogramOption;
     private JCheckBox checkBoxShowOnlyHighOscillation;
     private JCheckBox checkBoxHistogramShowBlack;
     private JCheckBox checkBoxHistogramShowWhite;
+    private JSplitPane splitPaneHistogram;
+    private JPanel panelWinrateHistogram;
+    private JScrollPane scrollPaneWinrateHistory;
+    private JTable tableWinrateHistory;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private ChartPanel histogramChartPanel = null;
@@ -94,11 +95,6 @@ public class WinrateHistogramDialog extends JDialog {
         histogramChartPanel = new ChartPanel(chart);
         panelWinrateHistogram.add(histogramChartPanel);
 
-        if (Lizzie.optionSetting.getWinrateHistogramWindowWidth() >= 10 && Lizzie.optionSetting.getWinrateHistogramWindowHeight() >= 10) {
-            setSize(Lizzie.optionSetting.getWinrateHistogramWindowWidth(), Lizzie.optionSetting.getWinrateHistogramWindowHeight());
-        }
-        histogramChartPanel.setPreferredSize(new Dimension(getWidth(), (int) (getHeight() * 0.3)));
-
         winrateHistogramTableModel.setRefreshObserver(model -> {
             blackSeries.clear();
             whiteSeries.clear();
@@ -123,6 +119,16 @@ public class WinrateHistogramDialog extends JDialog {
 
             histogramChartPanel.repaint();
         });
+
+        if (Lizzie.optionSetting.getWinrateHistogramWindowWidth() >= 10 && Lizzie.optionSetting.getWinrateHistogramWindowHeight() >= 10) {
+            setPreferredSize(new Dimension(Lizzie.optionSetting.getWinrateHistogramWindowWidth(), Lizzie.optionSetting.getWinrateHistogramWindowHeight()));
+        }
+        splitPaneHistogram.setDividerLocation(0.3);
+        pack();
+
+        histogramChartPanel.setPreferredSize(new Dimension(panelWinrateHistogram.getWidth(), panelWinrateHistogram.getHeight()));
+        histogramChartPanel.setSize(panelWinrateHistogram.getWidth(), panelWinrateHistogram.getHeight());
+        pack();
     }
 
     private void checkBoxShowOnlyHighOscillationItemStateChanged(ItemEvent e) {
@@ -132,28 +138,30 @@ public class WinrateHistogramDialog extends JDialog {
         tableModel.setProvideFilteredData(jcheckBoxShowOnlyHighOscillation.isSelected());
     }
 
-    private void thisComponentResized(ComponentEvent e) {
-        if (histogramChartPanel != null) {
-            Dimension preferredSize = new Dimension(getWidth(), (int) (getHeight() * 0.3));
-            histogramChartPanel.setPreferredSize(preferredSize);
-        }
-    }
-
     private void thisComponentHidden(ComponentEvent e) {
         Lizzie.optionSetting.setWinrateHistogramWindowShow(false);
+    }
+
+    private void panelWinrateHistogramComponentResized(ComponentEvent e) {
+        if (histogramChartPanel != null) {
+            Dimension preferredSize = new Dimension(e.getComponent().getWidth(), e.getComponent().getHeight());
+            histogramChartPanel.setPreferredSize(preferredSize);
+            histogramChartPanel.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+        }
     }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner non-commercial license
         ResourceBundle bundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
-        panelWinrateHistogram = new JPanel();
-        scrollPaneWinrateHistory = new JScrollPane();
-        tableWinrateHistory = new JTable();
         panelWinrateHistogramOption = new JPanel();
         checkBoxShowOnlyHighOscillation = new JCheckBox();
         checkBoxHistogramShowBlack = new JCheckBox();
         checkBoxHistogramShowWhite = new JCheckBox();
+        splitPaneHistogram = new JSplitPane();
+        panelWinrateHistogram = new JPanel();
+        scrollPaneWinrateHistory = new JScrollPane();
+        tableWinrateHistory = new JTable();
 
         //======== this ========
         setTitle(bundle.getString("WinrateHistogramDialog.this.title"));
@@ -162,30 +170,9 @@ public class WinrateHistogramDialog extends JDialog {
             public void componentHidden(ComponentEvent e) {
                 thisComponentHidden(e);
             }
-
-            @Override
-            public void componentResized(ComponentEvent e) {
-                thisComponentResized(e);
-            }
         });
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
-
-        //======== panelWinrateHistogram ========
-        {
-            panelWinrateHistogram.setLayout(new FlowLayout());
-        }
-        contentPane.add(panelWinrateHistogram, BorderLayout.NORTH);
-
-        //======== scrollPaneWinrateHistory ========
-        {
-
-            //---- tableWinrateHistory ----
-            tableWinrateHistory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            tableWinrateHistory.setFillsViewportHeight(true);
-            scrollPaneWinrateHistory.setViewportView(tableWinrateHistory);
-        }
-        contentPane.add(scrollPaneWinrateHistory, BorderLayout.CENTER);
 
         //======== panelWinrateHistogramOption ========
         {
@@ -208,6 +195,35 @@ public class WinrateHistogramDialog extends JDialog {
             panelWinrateHistogramOption.add(checkBoxHistogramShowWhite);
         }
         contentPane.add(panelWinrateHistogramOption, BorderLayout.SOUTH);
+
+        //======== splitPaneHistogram ========
+        {
+            splitPaneHistogram.setOrientation(JSplitPane.VERTICAL_SPLIT);
+            splitPaneHistogram.setDividerLocation(10);
+
+            //======== panelWinrateHistogram ========
+            {
+                panelWinrateHistogram.addComponentListener(new ComponentAdapter() {
+                    @Override
+                    public void componentResized(ComponentEvent e) {
+                        panelWinrateHistogramComponentResized(e);
+                    }
+                });
+                panelWinrateHistogram.setLayout(new FlowLayout());
+            }
+            splitPaneHistogram.setTopComponent(panelWinrateHistogram);
+
+            //======== scrollPaneWinrateHistory ========
+            {
+
+                //---- tableWinrateHistory ----
+                tableWinrateHistory.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                tableWinrateHistory.setFillsViewportHeight(true);
+                scrollPaneWinrateHistory.setViewportView(tableWinrateHistory);
+            }
+            splitPaneHistogram.setBottomComponent(scrollPaneWinrateHistory);
+        }
+        contentPane.add(splitPaneHistogram, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents

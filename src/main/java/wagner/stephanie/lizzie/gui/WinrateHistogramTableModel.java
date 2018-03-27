@@ -11,6 +11,7 @@ import wagner.stephanie.lizzie.rules.BoardData;
 import wagner.stephanie.lizzie.rules.BoardHistoryNode;
 import wagner.stephanie.lizzie.rules.BoardStateChangeObserver;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
-                    refreshObserver.accept(WinrateHistogramTableModel.this);
+                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
 
@@ -50,7 +51,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
-                    refreshObserver.accept(WinrateHistogramTableModel.this);
+                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
 
@@ -58,7 +59,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
             public void headMoved(BoardHistoryNode oldHead, BoardHistoryNode newHead) {
                 rebuildFilteredHistogramData();
                 if (refreshObserver != null) {
-                    refreshObserver.accept(WinrateHistogramTableModel.this);
+                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
 
@@ -69,7 +70,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
-                    refreshObserver.accept(WinrateHistogramTableModel.this);
+                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
         });
@@ -91,9 +92,11 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
                     }
 
                     rebuildFilteredHistogramData();
+                    fireTableDataChanged();
+                    if (refreshObserver != null) {
+                        SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                    }
                 }
-
-                fireTableDataChanged();
             }
 
             @Override

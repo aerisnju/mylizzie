@@ -37,6 +37,16 @@ new FormModel {
 					"selected": true
 					addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "checkBoxShowOnlyHighOscillationItemStateChanged", true ) )
 				} )
+				add( new FormComponent( "javax.swing.JCheckBox" ) {
+					name: "checkBoxHistogramShowBlack"
+					"text": new FormMessage( null, "WinrateHistogramDialog.checkBoxHistogramShowBlack.text" )
+					"selected": true
+				} )
+				add( new FormComponent( "javax.swing.JCheckBox" ) {
+					name: "checkBoxHistogramShowWhite"
+					"text": new FormMessage( null, "WinrateHistogramDialog.checkBoxHistogramShowWhite.text" )
+					"selected": true
+				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "South"
 			} )

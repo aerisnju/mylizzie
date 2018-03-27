@@ -32,6 +32,8 @@ public class WinrateHistogramDialog extends JDialog {
     private JTable tableWinrateHistory;
     private JPanel panelWinrateHistogramOption;
     private JCheckBox checkBoxShowOnlyHighOscillation;
+    private JCheckBox checkBoxHistogramShowBlack;
+    private JCheckBox checkBoxHistogramShowWhite;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private ChartPanel histogramChartPanel = null;
@@ -102,13 +104,18 @@ public class WinrateHistogramDialog extends JDialog {
             whiteSeries.clear();
             standardSeries.clear();
 
-            for (int i = 0; i < model.getHistogramEntryList().size() - 1; ++i) {
+            for (int i = 0; i < model.getHistogramEntryList().size(); ++i) {
                 WinrateHistogramEntry entry = model.getHistogramEntryList().get(i);
-                blackSeries.add(entry.getMoveNumber(), entry.getBlackWinrate());
-                whiteSeries.add(entry.getMoveNumber(), entry.getWhiteWinrate());
+
                 standardSeries.add(entry.getMoveNumber(), 50);
+                if (checkBoxHistogramShowBlack.isSelected()) {
+                    blackSeries.add(entry.getMoveNumber(), entry.getBlackWinrate());
+                }
+                if (checkBoxHistogramShowWhite.isSelected()) {
+                    whiteSeries.add(entry.getMoveNumber(), entry.getWhiteWinrate());
+                }
             }
-            if (model.getHistogramEntryList().size() - 1 < 50) {
+            if (model.getHistogramEntryList().size() < 50) {
                 for (int i = model.getHistogramEntryList().size() - 1; i <= 50; ++i) {
                     standardSeries.add(i, 50);
                 }
@@ -145,6 +152,8 @@ public class WinrateHistogramDialog extends JDialog {
         tableWinrateHistory = new JTable();
         panelWinrateHistogramOption = new JPanel();
         checkBoxShowOnlyHighOscillation = new JCheckBox();
+        checkBoxHistogramShowBlack = new JCheckBox();
+        checkBoxHistogramShowWhite = new JCheckBox();
 
         //======== this ========
         setTitle(bundle.getString("WinrateHistogramDialog.this.title"));
@@ -153,6 +162,7 @@ public class WinrateHistogramDialog extends JDialog {
             public void componentHidden(ComponentEvent e) {
                 thisComponentHidden(e);
             }
+
             @Override
             public void componentResized(ComponentEvent e) {
                 thisComponentResized(e);
@@ -186,6 +196,16 @@ public class WinrateHistogramDialog extends JDialog {
             checkBoxShowOnlyHighOscillation.setSelected(true);
             checkBoxShowOnlyHighOscillation.addItemListener(e -> checkBoxShowOnlyHighOscillationItemStateChanged(e));
             panelWinrateHistogramOption.add(checkBoxShowOnlyHighOscillation);
+
+            //---- checkBoxHistogramShowBlack ----
+            checkBoxHistogramShowBlack.setText(bundle.getString("WinrateHistogramDialog.checkBoxHistogramShowBlack.text"));
+            checkBoxHistogramShowBlack.setSelected(true);
+            panelWinrateHistogramOption.add(checkBoxHistogramShowBlack);
+
+            //---- checkBoxHistogramShowWhite ----
+            checkBoxHistogramShowWhite.setText(bundle.getString("WinrateHistogramDialog.checkBoxHistogramShowWhite.text"));
+            checkBoxHistogramShowWhite.setSelected(true);
+            panelWinrateHistogramOption.add(checkBoxHistogramShowWhite);
         }
         contentPane.add(panelWinrateHistogramOption, BorderLayout.SOUTH);
         pack();

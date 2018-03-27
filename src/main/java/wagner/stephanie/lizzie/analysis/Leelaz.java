@@ -1,27 +1,32 @@
 package wagner.stephanie.lizzie.analysis;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Stone;
 import wagner.stephanie.lizzie.util.ArgumentTokenizer;
+import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * an interface with leelaz.exe go engine. Can be adapted for GTP, but is specifically designed for GCP's Leela Zero.
  * leelaz is modified to output information as it ponders
  * see www.github.com/gcp/leela-zero
  */
-public class Leelaz {
+public class Leelaz implements Closeable {
+    private static final Logger logger = LogManager.getLogger(Leelaz.class);
+
     private static final long MINUTE = 60 * 1000; // number of milliseconds in a minute
     private static final long MAX_PONDER_TIME_MILLIS = 15 * MINUTE;
 
     private Process process;
+    private ExecutorService notificationExecutor;
 
     private BufferedInputStream inputStream;
     private BufferedOutputStream outputStream;
@@ -46,6 +51,7 @@ public class Leelaz {
      */
     public Leelaz(String commandline) throws IOException {
         observerCollection = new BestMoveObserverCollection();
+        notificationExecutor = Executors.newSingleThreadExecutor();
         boardStateCount = 0;
 
         normalExit = false;
@@ -88,7 +94,10 @@ public class Leelaz {
 
     public void registerBestMoveObserver(BestMoveObserver observer) {
         observerCollection.add(observer);
-        observer.bestMovesUpdated(boardStateCount, bestMoves);
+
+        final int currentBoardStateCount = boardStateCount;
+        final List<MoveData> currentBestMoves = bestMoves; // Does not need clone because we always allocate a new one
+        notificationExecutor.execute(() -> observer.bestMovesUpdated(currentBoardStateCount, currentBestMoves));
     }
 
     public void unregisterBestMoveObserver(BestMoveObserver observer) {
@@ -130,7 +139,9 @@ public class Leelaz {
                 isReadingPonderOutput = false;
                 bestMoves = bestMovesTemp;
 
-                observerCollection.bestMovesUpdated(boardStateCount, bestMoves);
+                final int currentBoardStateCount = boardStateCount;
+                final List<MoveData> currentBestMoves = bestMoves; // Does not need clone because we always allocate a new one
+                notificationExecutor.execute(() -> observerCollection.bestMovesUpdated(currentBoardStateCount, currentBestMoves));
             } else {
                 if (isReadingPonderOutput) {
                     bestMovesTemp.add(new MoveData(line));
@@ -170,6 +181,7 @@ public class Leelaz {
     private void cleanupAndExit() {
         if (!isNormalExit()) {
             Lizzie.storeGameByFile(Paths.get("restore.sgf"));
+            close();
         }
 
         System.exit(isNormalExit() ? 0 : -1);
@@ -270,5 +282,22 @@ public class Leelaz {
             sendCommand("name"); // ends pondering
             isPondering = false;
         }
+    }
+
+    @Override
+    public void close() {
+        if (notificationExecutor != null) {
+            try {
+                ThreadPoolUtil.shutdownAndAwaitTermination(notificationExecutor);
+                notificationExecutor = null;
+            } catch (Exception e) {
+                logger.error("Cannot close.", e);
+            }
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        close();
     }
 }

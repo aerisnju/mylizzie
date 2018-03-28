@@ -10,6 +10,7 @@ public class OptionSetting {
     private boolean autoHideAnalysisSuggession;
     private boolean analysisWindowShow;
     private boolean mouseOverShowMove;
+    private boolean showSuggession;
     private String leelazCommandLine;
     private boolean showMoveNumber;
     private int numberOfLastMovesShown;
@@ -40,6 +41,7 @@ public class OptionSetting {
         autoHideAnalysisSuggession = true;
         analysisWindowShow = true;
         mouseOverShowMove = false;
+        showSuggession = true;
         leelazCommandLine = "-g -t2 -wnetwork";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
@@ -135,6 +137,14 @@ public class OptionSetting {
 
     public void setShowMoveNumber(boolean showMoveNumber) {
         this.showMoveNumber = showMoveNumber;
+    }
+
+    public boolean isShowSuggession() {
+        return showSuggession;
+    }
+
+    public void setShowSuggession(boolean showSuggession) {
+        this.showSuggession = showSuggession;
     }
 
     public int getNumberOfLastMovesShown() {

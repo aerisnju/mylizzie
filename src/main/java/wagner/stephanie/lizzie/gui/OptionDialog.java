@@ -52,6 +52,7 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxAutoEnterTryPlayingMode;
     private JLabel labelMainWindow;
     private JCheckBox checkBoxMainWindowAlwaysOnTop;
+    private JCheckBox checkBoxShowSuggession;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -108,6 +109,8 @@ public class OptionDialog extends JDialog {
 
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
 
+        checkBoxShowSuggession.setSelected(setting.isShowSuggession());
+
         textFieldLeelazCommandLine.setText(setting.getLeelazCommandLine());
 
         checkBoxShowMoveNumber.setSelected(setting.isShowMoveNumber());
@@ -158,6 +161,7 @@ public class OptionDialog extends JDialog {
         setting.setAutoHideAnalysisSuggession(checkBoxAutoHideAnalysisSuggession.isSelected());
         setting.setAnalysisWindowShow(checkBoxAnalysisWindowShow.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
+        setting.setShowSuggession(checkBoxShowSuggession.isSelected());
         String newLeelazCommandLine = textFieldLeelazCommandLine.getText().trim();
         if (StringUtils.isEmpty(newLeelazCommandLine)) {
             setting.setLeelazCommandLine(new OptionSetting().getLeelazCommandLine());
@@ -237,6 +241,7 @@ public class OptionDialog extends JDialog {
         checkBoxAutoEnterTryPlayingMode = new JCheckBox();
         labelMainWindow = new JLabel();
         checkBoxMainWindowAlwaysOnTop = new JCheckBox();
+        checkBoxShowSuggession = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -360,6 +365,10 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxMainWindowAlwaysOnTop ----
                 checkBoxMainWindowAlwaysOnTop.setText("Always on top");
 
+                //---- checkBoxShowSuggession ----
+                checkBoxShowSuggession.setText("Show suggessions");
+                checkBoxShowSuggession.setSelected(true);
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -413,7 +422,9 @@ public class OptionDialog extends JDialog {
                                             .addGap(12, 12, 12)
                                             .addComponent(checkBoxAnalysisWindowShow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxMouseMoveShow))
+                                            .addComponent(checkBoxMouseMoveShow)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxShowSuggession))
                                         .addComponent(labelNotes)
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelMoveNumber)
@@ -470,7 +481,9 @@ public class OptionDialog extends JDialog {
                                 .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(checkBoxAnalysisWindowShow)
                                     .addComponent(labelAnalysisModeOn))
-                                .addComponent(checkBoxMouseMoveShow))
+                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(checkBoxMouseMoveShow)
+                                    .addComponent(checkBoxShowSuggession)))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)
@@ -523,7 +536,7 @@ public class OptionDialog extends JDialog {
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
         pack();
-        setLocationRelativeTo(getOwner());
+        setLocationRelativeTo(null);
 
         //---- buttonGroupVariationLimit ----
         ButtonGroup buttonGroupVariationLimit = new ButtonGroup();

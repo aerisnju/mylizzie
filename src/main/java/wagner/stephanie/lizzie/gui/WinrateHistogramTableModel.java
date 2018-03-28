@@ -57,6 +57,16 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
             @Override
             public void headMoved(BoardHistoryNode oldHead, BoardHistoryNode newHead) {
+                int lastMoveNumberInTable = histogramEntryList.get(histogramEntryList.size() - 1).getMoveNumber();
+                if (newHead.getData().getMoveNumber() > lastMoveNumberInTable) {
+                    BoardHistoryNode node = oldHead.getNext();
+                    do {
+                        addHistogramData(node.getData());
+                    } while (node != newHead);
+                } else {
+                    histogramEntryList.removeIf(entry -> entry.getMoveNumber() > newHead.getData().getMoveNumber());
+                }
+
                 rebuildFilteredHistogramData();
                 if (refreshObserver != null) {
                     SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));

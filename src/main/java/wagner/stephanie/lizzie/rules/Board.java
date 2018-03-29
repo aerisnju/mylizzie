@@ -6,11 +6,14 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
 import wagner.stephanie.lizzie.analysis.MoveData;
+import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
 import java.io.Closeable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Board implements Closeable {
     public static final int BOARD_SIZE = 19;
@@ -21,7 +24,10 @@ public class Board implements Closeable {
     private BoardStateChangeObserverCollection observerCollection;
     private BestMoveObserver bestMoveObserver;
 
+    private ExecutorService leelazExecutor;
+
     public Board() {
+        leelazExecutor = Executors.newSingleThreadExecutor();
         Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
         Arrays.setAll(stones, value -> Stone.EMPTY);
 
@@ -239,10 +245,6 @@ public class Board implements Closeable {
             // build the new game state
             BoardData newState = new BoardData(stones, null, color, !history.isBlacksTurn(), zobrist, moveNumber, moveNumberList);
 
-            // update leelaz with pass
-            Lizzie.leelaz.playMove(color, "pass");
-            Lizzie.leelaz.ponder();
-
             // update history with pass
             if (history.getHead().getNext() != null) {
                 history.getHead().disconnectNextNode();
@@ -250,6 +252,12 @@ public class Board implements Closeable {
             }
             history.add(newState);
             observerCollection.mainStreamAppended(history.getHead(), history.getHead());
+
+            // update leelaz with pass
+            leelazExecutor.execute(() -> {
+                Lizzie.leelaz.playMove(color, "pass");
+                Lizzie.leelaz.ponder();
+            });
         }
     }
 
@@ -317,10 +325,6 @@ public class Board implements Closeable {
             if (isSuicidal || history.violatesSuperko(newState))
                 return;
 
-            // update leelaz with board position
-            Lizzie.leelaz.playMove(color, convertCoordinatesToName(x, y));
-            Lizzie.leelaz.ponder();
-
             // update history with this coordinate
             if (history.getHead().getNext() != null) {
                 history.getHead().disconnectNextNode();
@@ -328,6 +332,12 @@ public class Board implements Closeable {
             }
             history.add(newState);
             observerCollection.mainStreamAppended(history.getHead(), history.getHead());
+
+            // update leelaz with board position
+            leelazExecutor.execute(() -> {
+                Lizzie.leelaz.playMove(color, convertCoordinatesToName(x, y));
+                Lizzie.leelaz.ponder();
+            });
         }
     }
 
@@ -464,16 +474,20 @@ public class Board implements Closeable {
         synchronized (this) {
             BoardHistoryNode oldHead = history.getHead();
             if (history.next() != null) {
+                observerCollection.headMoved(oldHead, history.getHead());
+
                 // update leelaz board position, before updating to next node
                 if (history.getData().getLastMove() == null) {
-                    Lizzie.leelaz.playMove(history.getLastMoveColor(), "pass");
-                    Lizzie.leelaz.ponder();
+                    leelazExecutor.execute(() -> {
+                        Lizzie.leelaz.playMove(history.getLastMoveColor(), "pass");
+                        Lizzie.leelaz.ponder();
+                    });
                 } else {
-                    Lizzie.leelaz.playMove(history.getLastMoveColor(), convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]));
-                    Lizzie.leelaz.ponder();
+                    leelazExecutor.execute(() -> {
+                        Lizzie.leelaz.playMove(history.getLastMoveColor(), convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]));
+                        Lizzie.leelaz.ponder();
+                    });
                 }
-
-                observerCollection.headMoved(oldHead, history.getHead());
             }
         }
     }
@@ -489,10 +503,12 @@ public class Board implements Closeable {
         synchronized (this) {
             BoardHistoryNode oldHead = history.getHead();
             if (history.previous() != null) {
-                Lizzie.leelaz.undo();
-                Lizzie.leelaz.ponder();
-
                 observerCollection.headMoved(oldHead, history.getHead());
+
+                leelazExecutor.execute(() -> {
+                    Lizzie.leelaz.undo();
+                    Lizzie.leelaz.ponder();
+                });
             }
         }
     }
@@ -539,6 +555,7 @@ public class Board implements Closeable {
 
     @Override
     public void close() {
+        ThreadPoolUtil.shutdownAndAwaitTermination(leelazExecutor);
         if (bestMoveObserver != null) {
             Lizzie.leelaz.unregisterBestMoveObserver(bestMoveObserver);
             bestMoveObserver = null;

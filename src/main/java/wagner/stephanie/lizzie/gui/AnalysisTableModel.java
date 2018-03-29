@@ -2,9 +2,12 @@ package wagner.stephanie.lizzie.gui;
 
 import com.google.common.collect.ImmutableList;
 import wagner.stephanie.lizzie.Lizzie;
+import wagner.stephanie.lizzie.analysis.BestMoveObserver;
 import wagner.stephanie.lizzie.analysis.MoveData;
 import wagner.stephanie.lizzie.rules.Board;
+import wagner.stephanie.lizzie.rules.BoardStateChangeObserver;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 import java.util.Objects;
@@ -13,12 +16,46 @@ public class AnalysisTableModel extends AbstractTableModel {
     private static final List<String> COLUMN_NAMES = ImmutableList.of("Move", "Win", "PO", "PV");
     private static final List<Class> COLUMN_CLASSES = ImmutableList.of(String.class, Double.class, Integer.class, String.class);
 
+    private JTable hostTable;
     private List<MoveData> bestMoves;
     private MoveData selectedMove;
+    private BestMoveObserver bestMoveObserver;
 
     public AnalysisTableModel() {
+        hostTable = null;
         bestMoves = null;
         selectedMove = null;
+
+        bestMoveObserver = new BestMoveObserver() {
+            @Override
+            public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
+                bestMoves = newBestMoves;
+
+                refreshSelectedMove();
+                if (hostTable != null) {
+                    fireTableDataChanged();
+                    int selectedIndex = getSelectedMoveIndex();
+                    if (selectedIndex >= 0) {
+                        SwingUtilities.invokeLater(() -> hostTable.setRowSelectionInterval(selectedIndex, selectedIndex));
+                    }
+                }
+            }
+
+            @Override
+            public void engineRestarted() {
+
+            }
+        };
+
+        Lizzie.leelaz.registerBestMoveObserver(bestMoveObserver);
+    }
+
+    public JTable getHostTable() {
+        return hostTable;
+    }
+
+    public void setHostTable(JTable hostTable) {
+        this.hostTable = hostTable;
     }
 
     public MoveData getSelectedMove() {
@@ -61,15 +98,6 @@ public class AnalysisTableModel extends AbstractTableModel {
         }
 
         selectedMove = mouseOnMove;
-    }
-
-    public void refreshData() {
-        List<MoveData> newBestMoves = Lizzie.leelaz.getBestMoves();
-        if (!Objects.equals(bestMoves, newBestMoves)) {
-            bestMoves = newBestMoves;
-            refreshSelectedMove();
-            fireTableDataChanged();
-        }
     }
 
     private void refreshSelectedMove() {

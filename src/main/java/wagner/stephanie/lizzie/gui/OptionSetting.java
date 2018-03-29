@@ -42,7 +42,7 @@ public class OptionSetting {
         analysisWindowShow = true;
         mouseOverShowMove = false;
         showSuggession = true;
-        leelazCommandLine = "-g -t2 -wnetwork";
+        leelazCommandLine = "-g -t2 -wnetwork -b0";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
         autoEnterTryPlayingMode = false;

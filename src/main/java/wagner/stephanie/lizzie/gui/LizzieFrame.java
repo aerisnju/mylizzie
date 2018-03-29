@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.gui;
 
+import com.jhlabs.image.GaussianFilter;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
@@ -8,58 +9,66 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * The window used to display the game.
  */
 public class LizzieFrame extends JFrame {
-    private static final int FPS = 10; // frames per second
-    private static final String[] commands = {"left arrow = undo",
-            "right arrow = redo",
-            "space = toggle pondering",
-            "right click = undo",
-            "mouse wheel scroll = undo/redo",
-            "key 'P' = pass",
-            "key 'S' = Show/hide move number",
-            "key 'O' = Show settings dialog",
-            "key 'C' = Clear board",
-            "key 'R' = Read SGF",
-            "key 'W' = Write SGF",
-            "key 'G' = Go to move",
-            "key 'V' = Enter/Leave try playing state",
-            "key 'X' = Drop all successive moves",
-            "key 'A' = Show/hide analysis window",
-            "key 'H' = Show/hide winrate histogram window"
+    private static final String[] commands = {
+            "left arrow | back"
+            , "right arrow | forward"
+            , "space | toggle pondering"
+            , "right click | back"
+            , "mouse wheel scroll | back/forward"
+            , "key 'P' | pass"
+            , "key 'S' | Show/hide move number"
+            , "key 'O' | Show settings dialog"
+            , "key 'C' | Clear board"
+            , "key 'R' | Read SGF"
+            , "key 'W' | Write SGF"
+            , "key 'G' | Go to move"
+            , "key 'V' | Enter/Leave try playing state"
+            , "key 'X' | Drop all successive moves"
+            , "key 'A' | Show/hide analysis window"
+            , "key 'H' | Show/hide winrate histogram window"
 
     };
     public static final String LIZZIE_TITLE = "Lizzie - Leela Zero Interface";
     public static final String LIZZIE_TRY_PLAY_TITLE = "... Try playing ...";
-    private static BoardRenderer boardRenderer = new BoardRenderer();
 
-    private final BufferStrategy bs;
+    static {
+        // load fonts
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, LizzieFrame.class.getResourceAsStream("/fonts/OpenSans-Regular.ttf")));
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, LizzieFrame.class.getResourceAsStream("/fonts/OpenSans-Semibold.ttf")));
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private BufferedImage cachedImage;
+    private BoardRenderer boardRenderer;
+    private BufferStrategy bs;
+
+    // TODO: Clean this
+    public boolean showControls = false;
+    public boolean showCoordinates = true;
+    public boolean isPlayingAgainstLeelaz = false;
 
     /**
      * Creates a window and refreshes the game state at FPS.
      */
     public LizzieFrame() {
         super(LIZZIE_TITLE);
+        boardRenderer = new BoardRenderer();
 
         setVisible(true);
 
         createBufferStrategy(2);
         bs = getBufferStrategy();
-
-        // set fps
-        final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(
-                this::repaint,
-                0,
-                1000 / FPS,
-                TimeUnit.MILLISECONDS);
 
         Input input = new Input();
         this.addMouseListener(input);
@@ -80,12 +89,8 @@ public class LizzieFrame extends JFrame {
         });
     }
 
-    // instead of the usual mod pattern (0 1 2 0 1 2...), it bounces back and forth: (0 1 2 1 0 1 2 1...)
-    private static long bouncingMod(long a, int mod) {
-        a = a % (2 * mod);
-        if (a >= mod)
-            a = 2 * mod - a;
-        return a;
+    public BoardRenderer getBoardRenderer() {
+        return boardRenderer;
     }
 
     // Toggle show/hide move number
@@ -103,43 +108,125 @@ public class LizzieFrame extends JFrame {
             return;
 
         // initialize
-        Graphics2D g = (Graphics2D) bs.getDrawGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        cachedImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D) cachedImage.getGraphics();
 
         int topInset = this.getInsets().top;
 
-        g.setColor(Color.GREEN.darker().darker());
-        g.fillRect(0, 0, getWidth(), getHeight());
+        try {
+            BufferedImage background = AssetsManager.getAssetsManager().getImageAsset("assets/background.jpg");
+            int drawWidth = Math.max(background.getWidth(), getWidth());
+            int drawHeight = Math.max(background.getHeight(), getHeight());
+            g.drawImage(background, 0, 0, drawWidth, drawHeight, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        int maxSize = (int) (Math.min(getWidth(), getHeight() - topInset) * 0.99);
+        int maxSize = (int) (Math.min(getWidth(), getHeight() - topInset) * 0.98);
         maxSize = Math.max(maxSize, Board.BOARD_SIZE + 5); // don't let maxWidth become too small
 
+        drawCommandString(g);
+
         int boardX = (getWidth() - maxSize) / 2;
-        int boardY = topInset + (getHeight() - topInset - maxSize) / 2;
+        int boardY = topInset + (getHeight() - topInset - maxSize) / 2 + 3;
         boardRenderer.setLocation(boardX, boardY);
-        boardRenderer.setBoardWidth(maxSize);
+        boardRenderer.setBoardLength(maxSize);
         boardRenderer.draw(g);
-
-        // draw the commands, right of the board.
-        Font font = new Font("Sans Serif", Font.PLAIN, (int) (maxSize * 0.02));
-        g.setFont(font);
-        int commandsX = (int) (boardX + maxSize * 1.01);
-        int commandsY = (int) (getHeight() * 0.2);
-
-        Color boxColor = new Color(200, 255, 200);
-        g.setColor(boxColor);
-        g.fillRect(commandsX, commandsY, (int) (maxSize * 0.35), (int) (commands.length * font.getSize() * 1.1));
-        g.setColor(boxColor.darker());
-        g.drawRect(commandsX, commandsY, (int) (maxSize * 0.35), (int) (commands.length * font.getSize() * 1.1));
-
-        g.setColor(Color.BLACK);
-        for (int i = 0; i < commands.length; i++) {
-            g.drawString(commands[i], commandsX, font.getSize() + (int) (commandsY + i * font.getSize() * 1.1));
-        }
 
         // cleanup
         g.dispose();
+
+        // draw the control hint
+        if (showControls) {
+            drawControls();
+        }
+
+        // draw the image
+        Graphics2D bsGraphics = (Graphics2D) bs.getDrawGraphics();
+        bsGraphics.drawImage(cachedImage, 0, 0, null);
+
+        // cleanup
+        bsGraphics.dispose();
         bs.show();
+    }
+
+    private GaussianFilter filter = new GaussianFilter(15);
+
+    /**
+     * Display the controls
+     */
+    private void drawControls() {
+        userAlreadyKnowsAboutCommandString = true;
+
+        Graphics2D g = (Graphics2D) cachedImage.getGraphics();
+        int maxSize = Math.min(getWidth(), getHeight());
+        Font font = new Font("Open Sans", Font.PLAIN, (int) (maxSize * 0.04));
+        g.setFont(font);
+        int lineHeight = (int) (font.getSize() * 1.15);
+
+        int boxWidth = (int) (maxSize * 0.85);
+        int boxHeight = (int) (commands.length * lineHeight);
+
+        int commandsX = (int) (getWidth() / 2 - boxWidth / 2);
+        int commandsY = (int) (getHeight() / 2 - boxHeight / 2);
+
+
+        BufferedImage result = new BufferedImage(boxWidth, boxHeight, BufferedImage.TYPE_INT_ARGB);
+        filter.filter(cachedImage.getSubimage(commandsX, commandsY, boxWidth, boxHeight), result);
+        g.drawImage(result, commandsX, commandsY, null);
+
+        g.setColor(new Color(0, 0, 0, 130));
+        g.fillRect(commandsX, commandsY, boxWidth, boxHeight);
+        int strokeRadius = 2;
+        g.setStroke(new BasicStroke(2 * strokeRadius));
+        g.setColor(new Color(0, 0, 0, 60));
+        g.drawRect(commandsX + strokeRadius, commandsY + strokeRadius, boxWidth - 2 * strokeRadius, boxHeight - 2 * strokeRadius);
+
+        int verticalLineX = (int) (commandsX + boxWidth * 0.3);
+        g.setColor(new Color(0, 0, 0, 60));
+        g.drawLine(verticalLineX, commandsY + 2 * strokeRadius, verticalLineX, commandsY + boxHeight - 2 * strokeRadius);
+
+
+        g.setStroke(new BasicStroke(1));
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        FontMetrics metrics = g.getFontMetrics(font);
+
+        g.setColor(Color.WHITE);
+        for (int i = 0; i < commands.length; i++) {
+            String[] split = commands[i].split("\\|");
+            g.drawString(split[0], verticalLineX - metrics.stringWidth(split[0]) - strokeRadius * 4, font.getSize() + (int) (commandsY + i * lineHeight));
+            g.drawString(split[1], verticalLineX + strokeRadius * 4, font.getSize() + (int) (commandsY + i * lineHeight));
+        }
+    }
+
+    private boolean userAlreadyKnowsAboutCommandString = false;
+
+    private void drawCommandString(Graphics2D g) {
+        if (userAlreadyKnowsAboutCommandString)
+            return;
+
+        int maxSize = (int) (Math.min(getWidth(), getHeight()) * 0.98);
+
+        Font font = new Font("Open Sans", Font.PLAIN, (int) (maxSize * 0.03));
+        String commandString = "hold F1 to view controls";
+        int strokeRadius = 2;
+
+        int showCommandsHeight = (int) (font.getSize() * 1.1);
+        int showCommandsWidth = g.getFontMetrics(font).stringWidth(commandString) + 4 * strokeRadius;
+        int showCommandsX = this.getInsets().left;
+        int showCommandsY = getHeight() - showCommandsHeight - this.getInsets().bottom;
+        g.setColor(new Color(0, 0, 0, 130));
+        g.fillRect(showCommandsX, showCommandsY, showCommandsWidth, showCommandsHeight);
+        g.setStroke(new BasicStroke(2 * strokeRadius));
+        g.setColor(new Color(0, 0, 0, 60));
+        g.drawRect(showCommandsX + strokeRadius, showCommandsY + strokeRadius, showCommandsWidth - 2 * strokeRadius, showCommandsHeight - 2 * strokeRadius);
+        g.setStroke(new BasicStroke(1));
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(Color.WHITE);
+        g.setFont(font);
+        g.drawString(commandString, showCommandsX + 2 * strokeRadius, showCommandsY + font.getSize());
     }
 
     /**

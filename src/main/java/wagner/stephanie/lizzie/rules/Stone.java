@@ -1,10 +1,11 @@
 package wagner.stephanie.lizzie.rules;
 
 public enum Stone {
-    BLACK, WHITE, EMPTY, BLACK_RECURSED, WHITE_RECURSED;
+    BLACK, WHITE, EMPTY, BLACK_RECURSED, WHITE_RECURSED, BLACK_GHOST, WHITE_GHOST;
 
     /**
      * used to find the opposite color stone
+     *
      * @return the opposite stone type
      */
     public Stone opposite() {
@@ -20,10 +21,11 @@ public enum Stone {
 
     /**
      * used to keep track of which stones were visited during removal of dead stones
+     *
      * @return the recursed version of this stone color
      */
     public Stone recursed() {
-        switch(this) {
+        switch (this) {
             case BLACK:
                 return BLACK_RECURSED;
             case WHITE:
@@ -35,6 +37,7 @@ public enum Stone {
 
     /**
      * used to keep track of which stones were visited during removal of dead stones
+     *
      * @return the unrecursed version of this stone color
      */
     public Stone unrecursed() {
@@ -45,6 +48,33 @@ public enum Stone {
                 return WHITE;
             default:
                 return this;
+        }
+    }
+
+    /**
+     * @return Whether or not this stone is of the black variants.
+     */
+    public boolean isBlack() {
+        return this == BLACK || this == BLACK_RECURSED || this == BLACK_GHOST;
+    }
+
+    /**
+     * @return Whether or not this stone is of the white variants.
+     */
+    public boolean isWhite() {
+        return this != EMPTY && !this.isBlack();
+    }
+
+    public Stone unGhosted() {
+        switch (this) {
+            case BLACK:
+            case BLACK_GHOST:
+                return BLACK;
+            case WHITE:
+            case WHITE_GHOST:
+                return WHITE;
+            default:
+                return EMPTY;
         }
     }
 }

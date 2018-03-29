@@ -40,6 +40,7 @@ public class AnalysisFrame extends JPanel {
         JScrollPane scrollPane = new JScrollPane(analysisTable);
         add(scrollPane);
 
+        analysisTableModel.setHostTable(analysisTable);
         analysisTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

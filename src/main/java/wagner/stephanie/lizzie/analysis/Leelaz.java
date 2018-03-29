@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.analysis;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wagner.stephanie.lizzie.Lizzie;
@@ -51,7 +52,7 @@ public class Leelaz implements Closeable {
      * @throws IOException
      */
     public Leelaz(String commandline) throws IOException {
-        observerCollection = new BestMoveObserverCollection();
+        observerCollection = new BestMoveObserverFrequencyLimitedCollection(300);
         notificationExecutor = Executors.newSingleThreadExecutor();
         boardStateCount = 0;
 
@@ -127,6 +128,11 @@ public class Leelaz implements Closeable {
      * @param line output line
      */
     private void parseLine(String line) {
+        line = line.trim();
+        if (StringUtils.isEmpty(line)) {
+            return;
+        }
+
         synchronized (this) {
             if (line.startsWith("~begin")) {
                 if (System.currentTimeMillis() - startPonderTime > MAX_PONDER_TIME_MILLIS) {
@@ -145,7 +151,9 @@ public class Leelaz implements Closeable {
                 notificationExecutor.execute(() -> observerCollection.bestMovesUpdated(currentBoardStateCount, currentBestMoves));
             } else {
                 if (isReadingPonderOutput) {
-                    bestMovesTemp.add(new MoveData(line));
+                    if (Character.isLetter(line.charAt(0))) {
+                        bestMovesTemp.add(new MoveData(line));
+                    }
                 } else {
                     System.out.print(line);
                 }

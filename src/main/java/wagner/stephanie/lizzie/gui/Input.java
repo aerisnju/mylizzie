@@ -106,23 +106,33 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_H) {
             Lizzie.optionSetting.setWinrateHistogramWindowShow(!Lizzie.optionSetting.isWinrateHistogramWindowShow());
             Lizzie.winrateHistogramDialog.setVisible(Lizzie.optionSetting.isWinrateHistogramWindowShow());
+        } else if (e.getKeyCode() == KeyEvent.VK_F1) {
+            if (!Lizzie.frame.showControls) {
+                Lizzie.frame.showControls = true;
+            }
         }
+
+        Lizzie.frame.repaint();
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            Lizzie.frame.showControls = false;
+            Lizzie.frame.repaint();
+        }
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         Lizzie.analysisFrame.getAnalysisTableModel().setSelectedMove(null);
-//        for (int i= 0; i < Math.abs(e.getWheelRotation()); i++) {
         if (e.getWheelRotation() > 0) {
             Lizzie.board.nextMove();
         } else if (e.getWheelRotation() < 0) {
             Lizzie.board.previousMove();
         }
-//        }
+
+        Lizzie.frame.repaint();
     }
 
     @Override

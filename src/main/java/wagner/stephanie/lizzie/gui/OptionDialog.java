@@ -197,6 +197,7 @@ public class OptionDialog extends JDialog {
         readDialogSetting(Lizzie.optionSetting);
         Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisWindowShow());
         Lizzie.frame.setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
+        Lizzie.frame.getBoardRenderer().forceCachedBackgroundImageRefresh();
         setVisible(false);
     }
 
@@ -323,7 +324,7 @@ public class OptionDialog extends JDialog {
                 labelLeelazCommandLine.setText("Leelaz command line:");
 
                 //---- textFieldLeelazCommandLine ----
-                textFieldLeelazCommandLine.setText("-g -t2 -wnetwork");
+                textFieldLeelazCommandLine.setText("-g -t2 -wnetwork -b0");
 
                 //---- labelNotes ----
                 labelNotes.setText("Note: Restarting Lizzie is required after changing the leelaz command line");
@@ -399,7 +400,7 @@ public class OptionDialog extends JDialog {
                                             .addComponent(radioButtonUnlimited))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAxisSetting)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonA1Top)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonA1Bottom))
@@ -419,7 +420,7 @@ public class OptionDialog extends JDialog {
                                             .addComponent(checkBoxAutoHideAnalysisSuggession))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAnalysisModeOn)
-                                            .addGap(12, 12, 12)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxAnalysisWindowShow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMouseMoveShow)
@@ -444,7 +445,7 @@ public class OptionDialog extends JDialog {
                                             .addComponent(labelMainWindow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMainWindowAlwaysOnTop)))
-                                    .addGap(0, 49, Short.MAX_VALUE))))
+                                    .addGap(0, 19, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -477,13 +478,11 @@ public class OptionDialog extends JDialog {
                                 .addComponent(checkBoxAutoHideMoveNumber)
                                 .addComponent(checkBoxAutoHideAnalysisSuggession))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup()
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(checkBoxAnalysisWindowShow)
-                                    .addComponent(labelAnalysisModeOn))
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(checkBoxMouseMoveShow)
-                                    .addComponent(checkBoxShowSuggession)))
+                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(labelAnalysisModeOn)
+                                .addComponent(checkBoxAnalysisWindowShow)
+                                .addComponent(checkBoxMouseMoveShow)
+                                .addComponent(checkBoxShowSuggession))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)

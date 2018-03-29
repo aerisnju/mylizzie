@@ -52,7 +52,7 @@ public class Leelaz implements Closeable {
      * @throws IOException
      */
     public Leelaz(String commandline) throws IOException {
-        observerCollection = new BestMoveObserverFrequencyLimitedCollection(300);
+        observerCollection = new BestMoveObserverCollection();
         notificationExecutor = Executors.newSingleThreadExecutor();
         boardStateCount = 0;
 
@@ -155,7 +155,7 @@ public class Leelaz implements Closeable {
                         bestMovesTemp.add(new MoveData(line));
                     }
                 } else {
-                    System.out.print(line);
+                    System.out.println(line);
                 }
             }
         }

@@ -23,6 +23,7 @@ public class BoardRenderer {
     private boolean fancyBoard = true;
     private boolean shadowEnabled = true;
     private int shadowSizeConfigured = 100;
+    private boolean usingShorterPlayouts = false;
 
 
     private int x, y;
@@ -349,16 +350,21 @@ public class BoardRenderer {
                         int stoneX = x + scaledMargin + squareLength * i;
                         int stoneY = y + scaledMargin + squareLength * j;
 
-                        Stone stoneAtThisPoint = Lizzie.board.getStones()[Board.getIndex(i, j)];
+                        int index = Board.getIndex(i, j);
 
+                        if (Lizzie.board.getData().getMoveNumber() - moveNumberList[index] > Lizzie.optionSetting.getNumberOfLastMovesShown()) {
+                            continue;
+                        }
+
+                        Stone stoneAtThisPoint = Lizzie.board.getStones()[index];
                         // don't write the move number if either: the move number is 0, or there will already be playout information written
-                        if (moveNumberList[Board.getIndex(i, j)] > 0) {
+                        if (moveNumberList[index] > 0) {
                             if (lastMove != null && i == lastMove[0] && j == lastMove[1])
                                 g.setColor(Color.RED.brighter());//stoneAtThisPoint.isBlack() ? Color.RED.brighter() : Color.BLUE.brighter());
                             else
                                 g.setColor(stoneAtThisPoint.isBlack() ? Color.WHITE : Color.BLACK);
 
-                            String moveNumberString = moveNumberList[Board.getIndex(i, j)] + "";
+                            String moveNumberString = moveNumberList[index] + "";
                             drawString(g, stoneX, stoneY, "Open Sans", moveNumberString, (float) (stoneRadius * 1.4), (int) (stoneRadius * 1.4));
                         }
                     }
@@ -748,15 +754,19 @@ public class BoardRenderer {
      * @return a shorter, rounded string version of playouts. e.g. 345 -> 345, 1265 -> 1.3k, 44556 -> 45k, 133523 -> 134k, 1234567 -> 1.2m
      */
     private String getPlayoutsString(int playouts) {
-        if (playouts >= 1_000_000) {
-            double playoutsDouble = (double) playouts / 100_000; // 1234567 -> 12.34567
-            return Math.round(playoutsDouble) / 10.0 + "m";
-        } else if (playouts >= 10_000) {
-            double playoutsDouble = (double) playouts / 1_000; // 13265 -> 13.265
-            return Math.round(playoutsDouble) + "k";
-        } else if (playouts >= 1_000) {
-            double playoutsDouble = (double) playouts / 100; // 1265 -> 12.65
-            return Math.round(playoutsDouble) / 10.0 + "k";
+        if (usingShorterPlayouts) {
+            if (playouts >= 1_000_000) {
+                double playoutsDouble = (double) playouts / 100_000; // 1234567 -> 12.34567
+                return Math.round(playoutsDouble) / 10.0 + "m";
+            } else if (playouts >= 10_000) {
+                double playoutsDouble = (double) playouts / 1_000; // 13265 -> 13.265
+                return Math.round(playoutsDouble) + "k";
+            } else if (playouts >= 1_000) {
+                double playoutsDouble = (double) playouts / 100; // 1265 -> 12.65
+                return Math.round(playoutsDouble) / 10.0 + "k";
+            } else {
+                return String.valueOf(playouts);
+            }
         } else {
             return String.valueOf(playouts);
         }

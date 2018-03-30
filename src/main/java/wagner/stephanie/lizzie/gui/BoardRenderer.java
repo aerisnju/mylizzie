@@ -23,7 +23,6 @@ public class BoardRenderer {
     private boolean fancyBoard = true;
     private boolean shadowEnabled = true;
     private int shadowSizeConfigured = 100;
-    private boolean usingShorterPlayouts = false;
 
 
     private int x, y;
@@ -754,7 +753,7 @@ public class BoardRenderer {
      * @return a shorter, rounded string version of playouts. e.g. 345 -> 345, 1265 -> 1.3k, 44556 -> 45k, 133523 -> 134k, 1234567 -> 1.2m
      */
     private String getPlayoutsString(int playouts) {
-        if (usingShorterPlayouts) {
+        if (Lizzie.optionSetting.isPlayoutsInShortForm()) {
             if (playouts >= 1_000_000) {
                 double playoutsDouble = (double) playouts / 100_000; // 1234567 -> 12.34567
                 return Math.round(playoutsDouble) / 10.0 + "m";

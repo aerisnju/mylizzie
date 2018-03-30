@@ -334,8 +334,10 @@ public class Board implements Closeable {
             observerCollection.mainStreamAppended(history.getHead(), history.getHead());
 
             // update leelaz with board position
+            final Stone colorToPlay = color;
+            final String locationToPlay = convertCoordinatesToName(x, y);
             leelazExecutor.execute(() -> {
-                Lizzie.leelaz.playMove(color, convertCoordinatesToName(x, y));
+                Lizzie.leelaz.playMove(colorToPlay, locationToPlay);
                 Lizzie.leelaz.ponder();
             });
         }
@@ -477,14 +479,16 @@ public class Board implements Closeable {
                 observerCollection.headMoved(oldHead, history.getHead());
 
                 // update leelaz board position, before updating to next node
+                final Stone colorToPlay = history.getLastMoveColor();
                 if (history.getData().getLastMove() == null) {
                     leelazExecutor.execute(() -> {
-                        Lizzie.leelaz.playMove(history.getLastMoveColor(), "pass");
+                        Lizzie.leelaz.playMove(colorToPlay, "pass");
                         Lizzie.leelaz.ponder();
                     });
                 } else {
+                    final String locationToPlay = convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]);
                     leelazExecutor.execute(() -> {
-                        Lizzie.leelaz.playMove(history.getLastMoveColor(), convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]));
+                        Lizzie.leelaz.playMove(colorToPlay, locationToPlay);
                         Lizzie.leelaz.ponder();
                     });
                 }

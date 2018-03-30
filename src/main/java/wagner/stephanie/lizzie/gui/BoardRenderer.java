@@ -274,8 +274,16 @@ public class BoardRenderer {
         if (color == Stone.EMPTY) {
             color = Stone.WHITE;
         }
+
+        int variationCount = 0;
         for (String variation : branch.getVariation()) {
             color = color.opposite();
+            ++variationCount;
+            // limit variation stones
+            // note that move number display is in another function
+            if (variationCount > Lizzie.optionSetting.getVariationLimit()) {
+                break;
+            }
 
             int[] coords = Board.convertNameToCoordinates(variation);
             if (Board.isValid(coords[0], coords[1])) {
@@ -393,6 +401,12 @@ public class BoardRenderer {
                     if (nextVariationNumber == 1) {
                         // we do not draw the first variation as its winrate should be displayed
                         continue;
+                    }
+
+                    // limit variation number to settings
+                    // note that stone drawing is at another place
+                    if (nextVariationNumber > Lizzie.optionSetting.getVariationLimit()) {
+                        break;
                     }
 
                     int[] coords = Board.convertNameToCoordinates(move);

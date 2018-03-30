@@ -29,6 +29,7 @@ public class Leelaz implements Closeable {
 
     private Process process;
     private ExecutorService notificationExecutor;
+    private ExecutorService miscExecutor;
 
     private BufferedInputStream inputStream;
     private BufferedOutputStream outputStream;
@@ -54,6 +55,7 @@ public class Leelaz implements Closeable {
     public Leelaz(String commandline) throws IOException {
         observerCollection = new BestMoveObserverCollection();
         notificationExecutor = Executors.newSingleThreadExecutor();
+        miscExecutor = Executors.newSingleThreadExecutor();
         boardStateCount = 0;
 
         normalExit = false;
@@ -155,7 +157,8 @@ public class Leelaz implements Closeable {
                         bestMovesTemp.add(new MoveData(line));
                     }
                 } else {
-                    System.out.println(line);
+                    final String lineToPrint = line;
+                    miscExecutor.execute(() -> System.out.println(lineToPrint));
                 }
             }
         }
@@ -301,7 +304,16 @@ public class Leelaz implements Closeable {
                 ThreadPoolUtil.shutdownAndAwaitTermination(notificationExecutor);
                 notificationExecutor = null;
             } catch (Exception e) {
-                logger.error("Cannot close.", e);
+                logger.error("Cannot close notification executor.", e);
+            }
+        }
+
+        if (miscExecutor != null) {
+            try {
+                ThreadPoolUtil.shutdownAndAwaitTermination(miscExecutor);
+                miscExecutor = null;
+            } catch (Exception e) {
+                logger.error("Cannot close misc executor.", e);
             }
         }
     }

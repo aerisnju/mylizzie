@@ -246,7 +246,7 @@ public class BoardRenderer {
                     // highlight the top recommended move
                     if (i == 0) {
                         strokeWidth = 2;
-                        g.setColor(Color.BLUE.brighter());
+                        g.setColor(Color.RED.brighter());
                         g.setStroke(new BasicStroke(strokeWidth));
                     } else {
                         g.setColor(color.darker());

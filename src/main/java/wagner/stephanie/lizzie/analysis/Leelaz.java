@@ -127,6 +127,11 @@ public class Leelaz implements Closeable {
      * @param line output line
      */
     private void parseLine(String line) {
+        line = line.trim();
+        if (line.isEmpty()) {
+            return;
+        }
+
         synchronized (this) {
             if (line.startsWith("~begin")) {
                 if (System.currentTimeMillis() - startPonderTime > MAX_PONDER_TIME_MILLIS) {
@@ -144,7 +149,7 @@ public class Leelaz implements Closeable {
                 final List<MoveData> currentBestMoves = bestMoves; // Does not need clone because we always allocate a new one
                 notificationExecutor.execute(() -> observerCollection.bestMovesUpdated(currentBoardStateCount, currentBestMoves));
             } else {
-                if (isReadingPonderOutput) {
+                if (Character.isAlphabetic(line.charAt(0)) && isReadingPonderOutput) {
                     bestMovesTemp.add(new MoveData(line));
                 } else {
                     System.out.print(line);

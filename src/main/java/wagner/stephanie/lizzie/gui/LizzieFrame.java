@@ -11,6 +11,9 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The window used to display the game.
@@ -244,12 +247,15 @@ public class LizzieFrame extends JFrame {
         }
     }
 
+    private AtomicReference<int[]> lastBoardCoordinates = new AtomicReference<>();
     public void onMouseMove(int x, int y) {
         if (Lizzie.optionSetting.isMouseOverShowMove()) {
             // check for board click
             int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
-            if (boardCoordinates != null) {
+            int[] previousCoordinates = lastBoardCoordinates.getAndSet(boardCoordinates);
+            if (!Arrays.equals(previousCoordinates, boardCoordinates)) {
                 Lizzie.analysisFrame.getAnalysisTableModel().selectOrDeselectMoveByCoord(boardCoordinates);
+                repaint();
             }
         }
     }

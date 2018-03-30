@@ -89,15 +89,23 @@ public class AnalysisTableModel extends AbstractTableModel {
 
     public void selectOrDeselectMoveByCoord(int[] mouseCoords) {
         MoveData mouseOnMove = null;
-        for (MoveData data : bestMoves) {
-            int[] coords = Board.convertNameToCoordinates(data.getCoordinate());
-            if (coords[0] == mouseCoords[0] && coords[1] == mouseCoords[1]) {
-                mouseOnMove = data;
-                break;
+        if (mouseCoords != null) {
+            for (MoveData data : bestMoves) {
+                int[] coords = Board.convertNameToCoordinates(data.getCoordinate());
+                if (coords[0] == mouseCoords[0] && coords[1] == mouseCoords[1]) {
+                    mouseOnMove = data;
+                    break;
+                }
             }
         }
 
         selectedMove = mouseOnMove;
+        int selectedIndex = getSelectedMoveIndex();
+        if (selectedIndex >= 0) {
+            SwingUtilities.invokeLater(() -> hostTable.setRowSelectionInterval(selectedIndex, selectedIndex));
+        } else {
+            SwingUtilities.invokeLater(() -> hostTable.clearSelection());
+        }
     }
 
     private void refreshSelectedMove() {

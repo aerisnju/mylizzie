@@ -152,7 +152,7 @@ public class Leelaz implements Closeable {
                 if (Character.isAlphabetic(line.charAt(0)) && isReadingPonderOutput) {
                     bestMovesTemp.add(new MoveData(line));
                 } else {
-                    System.out.print(line);
+                    System.out.println(line);
                 }
             }
         }

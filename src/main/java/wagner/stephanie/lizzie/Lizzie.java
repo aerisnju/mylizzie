@@ -322,7 +322,7 @@ public class Lizzie {
     }
 
     public static void setAnalysisWindowPosition() {
-        if (optionSetting.getAnalysisWindowPosX() >= 10 && optionSetting.getAnalysisWindowPosY() >= 10) {
+        if (optionSetting.getAnalysisWindowPosX() >= 0 && optionSetting.getAnalysisWindowPosY() >= 0) {
             analysisDialog.setLocation(optionSetting.getAnalysisWindowPosX(), optionSetting.getAnalysisWindowPosY());
         }
         if (optionSetting.getAnalysisWindowWidth() >= 10 && optionSetting.getAnalysisWindowHeight() >= 10) {
@@ -331,7 +331,7 @@ public class Lizzie {
     }
 
     public static void setMainWindowPosition() {
-        if (optionSetting.getMainWindowPosX() >= 10 && optionSetting.getMainWindowPosY() >= 10) {
+        if (optionSetting.getMainWindowPosX() >= 0 && optionSetting.getMainWindowPosY() >= 0) {
             frame.setLocation(optionSetting.getMainWindowPosX(), optionSetting.getMainWindowPosY());
         }
         if (optionSetting.getMainWindowWidth() >= 10 && optionSetting.getMainWindowHeight() >= 10) {
@@ -340,7 +340,7 @@ public class Lizzie {
     }
 
     public static void setWinrateHistogramWindowPosition() {
-        if (optionSetting.getWinrateHistogramWindowPosX() >= 10 && optionSetting.getWinrateHistogramWindowPosY() >= 10) {
+        if (optionSetting.getWinrateHistogramWindowPosX() >= 0 && optionSetting.getWinrateHistogramWindowPosY() >= 0) {
             winrateHistogramDialog.setLocation(optionSetting.getWinrateHistogramWindowPosX(), optionSetting.getWinrateHistogramWindowPosY());
         }
         if (optionSetting.getWinrateHistogramWindowWidth() >= 10 && optionSetting.getWinrateHistogramWindowHeight() >= 10) {

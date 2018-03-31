@@ -8,6 +8,7 @@ import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
 import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.gui.*;
 import wagner.stephanie.lizzie.rules.*;
@@ -15,6 +16,7 @@ import wagner.stephanie.lizzie.rules.*;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -264,27 +266,61 @@ public class Lizzie {
         }
     }
 
+    private static void storeBoardByFile(Path filePath) {
+        BufferedImage bufferedImage = Lizzie.frame.getCachedImage();
+        SVGGraphics2D svgGraphics2D = new SVGGraphics2D(bufferedImage.getWidth(), bufferedImage.getHeight());
+        try {
+            svgGraphics2D.drawImage(bufferedImage, 0, 0, null);
+            String fileContent = svgGraphics2D.getSVGDocument();
+            try (FileWriter writer = new FileWriter(filePath.toFile())) {
+                writer.write(fileContent);
+            } catch (Exception e) {
+                if (StringUtils.isEmpty(e.getMessage())) {
+                    JOptionPane.showMessageDialog(frame, "Error: cannot save svg: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Error: cannot save svg", "Lizzie", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } finally {
+            svgGraphics2D.dispose();
+        }
+    }
+
     public static void storeGameByPrompting() {
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
+        FileNameExtensionFilter sgfFilter = new FileNameExtensionFilter("*.sgf", "SGF");
+        FileNameExtensionFilter svgFilter = new FileNameExtensionFilter("*.svg", "SVG");
+
         JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
-        chooser.setFileFilter(filter);
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(sgfFilter);
+        chooser.addChoosableFileFilter(svgFilter);
         chooser.setMultiSelectionEnabled(false);
+
         int result = chooser.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
             optionSetting.setLastChooserLocation(file.getParent());
 
-            if (!file.getPath().toLowerCase().endsWith(".sgf")) {
-                file = new File(file.getPath() + ".sgf");
+            if (!file.getPath().toLowerCase().endsWith(".sgf") && !file.getPath().toLowerCase().endsWith(".svg")) {
+                if (chooser.getFileFilter().equals(sgfFilter)) {
+                    file = new File(file.getPath() + ".sgf");
+                } else {
+                    file = new File(file.getPath() + ".svg");
+                }
             }
+
             if (file.exists()) {
-                int ret = JOptionPane.showConfirmDialog(frame, "The SGF file is exists, do you want replace it?", "Warning", JOptionPane.OK_CANCEL_OPTION);
+                int ret = JOptionPane.showConfirmDialog(frame, "The target file is exists, do you want replace it?", "Warning", JOptionPane.OK_CANCEL_OPTION);
                 if (ret == JOptionPane.CANCEL_OPTION) {
                     return;
                 }
             }
 
-            storeGameByFile(file.toPath());
+            if (file.getPath().toLowerCase().endsWith(".sgf")) {
+                storeGameByFile(file.toPath());
+            } else {
+                storeBoardByFile(file.toPath());
+            }
         }
     }
 

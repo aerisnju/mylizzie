@@ -98,6 +98,10 @@ public class LizzieFrame extends JFrame {
         return boardRenderer;
     }
 
+    public BufferedImage getCachedImage() {
+        return cachedImage;
+    }
+
     // Toggle show/hide move number
     public void toggleShowMoveNumber() {
         Lizzie.optionSetting.setShowMoveNumber(!Lizzie.optionSetting.isShowMoveNumber());

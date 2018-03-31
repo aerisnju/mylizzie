@@ -191,6 +191,10 @@ public class OptionDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         readDialogSetting(Lizzie.optionSetting);
+        if (!Lizzie.optionSetting.isShowSuggestion() || !Lizzie.optionSetting.isAnalysisWindowShow()) {
+            Lizzie.analysisFrame.getAnalysisTableModel().clearSelectedMove();
+        }
+
         Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisWindowShow());
         Lizzie.frame.setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         Lizzie.frame.getBoardRenderer().forceCachedBackgroundImageRefresh();

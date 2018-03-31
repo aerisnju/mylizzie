@@ -108,6 +108,11 @@ public class AnalysisTableModel extends AbstractTableModel {
         }
     }
 
+    public void clearSelectedMove() {
+        selectedMove = null;
+        SwingUtilities.invokeLater(() -> hostTable.clearSelection());
+    }
+
     private void refreshSelectedMove() {
         if (selectedMove != null) {
             int index = getSelectedMoveIndex();

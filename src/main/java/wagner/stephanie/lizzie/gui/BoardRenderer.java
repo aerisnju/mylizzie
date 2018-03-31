@@ -430,17 +430,16 @@ public class BoardRenderer {
         }
     }
 
+    private final int MIN_ALPHA = 32;
+    private final int MIN_ALPHA_TO_DISPLAY_TEXT = 64;
+    private final int MAX_ALPHA = 240;
+    private final double HUE_SCALING_FACTOR = 3.0;
+    private final double ALPHA_SCALING_FACTOR = 5.0;
     /**
      * Draw all of Leelaz's suggestions as colored stones with winrate/playout statistics overlayed
      */
     private void drawLeelazSuggestions(Graphics2D g) {
-        final int MIN_ALPHA = 32;
-        final int MIN_ALPHA_TO_DISPLAY_TEXT = 64;
-        final int MAX_ALPHA = 240;
-        final double HUE_SCALING_FACTOR = 3.0;
-        final double ALPHA_SCALING_FACTOR = 5.0;
-
-        if (!bestMoves.isEmpty()) {
+        if (Lizzie.optionSetting.isShowSuggestion() && !bestMoves.isEmpty()) {
             int maxPlayouts = bestMoves.stream().max(Comparator.comparingInt(MoveData::getPlayouts)).get().getPlayouts();
             for (MoveData move : bestMoves) {
                 boolean isBestMove = bestMoves.get(0) == move;

@@ -58,14 +58,18 @@ public class AnalysisFrame extends JPanel {
     }
 
     private void handleTableClick(int row, int col) {
-        if (row == analysisTableModel.getSelectedMoveIndex()) {
-            analysisTable.clearSelection();
-            analysisTableModel.setSelectedMove(null);
-        } else {
-            analysisTableModel.setSelectedMoveByIndex(row);
-        }
+        if (Lizzie.optionSetting.isShowSuggestion()) {
+            if (row == analysisTableModel.getSelectedMoveIndex()) {
+                analysisTable.clearSelection();
+                analysisTableModel.setSelectedMove(null);
+            } else {
+                analysisTableModel.setSelectedMoveByIndex(row);
+            }
 
-        Lizzie.frame.repaint();
+            Lizzie.frame.repaint();
+        } else {
+            analysisTable.clearSelection();
+        }
     }
 
     /**

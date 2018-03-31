@@ -249,7 +249,7 @@ public class LizzieFrame extends JFrame {
 
     private AtomicReference<int[]> lastBoardCoordinates = new AtomicReference<>();
     public void onMouseMove(int x, int y) {
-        if (Lizzie.optionSetting.isMouseOverShowMove()) {
+        if (Lizzie.optionSetting.isMouseOverShowMove() && Lizzie.optionSetting.isShowSuggestion()) {
             // check for board click
             int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
             int[] previousCoordinates = lastBoardCoordinates.getAndSet(boardCoordinates);

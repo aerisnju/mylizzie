@@ -7,10 +7,10 @@ public class OptionSetting {
     private boolean a1OnTop;
     private Color boardColor;
     private boolean autoHideMoveNumber;
-    private boolean autoHideAnalysisSuggession;
+    private boolean autoHideAnalysisSuggestion;
     private boolean analysisWindowShow;
     private boolean mouseOverShowMove;
-    private boolean showSuggession;
+    private boolean showSuggestion;
     private String leelazCommandLine;
     private boolean showMoveNumber;
     private int numberOfLastMovesShown;
@@ -38,10 +38,10 @@ public class OptionSetting {
         a1OnTop = false;
         boardColor = new Color(0xf0, 0xd2, 0xa0);
         autoHideMoveNumber = true;
-        autoHideAnalysisSuggession = true;
+        autoHideAnalysisSuggestion = true;
         analysisWindowShow = true;
         mouseOverShowMove = false;
-        showSuggession = true;
+        showSuggestion = true;
         leelazCommandLine = "-g -t2 -wnetwork";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
@@ -99,12 +99,12 @@ public class OptionSetting {
         this.autoHideMoveNumber = autoHideMoveNumber;
     }
 
-    public boolean isAutoHideAnalysisSuggession() {
-        return autoHideAnalysisSuggession;
+    public boolean isAutoHideAnalysisSuggestion() {
+        return autoHideAnalysisSuggestion;
     }
 
-    public void setAutoHideAnalysisSuggession(boolean autoHideAnalysisSuggession) {
-        this.autoHideAnalysisSuggession = autoHideAnalysisSuggession;
+    public void setAutoHideAnalysisSuggestion(boolean autoHideAnalysisSuggestion) {
+        this.autoHideAnalysisSuggestion = autoHideAnalysisSuggestion;
     }
 
     public boolean isAnalysisWindowShow() {
@@ -139,12 +139,12 @@ public class OptionSetting {
         this.showMoveNumber = showMoveNumber;
     }
 
-    public boolean isShowSuggession() {
-        return showSuggession;
+    public boolean isShowSuggestion() {
+        return showSuggestion;
     }
 
-    public void setShowSuggession(boolean showSuggession) {
-        this.showSuggession = showSuggession;
+    public void setShowSuggestion(boolean showSuggestion) {
+        this.showSuggestion = showSuggestion;
     }
 
     public int getNumberOfLastMovesShown() {

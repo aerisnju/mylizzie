@@ -47,12 +47,12 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxMoveNumberLimit;
     private JTextField textFieldMoveNumberLimitCount;
     private JLabel labelMoveNumberLimitLabelTail;
-    private JCheckBox checkBoxAutoHideAnalysisSuggession;
+    private JCheckBox checkBoxAutoHideAnalysisSuggestion;
     private JLabel labelTryPlayingMode;
     private JCheckBox checkBoxAutoEnterTryPlayingMode;
     private JLabel labelMainWindow;
     private JCheckBox checkBoxMainWindowAlwaysOnTop;
-    private JCheckBox checkBoxShowSuggession;
+    private JCheckBox checkBoxShowSuggestion;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -103,13 +103,13 @@ public class OptionDialog extends JDialog {
 
         checkBoxAutoHideMoveNumber.setSelected(setting.isAutoHideMoveNumber());
 
-        checkBoxAutoHideAnalysisSuggession.setSelected(setting.isAutoHideAnalysisSuggession());
+        checkBoxAutoHideAnalysisSuggestion.setSelected(setting.isAutoHideAnalysisSuggestion());
 
         checkBoxAnalysisWindowShow.setSelected(setting.isAnalysisWindowShow());
 
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
 
-        checkBoxShowSuggession.setSelected(setting.isShowSuggession());
+        checkBoxShowSuggestion.setSelected(setting.isShowSuggestion());
 
         textFieldLeelazCommandLine.setText(setting.getLeelazCommandLine());
 
@@ -158,10 +158,10 @@ public class OptionDialog extends JDialog {
         setting.setA1OnTop(radioButtonA1Top.isSelected());
         setting.setBoardColor(boardColor);
         setting.setAutoHideMoveNumber(checkBoxAutoHideMoveNumber.isSelected());
-        setting.setAutoHideAnalysisSuggession(checkBoxAutoHideAnalysisSuggession.isSelected());
+        setting.setAutoHideAnalysisSuggestion(checkBoxAutoHideAnalysisSuggestion.isSelected());
         setting.setAnalysisWindowShow(checkBoxAnalysisWindowShow.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
-        setting.setShowSuggession(checkBoxShowSuggession.isSelected());
+        setting.setShowSuggestion(checkBoxShowSuggestion.isSelected());
         String newLeelazCommandLine = textFieldLeelazCommandLine.getText().trim();
         if (StringUtils.isEmpty(newLeelazCommandLine)) {
             setting.setLeelazCommandLine(new OptionSetting().getLeelazCommandLine());
@@ -236,12 +236,12 @@ public class OptionDialog extends JDialog {
         checkBoxMoveNumberLimit = new JCheckBox();
         textFieldMoveNumberLimitCount = new JTextField();
         labelMoveNumberLimitLabelTail = new JLabel();
-        checkBoxAutoHideAnalysisSuggession = new JCheckBox();
+        checkBoxAutoHideAnalysisSuggestion = new JCheckBox();
         labelTryPlayingMode = new JLabel();
         checkBoxAutoEnterTryPlayingMode = new JCheckBox();
         labelMainWindow = new JLabel();
         checkBoxMainWindowAlwaysOnTop = new JCheckBox();
-        checkBoxShowSuggession = new JCheckBox();
+        checkBoxShowSuggestion = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -349,9 +349,9 @@ public class OptionDialog extends JDialog {
                 //---- labelMoveNumberLimitLabelTail ----
                 labelMoveNumberLimitLabelTail.setText("move(s).");
 
-                //---- checkBoxAutoHideAnalysisSuggession ----
-                checkBoxAutoHideAnalysisSuggession.setText("Analysis suggessions");
-                checkBoxAutoHideAnalysisSuggession.setSelected(true);
+                //---- checkBoxAutoHideAnalysisSuggestion ----
+                checkBoxAutoHideAnalysisSuggestion.setText("Analysis suggestions");
+                checkBoxAutoHideAnalysisSuggestion.setSelected(true);
 
                 //---- labelTryPlayingMode ----
                 labelTryPlayingMode.setText("Try playing mode:");
@@ -365,9 +365,9 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxMainWindowAlwaysOnTop ----
                 checkBoxMainWindowAlwaysOnTop.setText("Always on top");
 
-                //---- checkBoxShowSuggession ----
-                checkBoxShowSuggession.setText("Show suggessions");
-                checkBoxShowSuggession.setSelected(true);
+                //---- checkBoxShowSuggestion ----
+                checkBoxShowSuggestion.setText("Show suggestions");
+                checkBoxShowSuggestion.setSelected(true);
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
@@ -416,7 +416,7 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxAutoHideMoveNumber)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxAutoHideAnalysisSuggession))
+                                            .addComponent(checkBoxAutoHideAnalysisSuggestion))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAnalysisModeOn)
                                             .addGap(12, 12, 12)
@@ -424,7 +424,7 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMouseMoveShow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxShowSuggession))
+                                            .addComponent(checkBoxShowSuggestion))
                                         .addComponent(labelNotes)
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelMoveNumber)
@@ -475,7 +475,7 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelAutoHide)
                                 .addComponent(checkBoxAutoHideMoveNumber)
-                                .addComponent(checkBoxAutoHideAnalysisSuggession))
+                                .addComponent(checkBoxAutoHideAnalysisSuggestion))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup()
                                 .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -483,7 +483,7 @@ public class OptionDialog extends JDialog {
                                     .addComponent(labelAnalysisModeOn))
                                 .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                     .addComponent(checkBoxMouseMoveShow)
-                                    .addComponent(checkBoxShowSuggession)))
+                                    .addComponent(checkBoxShowSuggestion)))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)

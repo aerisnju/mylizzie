@@ -33,7 +33,9 @@ public class LizzieFrame extends JFrame {
             "key 'V' = Enter/Leave try playing state",
             "key 'X' = Drop all successive moves",
             "key 'A' = Show/hide analysis window",
-            "key 'H' = Show/hide winrate histogram window"
+            "key 'H' = Show/hide winrate histogram window",
+            "key 'Home' = Go to initial board",
+            "key 'End' = Go to last move"
 
     };
     public static final String LIZZIE_TITLE = "Lizzie - Leela Zero Interface";

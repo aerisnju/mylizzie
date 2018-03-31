@@ -321,7 +321,8 @@ public class BoardRenderer {
         int lastMoveNumber = Lizzie.board.getData().getMoveNumber();
 
         // mark last coordinate with a small circle
-        if (!Lizzie.optionSetting.isShowMoveNumber() && branch == null) { // if change this condition please check else branch
+        if (!Lizzie.board.isInTryPlayState() && (!Lizzie.optionSetting.isShowMoveNumber() || branch != null)
+                || Lizzie.board.isInTryPlayState() && lastMoveNumber <= Lizzie.board.getTryPlayStateBeginMoveNumber()) {
             if (lastMove != null) {
                 // mark the last coordinate
                 int lastMoveMarkerRadius = stoneRadius / 2;
@@ -339,92 +340,98 @@ public class BoardRenderer {
                 g.setColor(Lizzie.board.getData().isBlackToPlay() ? new Color(0, 0, 0, 255) : new Color(255, 255, 255, 255));
                 drawString(g, x + boardLength / 2, y + boardLength / 2, "Open Sans", "pass", stoneRadius * 4, stoneRadius * 6);
             }
-        } else {
-            if (branch == null) { // at this time, isShowMoveNumber is true
-                // draw existing stones
-                int[] moveNumberList = Lizzie.board.getMoveNumberList();
+        }
 
-                for (int i = 0; i < Board.BOARD_SIZE; i++) {
-                    for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                        int stoneX = x + scaledMargin + squareLength * i;
-                        int stoneY = y + scaledMargin + squareLength * j;
+        if (!Lizzie.board.isInTryPlayState() && Lizzie.optionSetting.isShowMoveNumber() && branch == null
+                || Lizzie.board.isInTryPlayState()) { // at this time, isShowMoveNumber is true, or is in try play state
+            // draw existing stones
+            int[] moveNumberList = Lizzie.board.getMoveNumberList();
+            int moveNumberBaseFix = 0;
+            if (Lizzie.board.isInTryPlayState()) {
+                moveNumberBaseFix = Lizzie.board.getTryPlayStateBeginMoveNumber();
+            }
 
-                        int index = Board.getIndex(i, j);
+            for (int i = 0; i < Board.BOARD_SIZE; i++) {
+                for (int j = 0; j < Board.BOARD_SIZE; j++) {
+                    int stoneX = x + scaledMargin + squareLength * i;
+                    int stoneY = y + scaledMargin + squareLength * j;
 
-                        if (Lizzie.board.getData().getMoveNumber() - moveNumberList[index] > Lizzie.optionSetting.getNumberOfLastMovesShown()) {
-                            continue;
-                        }
-
-                        Stone stoneAtThisPoint = Lizzie.board.getStones()[index];
-                        // don't write the move number if either: the move number is 0, or there will already be playout information written
-                        if (moveNumberList[index] > 0) {
-                            if (lastMove != null && i == lastMove[0] && j == lastMove[1])
-                                g.setColor(Color.RED.brighter());//stoneAtThisPoint.isBlack() ? Color.RED.brighter() : Color.BLUE.brighter());
-                            else
-                                g.setColor(stoneAtThisPoint.isBlack() ? Color.WHITE : Color.BLACK);
-
-                            String moveNumberString = moveNumberList[index] + "";
-                            drawString(g, stoneX, stoneY, "Open Sans", moveNumberString, (float) (stoneRadius * 1.4), (int) (stoneRadius * 1.4));
-                        }
-                    }
-                }
-
-                // draw pass with number
-                if (lastMove == null && lastMoveNumber != 0) {
-                    g.setColor(Lizzie.board.getData().isBlackToPlay() ? new Color(255, 255, 255, 150) : new Color(0, 0, 0, 150));
-                    g.fillOval(x + boardLength / 2 - 4 * stoneRadius, y + boardLength / 2 - 4 * stoneRadius, stoneRadius * 8, stoneRadius * 8);
-                    g.setColor(Color.RED);
-                    drawString(g, x + boardLength / 2, y + boardLength / 2, "Open Sans", Font.PLAIN, String.valueOf(lastMoveNumber), stoneRadius * 4, stoneRadius * 6, 1);
-                    g.setColor(Lizzie.board.getData().isBlackToPlay() ? new Color(0, 0, 0, 255) : new Color(255, 255, 255, 255));
-                    drawString(g, x + boardLength / 2, y + boardLength / 2 + stoneRadius, "Open Sans", "pass", stoneRadius * 4, stoneRadius * 6);
-                }
-            } else { // at this time, we will auto hide normal move numbers
-                // draw branch number
-                int nextVariationNumber = 0;
-                if (Lizzie.board.isInTryPlayState()) {
-                    nextVariationNumber = Lizzie.board.getData().getMoveNumber() - Lizzie.board.getTryPlayStateBeginMoveNumber();
-                    if (nextVariationNumber < 0) {
-                        nextVariationNumber = 0;
-                    }
-                }
-
-                Stone nextStone = Lizzie.board.getData().getLastMoveColor();
-                if (nextStone == Stone.EMPTY) {
-                    nextStone = Stone.WHITE;
-                }
-                for (String move : branch.getVariation()) {
-                    ++nextVariationNumber;
-
-                    // Limit move number according to limit
-                    if (nextVariationNumber > Lizzie.optionSetting.getVariationLimit()) {
-                        break;
-                    }
-
-                    // Flip stone
-                    nextStone = nextStone.opposite();
-
-                    if (nextVariationNumber == 1) {
-                        // we do not draw the first variation as its winrate should be displayed
+                    int index = Board.getIndex(i, j);
+                    if (lastMoveNumber - moveNumberList[index] > Lizzie.optionSetting.getNumberOfLastMovesShown()) {
                         continue;
                     }
 
-                    // limit variation number to settings
-                    // note that stone drawing is at another place
-                    if (nextVariationNumber > Lizzie.optionSetting.getVariationLimit()) {
-                        break;
-                    }
+                    Stone stoneAtThisPoint = Lizzie.board.getStones()[index];
+                    // don't write the move number if either: the move number is 0, or there will already be playout information written
+                    if (moveNumberList[index] - moveNumberBaseFix > 0) {
+                        if (lastMove != null && i == lastMove[0] && j == lastMove[1])
+                            g.setColor(Color.RED.brighter());//stoneAtThisPoint.isBlack() ? Color.RED.brighter() : Color.BLUE.brighter());
+                        else
+                            g.setColor(stoneAtThisPoint.isBlack() ? Color.WHITE : Color.BLACK);
 
-                    int[] coords = Board.convertNameToCoordinates(move);
-                    int i = coords[0], j = coords[1];
-                    if (Board.isValid(i, j)) {
-                        int stoneX = x + scaledMargin + squareLength * i;
-                        int stoneY = y + scaledMargin + squareLength * j;
-
-                        // Draw variation move number
-                        g.setColor(nextStone.equals(Stone.BLACK) ? Color.WHITE : Color.BLACK);
-                        String moveNumberString = String.valueOf(nextVariationNumber);
+                        String moveNumberString = String.valueOf(moveNumberList[index] - moveNumberBaseFix);
                         drawString(g, stoneX, stoneY, "Open Sans", moveNumberString, (float) (stoneRadius * 1.4), (int) (stoneRadius * 1.4));
                     }
+                }
+            }
+
+            // draw pass with number
+            if (lastMove == null && lastMoveNumber != 0 && lastMoveNumber - moveNumberBaseFix >= 0) {
+                g.setColor(Lizzie.board.getData().isBlackToPlay() ? new Color(255, 255, 255, 150) : new Color(0, 0, 0, 150));
+                g.fillOval(x + boardLength / 2 - 4 * stoneRadius, y + boardLength / 2 - 4 * stoneRadius, stoneRadius * 8, stoneRadius * 8);
+                g.setColor(Color.RED);
+                drawString(g, x + boardLength / 2, y + boardLength / 2, "Open Sans", Font.PLAIN, String.valueOf(lastMoveNumber - moveNumberBaseFix), stoneRadius * 4, stoneRadius * 6, 1);
+                g.setColor(Lizzie.board.getData().isBlackToPlay() ? new Color(0, 0, 0, 255) : new Color(255, 255, 255, 255));
+                drawString(g, x + boardLength / 2, y + boardLength / 2 + stoneRadius, "Open Sans", "pass", stoneRadius * 4, stoneRadius * 6);
+            }
+        }
+
+        if (branch != null) {
+            int variationBase = 0;
+            if (Lizzie.board.isInTryPlayState()) {
+                variationBase = lastMoveNumber - Lizzie.board.getTryPlayStateBeginMoveNumber();
+                if (variationBase < 0) {
+                    variationBase = 0;
+                }
+            }
+            // draw branch number
+            int nextVariationNumber = 0;
+            if (Lizzie.board.isInTryPlayState()) {
+                // try play state: show successive move number
+                nextVariationNumber = variationBase;
+            }
+
+            Stone nextStone = Lizzie.board.getData().getLastMoveColor();
+            if (nextStone == Stone.EMPTY) {
+                nextStone = Stone.WHITE;
+            }
+            for (String move : branch.getVariation()) {
+                ++nextVariationNumber;
+
+                // Flip stone
+                nextStone = nextStone.opposite();
+
+                if (nextVariationNumber == variationBase + 1) {
+                    // we do not draw the first variation as its winrate should be displayed
+                    continue;
+                }
+
+                // limit variation number to settings
+                // note that stone drawing is at another place
+                if (nextVariationNumber - variationBase > Lizzie.optionSetting.getVariationLimit()) {
+                    break;
+                }
+
+                int[] coords = Board.convertNameToCoordinates(move);
+                int i = coords[0], j = coords[1];
+                if (Board.isValid(i, j)) {
+                    int stoneX = x + scaledMargin + squareLength * i;
+                    int stoneY = y + scaledMargin + squareLength * j;
+
+                    // Draw variation move number
+                    g.setColor(nextStone.equals(Stone.BLACK) ? Color.WHITE : Color.BLACK);
+                    String moveNumberString = String.valueOf(nextVariationNumber);
+                    drawString(g, stoneX, stoneY, "Open Sans", moveNumberString, (float) (stoneRadius * 1.4), (int) (stoneRadius * 1.4));
                 }
             }
         }
@@ -435,6 +442,7 @@ public class BoardRenderer {
     private final int MAX_ALPHA = 240;
     private final double HUE_SCALING_FACTOR = 3.0;
     private final double ALPHA_SCALING_FACTOR = 5.0;
+
     /**
      * Draw all of Leelaz's suggestions as colored stones with winrate/playout statistics overlayed
      */

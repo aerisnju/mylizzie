@@ -25,7 +25,6 @@ public class Leelaz implements Closeable {
     private static final Logger logger = LogManager.getLogger(Leelaz.class);
 
     private static final long MINUTE = 60 * 1000; // number of milliseconds in a minute
-    private static final long MAX_PONDER_TIME_MILLIS = 15 * MINUTE;
 
     private Process process;
     private ExecutorService notificationExecutor;
@@ -137,7 +136,7 @@ public class Leelaz implements Closeable {
 
         synchronized (this) {
             if (line.startsWith("~begin")) {
-                if (System.currentTimeMillis() - startPonderTime > MAX_PONDER_TIME_MILLIS) {
+                if (System.currentTimeMillis() - startPonderTime > Lizzie.optionSetting.getMaxAnalysisTimeInMinutes() * MINUTE) {
                     // we have pondered for enough time. pause pondering
                     togglePonder();
                 }

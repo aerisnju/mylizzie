@@ -15,6 +15,7 @@ public class OptionSetting {
     private int numberOfLastMovesShown;
     private boolean autoEnterTryPlayingMode;
     private boolean mainWindowAlwaysOnTop;
+    private int maxAnalysisTimeInMinutes;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -45,6 +46,7 @@ public class OptionSetting {
         numberOfLastMovesShown = Integer.MAX_VALUE;
         autoEnterTryPlayingMode = false;
         mainWindowAlwaysOnTop = false;
+        maxAnalysisTimeInMinutes = 2;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -159,6 +161,14 @@ public class OptionSetting {
 
     public void setMainWindowAlwaysOnTop(boolean mainWindowAlwaysOnTop) {
         this.mainWindowAlwaysOnTop = mainWindowAlwaysOnTop;
+    }
+
+    public int getMaxAnalysisTimeInMinutes() {
+        return maxAnalysisTimeInMinutes;
+    }
+
+    public void setMaxAnalysisTimeInMinutes(int maxAnalysisTimeInMinutes) {
+        this.maxAnalysisTimeInMinutes = maxAnalysisTimeInMinutes;
     }
 
     public int getMainWindowPosX() {

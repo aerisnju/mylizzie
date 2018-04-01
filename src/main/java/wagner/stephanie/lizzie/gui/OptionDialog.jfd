@@ -12,8 +12,8 @@ new FormModel {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelLeelazCommandLine:::p::p, space :::p, comp textFieldLeelazCommandLine:::p:388:p, space :::p, comp buttonResetCommandLine:::::x, space :::p}, seq {par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space :::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelSuggestion:::p::p, space :::p, comp checkBoxShowSuggestion:::p::p, space :::p, comp checkBoxPlayoutsInShortForm:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :::p, comp checkBoxAnalysisWindowShow:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p}, comp labelNotes::l:p::p, seq l {comp labelMoveNumber:::p::p, space :::p, comp checkBoxShowMoveNumber:::p::p, space :::p, comp checkBoxMoveNumberLimit:::p::p, space :::p, comp textFieldMoveNumberLimitCount:::p::p, space :::p, comp labelMoveNumberLimitLabelTail:::p::p}, seq l {comp labelTryPlayingMode:::p::p, space :::p, comp checkBoxAutoEnterTryPlayingMode:::p::p}, seq l {comp labelMainWindow:::p::p, space :::p, comp checkBoxMainWindowAlwaysOnTop:::p::p}}, space :0:0:x}}}}"
-					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelSuggestion::b:p::p, comp checkBoxPlayoutsInShortForm::b:p::p, comp checkBoxShowSuggestion::b:p::p}, space :::p, par b {comp labelAnalysisModeOn::b:p::p, comp checkBoxAnalysisWindowShow::b:p::p, comp checkBoxMouseMoveShow::b:p::p}, space :::p, par b {comp labelLeelazCommandLine::b:p::p, comp buttonResetCommandLine::b:p::p, comp textFieldLeelazCommandLine::b:p::p}, space :::p, par b {comp labelMoveNumber::b:p::p, comp checkBoxShowMoveNumber::b:p::p, comp checkBoxMoveNumberLimit::b:p::p, comp textFieldMoveNumberLimitCount::b:p::p, comp labelMoveNumberLimitLabelTail::b:p::p}, space :::p, par b {comp labelTryPlayingMode::b:p::p, comp checkBoxAutoEnterTryPlayingMode::b:p::p}, space :::p, par b {comp labelMainWindow::b:p::p, comp checkBoxMainWindowAlwaysOnTop::b:p::p}, space ::17:x, comp labelNotes:::p::p, space :::p}}"
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelLeelazCommandLine:::p::p, space :::p, comp textFieldLeelazCommandLine:::p:388:p, space :::p, comp buttonResetCommandLine:::::x, space :::p}, seq {par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p}, seq l {comp labelAxisSetting:::p::p, space :::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, seq l {comp labelBoardColor:::p::p, space :::p, comp radioButtonColorOriginal:::p::p, space :::p, comp radioButtonColorBright:::p::p, space :::p, comp radioButtonColorPureWhite:::p::p}, seq l {comp labelSuggestion:::p::p, space :::p, comp checkBoxShowSuggestion:::p::p, space :::p, comp checkBoxPlayoutsInShortForm:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :::p, comp checkBoxAnalysisWindowShow:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p, space s:::p, comp labelMaxAnalysisTime:::p::p, space :::p, comp textFieldMaxAnalysisTime:::p::p, space :::p, comp labelMinute:::p::p}, comp labelNotes::l:p::p, seq l {comp labelMoveNumber:::p::p, space :::p, comp checkBoxShowMoveNumber:::p::p, space :::p, comp checkBoxMoveNumberLimit:::p::p, space :::p, comp textFieldMoveNumberLimitCount:::p::p, space :::p, comp labelMoveNumberLimitLabelTail:::p::p}, seq l {comp labelTryPlayingMode:::p::p, space :::p, comp checkBoxAutoEnterTryPlayingMode:::p::p}, seq l {comp labelMainWindow:::p::p, space :::p, comp checkBoxMainWindowAlwaysOnTop:::p::p}}, space :0:0:x}}}}"
+					"$verticalGroup": "par l {seq l {space :::p, par l {comp radioButtonUnlimited:::p::p, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p}, space :::p, par l {par b:l {comp radioButtonColorOriginal::b:p::p, comp labelBoardColor::b:p::p}, par b {comp radioButtonColorBright::b:p::p, comp radioButtonColorPureWhite::b:p::p}}, space :::p, par b {comp labelSuggestion::b:p::p, comp checkBoxPlayoutsInShortForm::b:p::p, comp checkBoxShowSuggestion::b:p::p}, space :::p, par b {comp labelAnalysisModeOn::b:p::p, comp checkBoxAnalysisWindowShow::b:p::p, comp checkBoxMouseMoveShow::b:p::p, comp labelMaxAnalysisTime::b:p::p, comp textFieldMaxAnalysisTime::b:p::p, comp labelMinute::b:p::p}, space :::p, par b {comp labelLeelazCommandLine::b:p::p, comp buttonResetCommandLine::b:p::p, comp textFieldLeelazCommandLine::b:p::p}, space :::p, par b {comp labelMoveNumber::b:p::p, comp checkBoxShowMoveNumber::b:p::p, comp checkBoxMoveNumberLimit::b:p::p, comp textFieldMoveNumberLimitCount::b:p::p, comp labelMoveNumberLimitLabelTail::b:p::p}, space :::p, par b {comp labelTryPlayingMode::b:p::p, comp checkBoxAutoEnterTryPlayingMode::b:p::p}, space :::p, par b {comp labelMainWindow::b:p::p, comp checkBoxMainWindowAlwaysOnTop::b:p::p}, space ::13:x, comp labelNotes:::p::p, space :::p}}"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -99,7 +99,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxMouseMoveShow"
-						"text": "Mouse over show move"
+						"text": "Mouse over show move."
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelLeelazCommandLine"
@@ -164,6 +164,18 @@ new FormModel {
 						name: "checkBoxShowSuggestion"
 						"text": "Show"
 						"selected": true
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelMaxAnalysisTime"
+						"text": "Max time:"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldMaxAnalysisTime"
+						"text": "2"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelMinute"
+						"text": "minute(s)"
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"

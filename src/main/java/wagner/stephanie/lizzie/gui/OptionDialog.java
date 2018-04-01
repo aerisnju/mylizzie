@@ -52,6 +52,9 @@ public class OptionDialog extends JDialog {
     private JLabel labelMainWindow;
     private JCheckBox checkBoxMainWindowAlwaysOnTop;
     private JCheckBox checkBoxShowSuggestion;
+    private JLabel labelMaxAnalysisTime;
+    private JTextField textFieldMaxAnalysisTime;
+    private JLabel labelMinute;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -125,6 +128,8 @@ public class OptionDialog extends JDialog {
         checkBoxAutoEnterTryPlayingMode.setSelected(setting.isAutoEnterTryPlayingMode());
 
         checkBoxMainWindowAlwaysOnTop.setSelected(setting.isMainWindowAlwaysOnTop());
+
+        textFieldMaxAnalysisTime.setText(String.valueOf(setting.getMaxAnalysisTimeInMinutes()));
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -183,6 +188,15 @@ public class OptionDialog extends JDialog {
         setting.setAutoEnterTryPlayingMode(checkBoxAutoEnterTryPlayingMode.isSelected());
 
         setting.setMainWindowAlwaysOnTop(checkBoxMainWindowAlwaysOnTop.isSelected());
+
+        try {
+            int maxAnalysisTime = Integer.parseInt(textFieldMaxAnalysisTime.getText());
+            if (maxAnalysisTime > 0) {
+                setting.setMaxAnalysisTimeInMinutes(maxAnalysisTime);
+            }
+        } catch (NumberFormatException e) {
+            // no operation
+        }
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -242,6 +256,9 @@ public class OptionDialog extends JDialog {
         labelMainWindow = new JLabel();
         checkBoxMainWindowAlwaysOnTop = new JCheckBox();
         checkBoxShowSuggestion = new JCheckBox();
+        labelMaxAnalysisTime = new JLabel();
+        textFieldMaxAnalysisTime = new JTextField();
+        labelMinute = new JLabel();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -316,7 +333,7 @@ public class OptionDialog extends JDialog {
                 checkBoxAnalysisWindowShow.setSelected(true);
 
                 //---- checkBoxMouseMoveShow ----
-                checkBoxMouseMoveShow.setText("Mouse over show move");
+                checkBoxMouseMoveShow.setText("Mouse over show move.");
 
                 //---- labelLeelazCommandLine ----
                 labelLeelazCommandLine.setText("Leelaz command line:");
@@ -366,6 +383,15 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxShowSuggestion ----
                 checkBoxShowSuggestion.setText("Show");
                 checkBoxShowSuggestion.setSelected(true);
+
+                //---- labelMaxAnalysisTime ----
+                labelMaxAnalysisTime.setText("Max time:");
+
+                //---- textFieldMaxAnalysisTime ----
+                textFieldMaxAnalysisTime.setText("2");
+
+                //---- labelMinute ----
+                labelMinute.setText("minute(s)");
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
@@ -420,7 +446,13 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxAnalysisWindowShow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxMouseMoveShow))
+                                            .addComponent(checkBoxMouseMoveShow)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(labelMaxAnalysisTime)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(labelMinute))
                                         .addComponent(labelNotes)
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelMoveNumber)
@@ -476,7 +508,10 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelAnalysisModeOn)
                                 .addComponent(checkBoxAnalysisWindowShow)
-                                .addComponent(checkBoxMouseMoveShow))
+                                .addComponent(checkBoxMouseMoveShow)
+                                .addComponent(labelMaxAnalysisTime)
+                                .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(labelMinute))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)
@@ -497,7 +532,7 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelMainWindow)
                                 .addComponent(checkBoxMainWindowAlwaysOnTop))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

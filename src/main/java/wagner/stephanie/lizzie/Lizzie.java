@@ -98,12 +98,19 @@ public class Lizzie {
     public static void loadGameByPrompting() {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
         JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
-        chooser.setFileFilter(filter);
+        chooser.addChoosableFileFilter(filter);
         chooser.setMultiSelectionEnabled(false);
+        chooser.setAcceptAllFileFilterUsed(false);
         int state = chooser.showOpenDialog(frame);
         if (state == JFileChooser.APPROVE_OPTION) {
             optionSetting.setLastChooserLocation(chooser.getSelectedFile().toPath().getParent().toString());
-            loadGameByFile(chooser.getSelectedFile().toPath());
+
+            File file = chooser.getSelectedFile();
+            if (!file.getPath().toLowerCase().endsWith(".sgf")) {
+                file = new File(file.getPath() + ".sgf");
+            }
+
+            loadGameByFile(file.toPath());
         }
     }
 

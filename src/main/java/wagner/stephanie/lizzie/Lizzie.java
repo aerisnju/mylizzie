@@ -18,11 +18,9 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -214,12 +212,9 @@ public class Lizzie {
             BoardHistoryNode initialNode = historyList.getInitialNode();
 
             GameNode previousNode = null;
+            BoardData previousData = null;
             for (BoardHistoryNode p = initialNode.getNext(); p != null; p = p.getNext()) {
                 GameNode gameNode = new GameNode(previousNode);
-
-                if (previousNode == null) {
-                    game.setRootNode(gameNode);
-                }
 
                 // Move node
                 if (Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) || Objects.equals(p.getData().getLastMoveColor(), Stone.WHITE)) {
@@ -243,6 +238,9 @@ public class Lizzie {
                     String moveValue = Util.coordToAlpha.get(x) + Util.coordToAlpha.get(y);
 
                     gameNode.addProperty(moveKey, moveValue);
+                    if (p.getData().getCalculationCount() > 100) {
+                        gameNode.addProperty("C", String.format("Black: %.1f; White: %.1f", p.getData().getBlackWinrate(), p.getData().getWhiteWinrate()));
+                    }
                 }
 
                 if (p.getData().getMoveNumber() > 0) {
@@ -251,18 +249,144 @@ public class Lizzie {
 
                 if (previousNode != null) {
                     previousNode.addChild(gameNode);
+                    // Ensure we have already added child
+                    if (previousData != null) {
+                        addVariationTrees(previousNode, previousData);
+                    }
+                } else {
+                    game.setRootNode(gameNode);
                 }
 
                 previousNode = gameNode;
+                previousData = p.getData();
             }
 
-            Sgf.writeToFile(game, filePath);
+            // Ignore the last node
+            // addVariationTree(previousNode, previousData);
+
+            writeSgfToFile(game, filePath);
         } catch (Exception e) {
             if (StringUtils.isEmpty(e.getMessage())) {
                 JOptionPane.showMessageDialog(frame, "Error: cannot save sgf: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(frame, "Error: cannot save sgf", "Lizzie", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    private static void addVariationTrees(GameNode baseNode, BoardData data) {
+        if (CollectionUtils.isEmpty(data.getVariationDataList())) {
+            return;
+        }
+
+        for (VariationData variationData : data.getVariationDataList()) {
+            addVariationTree(baseNode, variationData);
+        }
+    }
+
+    private static void addVariationTree(GameNode baseNode, VariationData variationData) {
+        Stone baseColor = baseNode.isBlack() ? Stone.BLACK : Stone.WHITE;
+        GameNode previousNode = baseNode;
+
+        for (int[] variation : variationData.getVariation()) {
+            GameNode gameNode = new GameNode(previousNode);
+
+            int x, y;
+            if (variation == null) {
+                // Pass
+                x = 19;
+                y = 19;
+            } else {
+                x = variation[0];
+                y = variation[1];
+
+                if (x < 0 || x >= 19 || y < 0 || y >= 19) {
+                    x = 19;
+                    y = 19;
+                }
+            }
+
+            String moveKey = Objects.equals(baseColor.opposite(), Stone.BLACK) ? "B" : "W";
+            String moveValue = Util.coordToAlpha.get(x) + Util.coordToAlpha.get(y);
+            gameNode.addProperty(moveKey, moveValue);
+
+            if (previousNode == baseNode && variationData.getPlayouts() > 100) {
+                double blackWinrate, whiteWinrate;
+                if (moveKey.equals("B")) {
+                    blackWinrate = variationData.getWinrate();
+                    whiteWinrate = 100 - blackWinrate;
+                } else {
+                    whiteWinrate = variationData.getWinrate();
+                    blackWinrate = 100 - whiteWinrate;
+                }
+
+                gameNode.addProperty("C", String.format("Black: %.1f; White: %.1f", blackWinrate, whiteWinrate));
+            }
+
+            previousNode.addChild(gameNode);
+
+            previousNode = gameNode;
+            baseColor = baseColor.opposite();
+        }
+    }
+
+    public static void writeSgfToFile(Game game, Path destination) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destination.toFile()), Charset.forName("UTF-8"))) {
+            writer.write('(');
+
+            // lets write all the root node properties
+            Map<String, String> props = game.getProperties();
+            if (props.size() > 0) {
+                writer.write(";");
+            }
+
+            for (Map.Entry<String, String> entry : props.entrySet()) {
+                writer.write(entry.getKey());
+                writer.write('[');
+                writer.write(entry.getValue());
+                writer.write(']');
+            }
+
+            // write sgf nodes
+            GameNode node = game.getRootNode();
+            writeSgfSubTree(writer, node, 0);
+            writer.write(')');
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void writeSgfSubTree(OutputStreamWriter writer, GameNode subtreeRoot, int level) throws IOException {
+        if (level > 0) {
+            writer.write('(');
+        }
+
+        // DF pre-order traversal
+        // Write root
+        writer.write(';');
+        writeNodeProperties(writer, subtreeRoot);
+
+        // Write children
+        GameNode mainChild;
+        if ((mainChild = subtreeRoot.getNextNode()) != null) {
+            writeSgfSubTree(writer, mainChild, level + 1);
+
+            for (GameNode otherChild : subtreeRoot.getChildren()) {
+                writeSgfSubTree(writer, otherChild, level + 1);
+            }
+        }
+
+        if (level > 0) {
+            writer.write(')');
+        }
+    }
+
+    private static void writeNodeProperties(OutputStreamWriter writer, GameNode node) throws IOException {
+        for (Map.Entry<String, String> entry : node.getProperties().entrySet()) {
+            writer.write(entry.getKey());
+            writer.write('[');
+            writer.write(entry.getValue());
+            writer.write(']');
         }
     }
 

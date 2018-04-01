@@ -1,8 +1,12 @@
 package wagner.stephanie.lizzie.rules;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import wagner.stephanie.lizzie.analysis.MoveData;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BoardData {
     private ImmutablePair<Integer, Integer> boardSize;
@@ -15,10 +19,9 @@ public class BoardData {
     private int moveNumber;
     private int[] moveNumberListOnBoard;
 
-    private double blackWinrate;
-    private int calculationCount;
+    private List<VariationData> variationDataList;
 
-    public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard, double blackWinrate, int calculationCount) {
+    public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard, List<VariationData> variationDataList) {
         this.boardSize = boardSize;
         this.stonesOnBoard = stonesOnBoard;
         this.lastMove = lastMove;
@@ -27,16 +30,15 @@ public class BoardData {
         this.zobrist = zobrist;
         this.moveNumber = moveNumber;
         this.moveNumberListOnBoard = moveNumberListOnBoard;
-        this.blackWinrate = blackWinrate;
-        this.calculationCount = calculationCount;
+        this.variationDataList = variationDataList;
     }
 
     public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard) {
-        this(boardSize, stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, 50, 0);
+        this(boardSize, stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, null);
     }
 
     public BoardData(Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard) {
-        this(ImmutablePair.of(19, 19), stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, 50, 0);
+        this(ImmutablePair.of(19, 19), stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, null);
     }
 
     public ImmutablePair<Integer, Integer> getBoardSize() {
@@ -99,20 +101,45 @@ public class BoardData {
         this.moveNumberListOnBoard = moveNumberListOnBoard;
     }
 
-    public double getBlackWinrate() {
-        return blackWinrate;
+    public List<VariationData> getVariationDataList() {
+        return variationDataList;
     }
 
-    public void setBlackWinrate(double blackWinrate) {
-        this.blackWinrate = blackWinrate;
+    public void setVariationDataList(List<VariationData> variationDataList) {
+        this.variationDataList = variationDataList;
+    }
+
+    public Optional<VariationData> getFirstVariation() {
+        if (CollectionUtils.isEmpty(variationDataList)) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(variationDataList.get(0));
+        }
+    }
+
+    public double getBlackWinrate() {
+        Optional<VariationData> variationData = getFirstVariation();
+        double winrate = variationData.map(VariationData::getWinrate).orElse(50.0);
+        if (blackToPlay) {
+            return winrate;
+        } else {
+            return 100.0 - winrate;
+        }
+    }
+
+    public double getWhiteWinrate() {
+        return 100.0 - getBlackWinrate();
     }
 
     public int getCalculationCount() {
-        return calculationCount;
+        Optional<VariationData> variationData = getFirstVariation();
+        return variationData.map(VariationData::getPlayouts).orElse(0);
     }
 
-    public void setCalculationCount(int calculationCount) {
-        this.calculationCount = calculationCount;
+    public int getTotalCalculationCount() {
+        return CollectionUtils.isEmpty(variationDataList)
+                ? 0
+                : variationDataList.stream().mapToInt(VariationData::getPlayouts).sum();
     }
 
     public Optional<Boolean> isBlack() {
@@ -130,13 +157,17 @@ public class BoardData {
         return lastMove == null || lastMove[0] < 0 || lastMove[0] >= boardSize.getLeft() || lastMove[1] < 0 || lastMove[1] >= boardSize.getRight();
     }
 
-    public void tryUpdateWinrate(double newWinrate, int newCalculationCount, boolean isBlack) {
-        if (newCalculationCount > calculationCount) {
-            calculationCount = newCalculationCount;
-            if (isBlack) {
-                blackWinrate = newWinrate;
-            } else {
-                blackWinrate = 100 - newWinrate;
+    public void tryUpdateVariationInfo(List<MoveData> newMoveDataList) {
+        if (CollectionUtils.isEmpty(newMoveDataList)) {
+            return;
+        }
+        if (CollectionUtils.isEmpty(variationDataList)) {
+            variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
+        } else {
+            int totalCalculation = variationDataList.stream().mapToInt(VariationData::getPlayouts).sum();
+            int newTotalCalculation = newMoveDataList.stream().mapToInt(MoveData::getPlayouts).sum();
+            if (newTotalCalculation > totalCalculation) {
+                variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
             }
         }
     }

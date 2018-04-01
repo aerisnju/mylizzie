@@ -41,9 +41,7 @@ public class Board implements Closeable {
             public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
                 if (CollectionUtils.isNotEmpty(newBestMoves) && boardStateCount == getData().getMoveNumber()) {
                     BoardData boardData = getData();
-                    MoveData moveData = newBestMoves.get(0);
-
-                    boardData.tryUpdateWinrate(moveData.getWinrate(), moveData.getPlayouts(), boardData.isBlackToPlay());
+                    boardData.tryUpdateVariationInfo(newBestMoves);
                 }
             }
 
@@ -148,7 +146,7 @@ public class Board implements Closeable {
      * @return an array containing x, followed by y
      */
     public static int[] convertNameToCoordinates(String namedCoordinate) {
-        if (StringUtils.equalsIgnoreCase(namedCoordinate, "pass")) {
+        if (StringUtils.isEmpty(namedCoordinate) || StringUtils.equalsIgnoreCase(namedCoordinate, "pass")) {
             return new int[]{BOARD_SIZE, BOARD_SIZE};
         } else {
             // coordinates take the form C16 A19 Q5 K10 etc. I is not used.

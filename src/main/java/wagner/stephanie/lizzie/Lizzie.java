@@ -295,6 +295,7 @@ public class Lizzie {
         Stone baseColor = baseNode.isBlack() ? Stone.BLACK : Stone.WHITE;
         GameNode previousNode = baseNode;
 
+        int variationMoveCount = 0;
         for (int[] variation : variationData.getVariation()) {
             GameNode gameNode = new GameNode(previousNode);
 
@@ -334,6 +335,11 @@ public class Lizzie {
 
             previousNode = gameNode;
             baseColor = baseColor.opposite();
+
+            ++variationMoveCount;
+            if (variationMoveCount >= Lizzie.optionSetting.getVariationLimit()) {
+                break;
+            }
         }
     }
 

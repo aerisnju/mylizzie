@@ -13,6 +13,7 @@ import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.gui.*;
 import wagner.stephanie.lizzie.rules.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -423,14 +424,29 @@ public class Lizzie {
         }
     }
 
+    private static void storeBoardPngImageByFile(Path filePath) {
+        BufferedImage bufferedImage = Lizzie.frame.getCachedImage();
+        try (FileOutputStream stream = new FileOutputStream(filePath.toFile())) {
+            ImageIO.write(bufferedImage, "PNG", stream);
+        } catch (Exception e) {
+            if (StringUtils.isEmpty(e.getMessage())) {
+                JOptionPane.showMessageDialog(frame, "Error: cannot save png: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Error: cannot save png", "Lizzie", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
     public static void storeGameByPrompting() {
         FileNameExtensionFilter sgfFilter = new FileNameExtensionFilter("*.sgf", "SGF");
         FileNameExtensionFilter svgFilter = new FileNameExtensionFilter("*.svg", "SVG");
+        FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("*.png", "PNG");
 
         JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(sgfFilter);
         chooser.addChoosableFileFilter(svgFilter);
+        chooser.addChoosableFileFilter(pngFilter);
         chooser.setMultiSelectionEnabled(false);
 
         int result = chooser.showSaveDialog(frame);
@@ -438,11 +454,13 @@ public class Lizzie {
             File file = chooser.getSelectedFile();
             optionSetting.setLastChooserLocation(file.getParent());
 
-            if (!file.getPath().toLowerCase().endsWith(".sgf") && !file.getPath().toLowerCase().endsWith(".svg")) {
+            if (!file.getPath().toLowerCase().endsWith(".sgf") && !file.getPath().toLowerCase().endsWith(".svg") && !file.getPath().toLowerCase().endsWith(".png")) {
                 if (chooser.getFileFilter().equals(sgfFilter)) {
                     file = new File(file.getPath() + ".sgf");
-                } else {
+                } else if (chooser.getFileFilter().equals(svgFilter)) {
                     file = new File(file.getPath() + ".svg");
+                } else {
+                    file = new File(file.getPath() + ".png");
                 }
             }
 
@@ -455,8 +473,10 @@ public class Lizzie {
 
             if (file.getPath().toLowerCase().endsWith(".sgf")) {
                 storeGameByFile(file.toPath());
-            } else {
+            } else if (file.getPath().toLowerCase().endsWith(".svg")) {
                 storeBoardByFile(file.toPath());
+            } else {
+                storeBoardPngImageByFile(file.toPath());
             }
         }
     }

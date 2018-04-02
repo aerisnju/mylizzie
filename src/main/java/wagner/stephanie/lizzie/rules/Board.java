@@ -587,4 +587,13 @@ public class Board implements Closeable {
             }
         });
     }
+
+    public int[] getNextMoveCoordinate() {
+        BoardHistoryNode nextNode = history.getHead().getNext();
+        if (nextNode == null) {
+            return null;
+        } else {
+            return nextNode.getData().getLastMove();
+        }
+    }
 }

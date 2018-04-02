@@ -499,6 +499,18 @@ public class BoardRenderer {
                     drawString(g, suggestionX, suggestionY + stoneRadius * 2 / 5, "Open Sans", getPlayoutsString(move.getPlayouts()), (float) (stoneRadius * 0.8), stoneRadius * 1.4);
                 }
             }
+
+            int[] nextMove = Lizzie.board.getNextMoveCoordinate();
+            if (nextMove != null) {
+                if (Lizzie.board.getData().isBlackToPlay()) {
+                    g.setColor(Color.BLACK);
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+                int moveX = x + scaledMargin + squareLength * nextMove[0];
+                int moveY = y + scaledMargin + squareLength * nextMove[1];
+                drawCircle(g, moveX, moveY, stoneRadius + 1); // slightly outside best move circle
+            }
         }
     }
 

@@ -287,8 +287,18 @@ public class Lizzie {
             return;
         }
 
+        int treeCount = 0;
         for (VariationData variationData : data.getVariationDataList()) {
-            addVariationTree(baseNode, variationData);
+            // We only add variation whose playouts is greater than 200
+            if (variationData.getPlayouts() > 200) {
+                addVariationTree(baseNode, variationData);
+
+                ++treeCount;
+                // We only care for 5 or less variations
+                if (treeCount > 5) {
+                    break;
+                }
+            }
         }
     }
 

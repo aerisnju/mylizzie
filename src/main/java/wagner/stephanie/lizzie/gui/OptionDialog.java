@@ -51,10 +51,11 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxAutoEnterTryPlayingMode;
     private JLabel labelMainWindow;
     private JCheckBox checkBoxMainWindowAlwaysOnTop;
-    private JCheckBox checkBoxShowSuggestion;
+    private JCheckBox checkBoxShowBlackSuggestion;
     private JLabel labelMaxAnalysisTime;
     private JTextField textFieldMaxAnalysisTime;
     private JLabel labelMinute;
+    private JCheckBox checkBoxShowWhiteSuggestion;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -109,7 +110,9 @@ public class OptionDialog extends JDialog {
 
         checkBoxMouseMoveShow.setSelected(setting.isMouseOverShowMove());
 
-        checkBoxShowSuggestion.setSelected(setting.isShowSuggestion());
+        checkBoxShowBlackSuggestion.setSelected(setting.isShowBlackSuggestion());
+
+        checkBoxShowWhiteSuggestion.setSelected(setting.isShowWhiteSuggestion());
 
         textFieldLeelazCommandLine.setText(setting.getLeelazCommandLine());
 
@@ -162,7 +165,8 @@ public class OptionDialog extends JDialog {
         setting.setBoardColor(boardColor);
         setting.setAnalysisWindowShow(checkBoxAnalysisWindowShow.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
-        setting.setShowSuggestion(checkBoxShowSuggestion.isSelected());
+        setting.setShowBlackSuggestion(checkBoxShowBlackSuggestion.isSelected());
+        setting.setShowWhiteSuggestion(checkBoxShowWhiteSuggestion.isSelected());
         String newLeelazCommandLine = textFieldLeelazCommandLine.getText().trim();
         if (StringUtils.isEmpty(newLeelazCommandLine)) {
             setting.setLeelazCommandLine(new OptionSetting().getLeelazCommandLine());
@@ -205,7 +209,7 @@ public class OptionDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         readDialogSetting(Lizzie.optionSetting);
-        if (!Lizzie.optionSetting.isShowSuggestion() || !Lizzie.optionSetting.isAnalysisWindowShow()) {
+        if (!Lizzie.optionSetting.isShowBlackSuggestion() || !Lizzie.optionSetting.isShowWhiteSuggestion() || !Lizzie.optionSetting.isAnalysisWindowShow()) {
             Lizzie.analysisFrame.getAnalysisTableModel().clearSelectedMove();
         }
 
@@ -255,10 +259,11 @@ public class OptionDialog extends JDialog {
         checkBoxAutoEnterTryPlayingMode = new JCheckBox();
         labelMainWindow = new JLabel();
         checkBoxMainWindowAlwaysOnTop = new JCheckBox();
-        checkBoxShowSuggestion = new JCheckBox();
+        checkBoxShowBlackSuggestion = new JCheckBox();
         labelMaxAnalysisTime = new JLabel();
         textFieldMaxAnalysisTime = new JTextField();
         labelMinute = new JLabel();
+        checkBoxShowWhiteSuggestion = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -380,9 +385,9 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxMainWindowAlwaysOnTop ----
                 checkBoxMainWindowAlwaysOnTop.setText("Always on top");
 
-                //---- checkBoxShowSuggestion ----
-                checkBoxShowSuggestion.setText("Show");
-                checkBoxShowSuggestion.setSelected(true);
+                //---- checkBoxShowBlackSuggestion ----
+                checkBoxShowBlackSuggestion.setText("Show black");
+                checkBoxShowBlackSuggestion.setSelected(true);
 
                 //---- labelMaxAnalysisTime ----
                 labelMaxAnalysisTime.setText("Max time:");
@@ -393,148 +398,155 @@ public class OptionDialog extends JDialog {
                 //---- labelMinute ----
                 labelMinute.setText("minute(s)");
 
+                //---- checkBoxShowWhiteSuggestion ----
+                checkBoxShowWhiteSuggestion.setText("Show white");
+                checkBoxShowWhiteSuggestion.setSelected(true);
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
-                    contentPanelLayout.createParallelGroup()
-                        .addGroup(contentPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(contentPanelLayout.createParallelGroup()
+                        contentPanelLayout.createParallelGroup()
                                 .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addComponent(labelLeelazCommandLine)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 388, GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(buttonResetCommandLine, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addContainerGap())
-                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                    .addGroup(contentPanelLayout.createParallelGroup()
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelVariationLimit)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonV5)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonV10)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonV15)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonV30)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonUnlimited))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelAxisSetting)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonA1Top)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonA1Bottom))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelBoardColor)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonColorOriginal)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonColorBright)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonColorPureWhite))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelSuggestion)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxShowSuggestion)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxPlayoutsInShortForm))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelAnalysisModeOn)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxAnalysisWindowShow)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxMouseMoveShow)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(labelMaxAnalysisTime)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelMinute))
-                                        .addComponent(labelNotes)
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelMoveNumber)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxShowMoveNumber)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxMoveNumberLimit)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelMoveNumberLimitLabelTail))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelTryPlayingMode)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxAutoEnterTryPlayingMode))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelMainWindow)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxMainWindowAlwaysOnTop)))
-                                    .addGap(0, 0, Short.MAX_VALUE))))
+                                        .addContainerGap()
+                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addComponent(labelLeelazCommandLine)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 388, GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(buttonResetCommandLine, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addContainerGap())
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelVariationLimit)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonV5)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonV10)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonV15)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonV30)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonUnlimited))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelAxisSetting)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonA1Top)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonA1Bottom))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelBoardColor)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonColorOriginal)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonColorBright)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonColorPureWhite))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelSuggestion)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxShowBlackSuggestion)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxShowWhiteSuggestion)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxPlayoutsInShortForm))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelAnalysisModeOn)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxAnalysisWindowShow)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxMouseMoveShow)
+                                                                        .addGap(18, 18, 18)
+                                                                        .addComponent(labelMaxAnalysisTime)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(labelMinute))
+                                                                .addComponent(labelNotes)
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelMoveNumber)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxShowMoveNumber)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxMoveNumberLimit)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(labelMoveNumberLimitLabelTail))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelTryPlayingMode)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxAutoEnterTryPlayingMode))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelMainWindow)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxMainWindowAlwaysOnTop)))
+                                                        .addGap(0, 0, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
-                    contentPanelLayout.createParallelGroup()
-                        .addGroup(contentPanelLayout.createSequentialGroup()
-                            .addContainerGap()
-                            .addGroup(contentPanelLayout.createParallelGroup()
-                                .addComponent(radioButtonUnlimited)
-                                .addComponent(radioButtonV30)
-                                .addComponent(radioButtonV15)
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(labelVariationLimit)
-                                    .addComponent(radioButtonV5))
-                                .addComponent(radioButtonV10))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelAxisSetting, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(radioButtonA1Top)
-                                .addComponent(radioButtonA1Bottom))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup()
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(radioButtonColorOriginal)
-                                    .addComponent(labelBoardColor))
-                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                    .addComponent(radioButtonColorBright)
-                                    .addComponent(radioButtonColorPureWhite)))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelSuggestion)
-                                .addComponent(checkBoxPlayoutsInShortForm)
-                                .addComponent(checkBoxShowSuggestion))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelAnalysisModeOn)
-                                .addComponent(checkBoxAnalysisWindowShow)
-                                .addComponent(checkBoxMouseMoveShow)
-                                .addComponent(labelMaxAnalysisTime)
-                                .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(labelMinute))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelLeelazCommandLine)
-                                .addComponent(buttonResetCommandLine)
-                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelMoveNumber)
-                                .addComponent(checkBoxShowMoveNumber)
-                                .addComponent(checkBoxMoveNumberLimit)
-                                .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(labelMoveNumberLimitLabelTail))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelTryPlayingMode)
-                                .addComponent(checkBoxAutoEnterTryPlayingMode))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelMainWindow)
-                                .addComponent(checkBoxMainWindowAlwaysOnTop))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                            .addComponent(labelNotes)
-                            .addContainerGap())
+                        contentPanelLayout.createParallelGroup()
+                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addComponent(radioButtonUnlimited)
+                                                .addComponent(radioButtonV30)
+                                                .addComponent(radioButtonV15)
+                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelVariationLimit)
+                                                        .addComponent(radioButtonV5))
+                                                .addComponent(radioButtonV10))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelAxisSetting, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(radioButtonA1Top)
+                                                .addComponent(radioButtonA1Bottom))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(radioButtonColorOriginal)
+                                                        .addComponent(labelBoardColor))
+                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(radioButtonColorBright)
+                                                        .addComponent(radioButtonColorPureWhite)))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelSuggestion)
+                                                .addComponent(checkBoxPlayoutsInShortForm)
+                                                .addComponent(checkBoxShowBlackSuggestion)
+                                                .addComponent(checkBoxShowWhiteSuggestion))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelAnalysisModeOn)
+                                                .addComponent(checkBoxAnalysisWindowShow)
+                                                .addComponent(checkBoxMouseMoveShow)
+                                                .addComponent(labelMaxAnalysisTime)
+                                                .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(labelMinute))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelLeelazCommandLine)
+                                                .addComponent(buttonResetCommandLine)
+                                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelMoveNumber)
+                                                .addComponent(checkBoxShowMoveNumber)
+                                                .addComponent(checkBoxMoveNumberLimit)
+                                                .addComponent(textFieldMoveNumberLimitCount, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(labelMoveNumberLimitLabelTail))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelTryPlayingMode)
+                                                .addComponent(checkBoxAutoEnterTryPlayingMode))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelMainWindow)
+                                                .addComponent(checkBoxMainWindowAlwaysOnTop))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                                        .addComponent(labelNotes)
+                                        .addContainerGap())
                 );
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
@@ -543,22 +555,22 @@ public class OptionDialog extends JDialog {
             {
                 buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
                 buttonBar.setLayout(new GridBagLayout());
-                ((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
-                ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
+                ((GridBagLayout) buttonBar.getLayout()).columnWidths = new int[]{0, 85, 80};
+                ((GridBagLayout) buttonBar.getLayout()).columnWeights = new double[]{1.0, 0.0, 0.0};
 
                 //---- okButton ----
                 okButton.setText("OK");
                 okButton.addActionListener(e -> okButtonActionPerformed(e));
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 5), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- cancelButton ----
                 cancelButton.setText("Cancel");
                 cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
                 buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }

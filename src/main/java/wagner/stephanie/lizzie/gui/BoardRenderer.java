@@ -447,7 +447,8 @@ public class BoardRenderer {
      * Draw all of Leelaz's suggestions as colored stones with winrate/playout statistics overlayed
      */
     private void drawLeelazSuggestions(Graphics2D g) {
-        if (Lizzie.optionSetting.isShowSuggestion() && !bestMoves.isEmpty()) {
+        if ((Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowBlackSuggestion()
+                || !Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowWhiteSuggestion()) && !bestMoves.isEmpty()) {
             int maxPlayouts = bestMoves.stream().max(Comparator.comparingInt(MoveData::getPlayouts)).get().getPlayouts();
             for (MoveData move : bestMoves) {
                 boolean isBestMove = bestMoves.get(0) == move;

@@ -58,7 +58,8 @@ public class AnalysisFrame extends JPanel {
     }
 
     private void handleTableClick(int row, int col) {
-        if (Lizzie.optionSetting.isShowSuggestion()) {
+        if ((Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowBlackSuggestion()
+                || !Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowWhiteSuggestion())) {
             if (row == analysisTableModel.getSelectedMoveIndex()) {
                 analysisTable.clearSelection();
                 analysisTableModel.setSelectedMove(null);

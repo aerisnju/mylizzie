@@ -9,7 +9,8 @@ public class OptionSetting {
     private boolean playoutsInShortForm;
     private boolean analysisWindowShow;
     private boolean mouseOverShowMove;
-    private boolean showSuggestion;
+    private boolean showBlackSuggestion;
+    private boolean showWhiteSuggestion;
     private String leelazCommandLine;
     private boolean showMoveNumber;
     private int numberOfLastMovesShown;
@@ -40,7 +41,8 @@ public class OptionSetting {
         playoutsInShortForm = false;
         analysisWindowShow = true;
         mouseOverShowMove = false;
-        showSuggestion = true;
+        showBlackSuggestion = true;
+        showWhiteSuggestion = true;
         leelazCommandLine = "-g -t2 -wnetwork -b0";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
@@ -131,12 +133,20 @@ public class OptionSetting {
         this.showMoveNumber = showMoveNumber;
     }
 
-    public boolean isShowSuggestion() {
-        return showSuggestion;
+    public boolean isShowBlackSuggestion() {
+        return showBlackSuggestion;
     }
 
-    public void setShowSuggestion(boolean showSuggestion) {
-        this.showSuggestion = showSuggestion;
+    public void setShowBlackSuggestion(boolean showBlackSuggestion) {
+        this.showBlackSuggestion = showBlackSuggestion;
+    }
+
+    public boolean isShowWhiteSuggestion() {
+        return showWhiteSuggestion;
+    }
+
+    public void setShowWhiteSuggestion(boolean showWhiteSuggestion) {
+        this.showWhiteSuggestion = showWhiteSuggestion;
     }
 
     public int getNumberOfLastMovesShown() {

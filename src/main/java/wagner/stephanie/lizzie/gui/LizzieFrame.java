@@ -12,7 +12,6 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -26,7 +25,7 @@ public class LizzieFrame extends JFrame {
             , "right click | back"
             , "mouse wheel scroll | back/forward"
             , "key 'P' | pass"
-            , "key 'S' | Show/hide move number"
+            , "key 'N' | Show/hide move number"
             , "key 'O' | Show settings dialog"
             , "key 'C' | Clear board"
             , "key 'R' | Read SGF"
@@ -38,6 +37,7 @@ public class LizzieFrame extends JFrame {
             , "key 'H' | Show/hide winrate histogram window"
             , "key 'Home' | Go to initial board"
             , "key 'End' | Go to the last move"
+            , "key 'S' | Show/hide suggestions (for B or W)"
 
     };
     public static final String LIZZIE_TITLE = "Lizzie - Leela Zero Interface";
@@ -254,8 +254,10 @@ public class LizzieFrame extends JFrame {
     }
 
     private AtomicReference<int[]> lastBoardCoordinates = new AtomicReference<>();
+
     public void onMouseMove(int x, int y) {
-        if (Lizzie.optionSetting.isMouseOverShowMove() && Lizzie.optionSetting.isShowSuggestion()) {
+        if (Lizzie.optionSetting.isMouseOverShowMove() && (Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowBlackSuggestion()
+                || !Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowWhiteSuggestion())) {
             // check for board click
             int[] boardCoordinates = boardRenderer.convertScreenToCoordinates(x, y);
             int[] previousCoordinates = lastBoardCoordinates.getAndSet(boardCoordinates);

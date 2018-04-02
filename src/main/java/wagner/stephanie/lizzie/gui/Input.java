@@ -63,7 +63,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.leelaz.togglePonder();
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
             Lizzie.board.pass();
-        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+        } else if (e.getKeyCode() == KeyEvent.VK_N) {
             Lizzie.frame.toggleShowMoveNumber();
         } else if (e.getKeyCode() == KeyEvent.VK_O) {
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
@@ -118,6 +118,12 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.board.gotoMove(Lizzie.board.getData().getMoveNumber());
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             Lizzie.board.playBestMove();
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            if (Lizzie.board.getData().isBlackToPlay()) {
+                Lizzie.optionSetting.setShowBlackSuggestion(!Lizzie.optionSetting.isShowBlackSuggestion());
+            } else {
+                Lizzie.optionSetting.setShowWhiteSuggestion(!Lizzie.optionSetting.isShowWhiteSuggestion());
+            }
         }
 
         Lizzie.frame.repaint();

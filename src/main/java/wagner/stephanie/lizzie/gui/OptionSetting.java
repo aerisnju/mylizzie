@@ -1,11 +1,78 @@
 package wagner.stephanie.lizzie.gui;
 
+import com.google.common.primitives.Ints;
+
 import java.awt.*;
+import java.util.Objects;
 
 public class OptionSetting {
+    public static class BoardColor {
+        private int red;
+        private int green;
+        private int blue;
+
+        public BoardColor() {
+            this(178, 140, 0);
+        }
+
+        public BoardColor(int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+        }
+
+        public int getRed() {
+            return red;
+        }
+
+        public void setRed(int red) {
+            this.red = Ints.constrainToRange(red, 0, 255);
+        }
+
+        public int getGreen() {
+            return green;
+        }
+
+        public void setGreen(int green) {
+            this.green = Ints.constrainToRange(green, 0, 255);
+        }
+
+        public int getBlue() {
+            return blue;
+        }
+
+        public void setBlue(int blue) {
+            this.blue = Ints.constrainToRange(blue, 0, 255);
+        }
+
+        public Color toColor() {
+            return new Color(red, green, blue);
+        }
+
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            BoardColor that = (BoardColor) o;
+            return red == that.red &&
+                    green == that.green &&
+                    blue == that.blue;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(red, green, blue);
+        }
+    }
+
     private int variationLimit;
     private boolean a1OnTop;
-    private Color boardColor;
+    private boolean showFancyBoard;
+    private boolean showFancyStone;
+    private boolean showShadow;
+    private int shadowSize;
+    private BoardColor boardColor;
     private boolean playoutsInShortForm;
     private boolean analysisWindowShow;
     private boolean mouseOverShowMove;
@@ -37,7 +104,11 @@ public class OptionSetting {
     public OptionSetting() {
         variationLimit = Integer.MAX_VALUE;
         a1OnTop = false;
-        boardColor = new Color(0xf0, 0xd2, 0xa0);
+        showFancyBoard = true;
+        showFancyStone = true;
+        showShadow = true;
+        shadowSize = 100;
+        boardColor = new BoardColor();
         playoutsInShortForm = false;
         analysisWindowShow = true;
         mouseOverShowMove = false;
@@ -85,11 +156,43 @@ public class OptionSetting {
         this.a1OnTop = a1OnTop;
     }
 
-    public Color getBoardColor() {
+    public boolean isShowFancyBoard() {
+        return showFancyBoard;
+    }
+
+    public void setShowFancyBoard(boolean showFancyBoard) {
+        this.showFancyBoard = showFancyBoard;
+    }
+
+    public boolean isShowFancyStone() {
+        return showFancyStone;
+    }
+
+    public void setShowFancyStone(boolean showFancyStone) {
+        this.showFancyStone = showFancyStone;
+    }
+
+    public boolean isShowShadow() {
+        return showShadow;
+    }
+
+    public void setShowShadow(boolean showShadow) {
+        this.showShadow = showShadow;
+    }
+
+    public int getShadowSize() {
+        return shadowSize;
+    }
+
+    public void setShadowSize(int shadowSize) {
+        this.shadowSize = shadowSize;
+    }
+
+    public BoardColor getBoardColor() {
         return boardColor;
     }
 
-    public void setBoardColor(Color boardColor) {
+    public void setBoardColor(BoardColor boardColor) {
         this.boardColor = boardColor;
     }
 

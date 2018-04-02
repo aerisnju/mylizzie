@@ -122,13 +122,18 @@ public class LizzieFrame extends JFrame {
 
         int topInset = this.getInsets().top;
 
-        try {
-            BufferedImage background = AssetsManager.getAssetsManager().getImageAsset("assets/background.jpg");
-            int drawWidth = Math.max(background.getWidth(), getWidth());
-            int drawHeight = Math.max(background.getHeight(), getHeight());
-            g.drawImage(background, 0, 0, drawWidth, drawHeight, null);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (Lizzie.optionSetting.isShowFancyBoard()) {
+            try {
+                BufferedImage background = AssetsManager.getAssetsManager().getImageAsset("assets/background.jpg");
+                int drawWidth = Math.max(background.getWidth(), getWidth());
+                int drawHeight = Math.max(background.getHeight(), getHeight());
+                g.drawImage(background, 0, 0, drawWidth, drawHeight, null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            g.setColor(Color.GREEN.darker().darker());
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
 
         int maxSize = (int) (Math.min(getWidth(), getHeight() - topInset) * 0.98);

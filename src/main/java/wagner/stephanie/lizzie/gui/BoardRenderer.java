@@ -18,13 +18,6 @@ public class BoardRenderer {
     private static final double MARGIN = 0.06; // percentage of the boardLength to offset before drawing black lines
     private static final double STARPOINT_DIAMETER = 0.015;
 
-    // Configs
-    private boolean fancyStones = true;
-    private boolean fancyBoard = true;
-    private boolean shadowEnabled = true;
-    private int shadowSizeConfigured = 100;
-
-
     private int x, y;
     private int boardLength;
 
@@ -510,7 +503,7 @@ public class BoardRenderer {
     }
 
     private void drawWoodenBoard(Graphics2D g) {
-        if (fancyBoard) {
+        if (Lizzie.optionSetting.isShowFancyBoard()) {
             // fancy version
             try {
                 int shadowRadius = (int) (boardLength * MARGIN / 6);
@@ -527,7 +520,7 @@ public class BoardRenderer {
         } else {
             // simple version
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setColor(Lizzie.optionSetting.getBoardColor());
+            g.setColor(Lizzie.optionSetting.getBoardColor().toColor());
             g.fillRect(x, y, boardLength, boardLength);
         }
     }
@@ -563,11 +556,11 @@ public class BoardRenderer {
     }
 
     private void drawShadow(Graphics2D g, int centerX, int centerY, boolean isGhost, float shadowStrength) {
-        if (!shadowEnabled)
+        if (!Lizzie.optionSetting.isShowShadow())
             return;
 
-        final int shadowSize = (int) (stoneRadius * 0.3 * shadowSizeConfigured / 100);
-        final int fartherShadowSize = (int) (stoneRadius * 0.17 * shadowSizeConfigured / 100);
+        final int shadowSize = (int) (stoneRadius * 0.3 * Lizzie.optionSetting.getShadowSize() / 100);
+        final int fartherShadowSize = (int) (stoneRadius * 0.17 * Lizzie.optionSetting.getShadowSize() / 100);
 
 
         final Paint TOP_GRADIENT_PAINT;
@@ -622,7 +615,7 @@ public class BoardRenderer {
 
         switch (color) {
             case BLACK:
-                if (fancyStones) {
+                if (Lizzie.optionSetting.isShowFancyStone()) {
                     drawShadow(gShadow, centerX, centerY, false);
                     try {
                         g.drawImage(AssetsManager.getAssetsManager().getImageAsset("assets/black0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
@@ -637,7 +630,7 @@ public class BoardRenderer {
                 break;
 
             case WHITE:
-                if (fancyStones) {
+                if (Lizzie.optionSetting.isShowFancyStone()) {
                     drawShadow(gShadow, centerX, centerY, false);
                     try {
                         g.drawImage(AssetsManager.getAssetsManager().getImageAsset("assets/white0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
@@ -654,7 +647,7 @@ public class BoardRenderer {
                 break;
 
             case BLACK_GHOST:
-                if (fancyStones) {
+                if (Lizzie.optionSetting.isShowFancyStone()) {
                     drawShadow(gShadow, centerX, centerY, true);
                     try {
                         g.drawImage(AssetsManager.getAssetsManager().getImageAsset("assets/black0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
@@ -669,7 +662,7 @@ public class BoardRenderer {
                 break;
 
             case WHITE_GHOST:
-                if (fancyStones) {
+                if (Lizzie.optionSetting.isShowFancyStone()) {
                     drawShadow(gShadow, centerX, centerY, true);
                     try {
                         g.drawImage(AssetsManager.getAssetsManager().getImageAsset("assets/white0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);

@@ -4,6 +4,7 @@
 
 package wagner.stephanie.lizzie.gui;
 
+import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
 
@@ -29,10 +30,9 @@ public class OptionDialog extends JDialog {
     private JLabel labelAxisSetting;
     private JRadioButton radioButtonA1Top;
     private JRadioButton radioButtonA1Bottom;
-    private JLabel labelBoardColor;
-    private JRadioButton radioButtonColorOriginal;
-    private JRadioButton radioButtonColorBright;
-    private JRadioButton radioButtonColorPureWhite;
+    private JLabel labelBoardDisplay;
+    private JRadioButton radioButtonBoardClassic;
+    private JRadioButton radioButtonBoardFancy;
     private JLabel labelSuggestion;
     private JLabel labelAnalysisModeOn;
     private JCheckBox checkBoxAnalysisWindowShow;
@@ -56,6 +56,16 @@ public class OptionDialog extends JDialog {
     private JTextField textFieldMaxAnalysisTime;
     private JLabel labelMinute;
     private JCheckBox checkBoxShowWhiteSuggestion;
+    private JLabel labelColorRed;
+    private JSpinner spinnerColorRed;
+    private JLabel labelColorGreen;
+    private JSpinner spinnerColorGreen;
+    private JLabel labelColorBlue;
+    private JSpinner spinnerColorBlue;
+    private JCheckBox checkBoxFancyStones;
+    private JLabel labelShadow;
+    private JCheckBox checkBoxShowShadow;
+    private JSpinner spinnerShadowSize;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -96,13 +106,20 @@ public class OptionDialog extends JDialog {
             radioButtonA1Bottom.setSelected(true);
         }
 
-        if (setting.getBoardColor().equals(Color.WHITE)) {
-            radioButtonColorPureWhite.setSelected(true);
-        } else if (setting.getBoardColor().equals(Color.ORANGE.darker())) {
-            radioButtonColorOriginal.setSelected(true);
+        if (setting.isShowFancyBoard()) {
+            radioButtonBoardFancy.setSelected(true);
         } else {
-            radioButtonColorBright.setSelected(true);
+            radioButtonBoardClassic.setSelected(true);
         }
+
+        spinnerColorRed.setValue(setting.getBoardColor().getRed());
+        spinnerColorGreen.setValue(setting.getBoardColor().getGreen());
+        spinnerColorBlue.setValue(setting.getBoardColor().getBlue());
+
+        checkBoxFancyStones.setSelected(setting.isShowFancyStone());
+
+        checkBoxShowShadow.setSelected(setting.isShowShadow());
+        spinnerShadowSize.setValue(Ints.constrainToRange(setting.getShadowSize(), 0, 999));
 
         checkBoxPlayoutsInShortForm.setSelected(setting.isPlayoutsInShortForm());
 
@@ -150,19 +167,15 @@ public class OptionDialog extends JDialog {
             variationLimit = Integer.MAX_VALUE;
         }
 
-        Color boardColor;
-        if (radioButtonColorBright.isSelected()) {
-            boardColor = new Color(0xf0, 0xd2, 0xa0);
-        } else if (radioButtonColorOriginal.isSelected()) {
-            boardColor = Color.ORANGE.darker();
-        } else {
-            boardColor = Color.WHITE;
-        }
+        setting.setShowFancyBoard(radioButtonBoardFancy.isSelected());
+        setting.setBoardColor(new OptionSetting.BoardColor((Integer) spinnerColorRed.getValue(), (Integer) spinnerColorGreen.getValue(), (Integer) spinnerColorBlue.getValue()));
+        setting.setShowFancyStone(checkBoxFancyStones.isSelected());
+        setting.setShowShadow(checkBoxShowShadow.isSelected());
+        setting.setShadowSize((Integer) spinnerShadowSize.getValue());
 
         setting.setVariationLimit(variationLimit);
         setting.setPlayoutsInShortForm(checkBoxPlayoutsInShortForm.isSelected());
         setting.setA1OnTop(radioButtonA1Top.isSelected());
-        setting.setBoardColor(boardColor);
         setting.setAnalysisWindowShow(checkBoxAnalysisWindowShow.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
         setting.setShowBlackSuggestion(checkBoxShowBlackSuggestion.isSelected());
@@ -216,6 +229,8 @@ public class OptionDialog extends JDialog {
         Lizzie.analysisDialog.setVisible(Lizzie.optionSetting.isAnalysisWindowShow());
         Lizzie.frame.setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         Lizzie.frame.getBoardRenderer().forceCachedBackgroundImageRefresh();
+        Lizzie.frame.getBoardRenderer().forceCachedStoneImageRefresh();
+        Lizzie.frame.repaint();
         setVisible(false);
     }
 
@@ -237,10 +252,9 @@ public class OptionDialog extends JDialog {
         labelAxisSetting = new JLabel();
         radioButtonA1Top = new JRadioButton();
         radioButtonA1Bottom = new JRadioButton();
-        labelBoardColor = new JLabel();
-        radioButtonColorOriginal = new JRadioButton();
-        radioButtonColorBright = new JRadioButton();
-        radioButtonColorPureWhite = new JRadioButton();
+        labelBoardDisplay = new JLabel();
+        radioButtonBoardClassic = new JRadioButton();
+        radioButtonBoardFancy = new JRadioButton();
         labelSuggestion = new JLabel();
         labelAnalysisModeOn = new JLabel();
         checkBoxAnalysisWindowShow = new JCheckBox();
@@ -264,6 +278,16 @@ public class OptionDialog extends JDialog {
         textFieldMaxAnalysisTime = new JTextField();
         labelMinute = new JLabel();
         checkBoxShowWhiteSuggestion = new JCheckBox();
+        labelColorRed = new JLabel();
+        spinnerColorRed = new JSpinner();
+        labelColorGreen = new JLabel();
+        spinnerColorGreen = new JSpinner();
+        labelColorBlue = new JLabel();
+        spinnerColorBlue = new JSpinner();
+        checkBoxFancyStones = new JCheckBox();
+        labelShadow = new JLabel();
+        checkBoxShowShadow = new JCheckBox();
+        spinnerShadowSize = new JSpinner();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -311,21 +335,15 @@ public class OptionDialog extends JDialog {
                 radioButtonA1Bottom.setText("A1 is on bottom(Yike, Yicheng, Zen, .etc)");
                 radioButtonA1Bottom.setSelected(true);
 
-                //---- labelBoardColor ----
-                labelBoardColor.setText("Board color:");
+                //---- labelBoardDisplay ----
+                labelBoardDisplay.setText("Board display:");
 
-                //---- radioButtonColorOriginal ----
-                radioButtonColorOriginal.setText("Original");
-                radioButtonColorOriginal.setEnabled(false);
+                //---- radioButtonBoardClassic ----
+                radioButtonBoardClassic.setText("Classic:");
 
-                //---- radioButtonColorBright ----
-                radioButtonColorBright.setText("Bright");
-                radioButtonColorBright.setSelected(true);
-                radioButtonColorBright.setEnabled(false);
-
-                //---- radioButtonColorPureWhite ----
-                radioButtonColorPureWhite.setText("Pure white");
-                radioButtonColorPureWhite.setEnabled(false);
+                //---- radioButtonBoardFancy ----
+                radioButtonBoardFancy.setText("Fancy");
+                radioButtonBoardFancy.setSelected(true);
 
                 //---- labelSuggestion ----
                 labelSuggestion.setText("Suggestions:");
@@ -402,6 +420,38 @@ public class OptionDialog extends JDialog {
                 checkBoxShowWhiteSuggestion.setText("Show white");
                 checkBoxShowWhiteSuggestion.setSelected(true);
 
+                //---- labelColorRed ----
+                labelColorRed.setText("R");
+
+                //---- spinnerColorRed ----
+                spinnerColorRed.setModel(new SpinnerNumberModel(178, 0, 255, 1));
+
+                //---- labelColorGreen ----
+                labelColorGreen.setText("G");
+
+                //---- spinnerColorGreen ----
+                spinnerColorGreen.setModel(new SpinnerNumberModel(140, 0, 255, 1));
+
+                //---- labelColorBlue ----
+                labelColorBlue.setText("B");
+
+                //---- spinnerColorBlue ----
+                spinnerColorBlue.setModel(new SpinnerNumberModel(0, 0, 255, 1));
+
+                //---- checkBoxFancyStones ----
+                checkBoxFancyStones.setText("Fancy stones");
+                checkBoxFancyStones.setSelected(true);
+
+                //---- labelShadow ----
+                labelShadow.setText("Stone shadow:");
+
+                //---- checkBoxShowShadow ----
+                checkBoxShowShadow.setText("Show. Shadow size:");
+                checkBoxShowShadow.setSelected(true);
+
+                //---- spinnerShadowSize ----
+                spinnerShadowSize.setModel(new SpinnerNumberModel(100, 0, 999, 1));
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -437,22 +487,6 @@ public class OptionDialog extends JDialog {
                                                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                                         .addComponent(radioButtonA1Bottom))
                                                                 .addGroup(contentPanelLayout.createSequentialGroup()
-                                                                        .addComponent(labelBoardColor)
-                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(radioButtonColorOriginal)
-                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(radioButtonColorBright)
-                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(radioButtonColorPureWhite))
-                                                                .addGroup(contentPanelLayout.createSequentialGroup()
-                                                                        .addComponent(labelSuggestion)
-                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(checkBoxShowBlackSuggestion)
-                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(checkBoxShowWhiteSuggestion)
-                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(checkBoxPlayoutsInShortForm))
-                                                                .addGroup(contentPanelLayout.createSequentialGroup()
                                                                         .addComponent(labelAnalysisModeOn)
                                                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                                         .addComponent(checkBoxAnalysisWindowShow)
@@ -482,8 +516,42 @@ public class OptionDialog extends JDialog {
                                                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                                                         .addComponent(labelMainWindow)
                                                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                        .addComponent(checkBoxMainWindowAlwaysOnTop)))
-                                                        .addGap(0, 0, Short.MAX_VALUE))))
+                                                                        .addComponent(checkBoxMainWindowAlwaysOnTop))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelSuggestion)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxShowBlackSuggestion)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxShowWhiteSuggestion)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxPlayoutsInShortForm))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelBoardDisplay)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonBoardFancy)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(radioButtonBoardClassic)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(labelColorRed)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(spinnerColorRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(labelColorGreen)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(spinnerColorGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(labelColorBlue)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(spinnerColorBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxFancyStones))
+                                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                                        .addComponent(labelShadow)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(checkBoxShowShadow)
+                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                        .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                                                        .addGap(0, 80, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                         contentPanelLayout.createParallelGroup()
@@ -503,19 +571,28 @@ public class OptionDialog extends JDialog {
                                                 .addComponent(radioButtonA1Top)
                                                 .addComponent(radioButtonA1Bottom))
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(contentPanelLayout.createParallelGroup()
-                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(radioButtonColorOriginal)
-                                                        .addComponent(labelBoardColor))
-                                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(radioButtonColorBright)
-                                                        .addComponent(radioButtonColorPureWhite)))
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelBoardDisplay)
+                                                .addComponent(radioButtonBoardFancy)
+                                                .addComponent(radioButtonBoardClassic)
+                                                .addComponent(labelColorRed)
+                                                .addComponent(spinnerColorRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(labelColorGreen)
+                                                .addComponent(spinnerColorGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(labelColorBlue)
+                                                .addComponent(spinnerColorBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(checkBoxFancyStones))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                .addComponent(labelShadow)
+                                                .addComponent(checkBoxShowShadow)
+                                                .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                                 .addComponent(labelSuggestion)
-                                                .addComponent(checkBoxPlayoutsInShortForm)
                                                 .addComponent(checkBoxShowBlackSuggestion)
-                                                .addComponent(checkBoxShowWhiteSuggestion))
+                                                .addComponent(checkBoxShowWhiteSuggestion)
+                                                .addComponent(checkBoxPlayoutsInShortForm))
                                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                                 .addComponent(labelAnalysisModeOn)
@@ -544,7 +621,7 @@ public class OptionDialog extends JDialog {
                                         .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                                 .addComponent(labelMainWindow)
                                                 .addComponent(checkBoxMainWindowAlwaysOnTop))
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(labelNotes)
                                         .addContainerGap())
                 );
@@ -593,9 +670,8 @@ public class OptionDialog extends JDialog {
 
         //---- buttonGroupBoardColor ----
         ButtonGroup buttonGroupBoardColor = new ButtonGroup();
-        buttonGroupBoardColor.add(radioButtonColorOriginal);
-        buttonGroupBoardColor.add(radioButtonColorBright);
-        buttonGroupBoardColor.add(radioButtonColorPureWhite);
+        buttonGroupBoardColor.add(radioButtonBoardClassic);
+        buttonGroupBoardColor.add(radioButtonBoardFancy);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 }

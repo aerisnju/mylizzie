@@ -116,6 +116,8 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.board.gotoMove(0);
         } else if (e.getKeyCode() == KeyEvent.VK_END) {
             Lizzie.board.gotoMove(Lizzie.board.getData().getMoveNumber());
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            Lizzie.board.playBestMove();
         }
 
         Lizzie.frame.repaint();

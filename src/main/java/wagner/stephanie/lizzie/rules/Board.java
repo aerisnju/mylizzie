@@ -1,6 +1,7 @@
 package wagner.stephanie.lizzie.rules;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import wagner.stephanie.lizzie.Lizzie;
@@ -12,6 +13,7 @@ import java.io.Closeable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,9 +41,11 @@ public class Board implements Closeable {
         bestMoveObserver = new BestMoveObserver() {
             @Override
             public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
-                if (CollectionUtils.isNotEmpty(newBestMoves) && boardStateCount == getData().getMoveNumber()) {
-                    BoardData boardData = getData();
-                    boardData.tryUpdateVariationInfo(newBestMoves);
+                synchronized (Board.this) {
+                    if (CollectionUtils.isNotEmpty(newBestMoves) && boardStateCount == getData().getMoveNumber()) {
+                        BoardData boardData = getData();
+                        boardData.tryUpdateVariationInfo(newBestMoves);
+                    }
                 }
             }
 
@@ -568,5 +572,19 @@ public class Board implements Closeable {
     protected void finalize() throws Throwable {
         close();
         super.finalize();
+    }
+
+    public void playBestMove() {
+        Optional<int[]> bestMove;
+        synchronized (this) {
+            bestMove = history.getData().getBestMove();
+        }
+        bestMove.ifPresent(coordinates -> {
+            if (ArrayUtils.isNotEmpty(coordinates) && coordinates.length == 2 && Board.isValid(coordinates[0], coordinates[1])) {
+                place(coordinates[0], coordinates[1]);
+            } else {
+                pass();
+            }
+        });
     }
 }

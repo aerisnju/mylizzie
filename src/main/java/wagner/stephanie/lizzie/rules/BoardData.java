@@ -161,15 +161,17 @@ public class BoardData {
         if (CollectionUtils.isEmpty(newMoveDataList)) {
             return;
         }
-        if (CollectionUtils.isEmpty(variationDataList)) {
-            variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
-        } else {
-            int totalCalculation = variationDataList.stream().mapToInt(VariationData::getPlayouts).sum();
-            int newTotalCalculation = newMoveDataList.stream().mapToInt(MoveData::getPlayouts).sum();
-            if (newTotalCalculation > totalCalculation) {
-                variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
-            }
-        }
+        // FIXME: Due to boardStateCount cannot sync with bestMoves, we may receive previous move's variations
+//        if (CollectionUtils.isEmpty(variationDataList)) {
+//            variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
+//        } else {
+//            int totalCalculation = variationDataList.stream().mapToInt(VariationData::getPlayouts).sum();
+//            int newTotalCalculation = newMoveDataList.stream().mapToInt(MoveData::getPlayouts).sum();
+//            if (newTotalCalculation > totalCalculation) {
+//                variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
+//            }
+//        }
+        variationDataList = newMoveDataList.stream().map(VariationData::new).collect(Collectors.toList());
     }
 
     public int coordsToIndex(int row, int col) {
@@ -191,6 +193,19 @@ public class BoardData {
             return moveNumberListOnBoard[index];
         } catch (ArrayIndexOutOfBoundsException e) {
             return 0;
+        }
+    }
+
+    public Optional<int[]> getBestMove() {
+        if (CollectionUtils.isEmpty(variationDataList)) {
+            return Optional.empty();
+        }
+
+        VariationData bestVariation = variationDataList.get(0);
+        if (CollectionUtils.isEmpty(bestVariation.getVariation())) {
+            return Optional.empty();
+        } else {
+            return Optional.ofNullable(bestVariation.getVariation().get(0));
         }
     }
 }

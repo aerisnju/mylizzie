@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * an interface with leelaz.exe go engine. Can be adapted for GTP, but is specifically designed for GCP's Leela Zero.
@@ -173,7 +174,8 @@ public class Leelaz implements Closeable {
             while ((c = inputStream.read()) != -1) {
                 line.append((char) c);
                 if ((c == '\n')) {
-                    parseLine(line.toString());
+                    final String lineString = line.toString();
+                    miscExecutor.execute(() -> parseLine(lineString));
                     line = new StringBuilder();
                 }
             }
@@ -269,7 +271,20 @@ public class Leelaz implements Closeable {
      * End the process
      */
     public void shutdown() {
-        process.destroy();
+        if (process.isAlive()) {
+            stopPonder();
+            sendCommand("quit");
+
+            try {
+                process.waitFor(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                // Do nothing
+            }
+
+            if (process.isAlive()) {
+                process.destroy();
+            }
+        }
     }
 
     public List<MoveData> getBestMoves() {

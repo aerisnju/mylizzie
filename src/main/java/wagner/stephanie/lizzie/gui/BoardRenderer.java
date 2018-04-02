@@ -357,7 +357,7 @@ public class BoardRenderer {
                     int stoneY = y + scaledMargin + squareLength * j;
 
                     int index = Board.getIndex(i, j);
-                    if (lastMoveNumber - moveNumberList[index] > Lizzie.optionSetting.getNumberOfLastMovesShown()) {
+                    if (lastMoveNumber - moveNumberList[index] >= Lizzie.optionSetting.getNumberOfLastMovesShown()) {
                         continue;
                     }
 

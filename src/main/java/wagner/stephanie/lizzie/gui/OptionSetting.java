@@ -74,6 +74,7 @@ public class OptionSetting {
     private int shadowSize;
     private BoardColor boardColor;
     private boolean playoutsInShortForm;
+    private boolean showNextMove;
     private boolean analysisWindowShow;
     private boolean mouseOverShowMove;
     private boolean showBlackSuggestion;
@@ -110,6 +111,7 @@ public class OptionSetting {
         shadowSize = 100;
         boardColor = new BoardColor();
         playoutsInShortForm = false;
+        showNextMove = false;
         analysisWindowShow = true;
         mouseOverShowMove = false;
         showBlackSuggestion = true;
@@ -202,6 +204,14 @@ public class OptionSetting {
 
     public void setPlayoutsInShortForm(boolean playoutsInShortForm) {
         this.playoutsInShortForm = playoutsInShortForm;
+    }
+
+    public boolean isShowNextMove() {
+        return showNextMove;
+    }
+
+    public void setShowNextMove(boolean showNextMove) {
+        this.showNextMove = showNextMove;
     }
 
     public boolean isAnalysisWindowShow() {

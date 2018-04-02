@@ -501,7 +501,7 @@ public class BoardRenderer {
             }
 
             int[] nextMove = Lizzie.board.getNextMoveCoordinate();
-            if (nextMove != null) {
+            if (Lizzie.optionSetting.isShowNextMove() && nextMove != null) {
                 if (Lizzie.board.getData().isBlackToPlay()) {
                     g.setColor(Color.BLACK);
                 } else {

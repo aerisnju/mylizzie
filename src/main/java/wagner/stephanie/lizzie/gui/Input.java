@@ -55,7 +55,15 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.analysisFrame.getAnalysisTableModel().setSelectedMove(null);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if (e.getKeyCode() == KeyEvent.VK_O && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
+                || e.getKeyCode() == KeyEvent.VK_R) {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.loadGameByPrompting();
+        } else if (e.getKeyCode() == KeyEvent.VK_S && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
+                || e.getKeyCode() == KeyEvent.VK_W) {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.storeGameByPrompting();
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             Lizzie.board.nextMove();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             Lizzie.board.previousMove();
@@ -71,12 +79,6 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_C) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.clearBoardAndState();
-        } else if (e.getKeyCode() == KeyEvent.VK_R) {
-            Lizzie.board.leaveTryPlayState();
-            Lizzie.loadGameByPrompting();
-        } else if (e.getKeyCode() == KeyEvent.VK_W) {
-            Lizzie.board.leaveTryPlayState();
-            Lizzie.storeGameByPrompting();
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
                     , "Enter move number you want to go:\ne.g. 78 - Jump to move No. 78\n-15 - move backward 15 steps\n+15 move forward 15 steps.", "Lizzie", JOptionPane.QUESTION_MESSAGE);

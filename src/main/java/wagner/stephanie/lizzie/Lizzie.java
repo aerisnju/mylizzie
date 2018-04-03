@@ -17,11 +17,15 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -98,10 +102,13 @@ public class Lizzie {
 
     public static void loadGameByPrompting() {
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.sgf", "SGF");
-        JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
+        final JFileChooser chooser = new JFileChooser(optionSetting.getLastChooserLocation());
         chooser.addChoosableFileFilter(filter);
         chooser.setMultiSelectionEnabled(false);
         chooser.setAcceptAllFileFilterUsed(false);
+
+        setFileChooserAutoFocusOnTextField(chooser);
+
         int state = chooser.showOpenDialog(frame);
         if (state == JFileChooser.APPROVE_OPTION) {
             optionSetting.setLastChooserLocation(chooser.getSelectedFile().toPath().getParent().toString());
@@ -113,6 +120,31 @@ public class Lizzie {
 
             loadGameByFile(file.toPath());
         }
+    }
+
+    private static void setFileChooserAutoFocusOnTextField(JFileChooser chooser) {
+        chooser.addHierarchyListener(new HierarchyListener() {
+            public void hierarchyChanged(HierarchyEvent he) {
+                grabFocusForTextField(chooser.getComponents());
+            }
+
+            // Loop to find the JTextField, the first
+            // JTextField in JFileChooser
+            // Even if you setAccessory which contains a JTextField
+            // or which is JTextField itself, it will not get focus
+            private void grabFocusForTextField(Component[] components) {
+                for (Component component : components) {
+                    if (component instanceof JTextField) {
+                        JTextField textField = (JTextField) component;
+                        textField.grabFocus();
+                        break;
+                    } else if (component instanceof JPanel) {
+                        JPanel panel = (JPanel) component;
+                        grabFocusForTextField(panel.getComponents());
+                    }
+                }
+            }
+        });
     }
 
     private static class MoveReplayer {
@@ -458,6 +490,8 @@ public class Lizzie {
         chooser.addChoosableFileFilter(svgFilter);
         chooser.addChoosableFileFilter(pngFilter);
         chooser.setMultiSelectionEnabled(false);
+
+        setFileChooserAutoFocusOnTextField(chooser);
 
         int result = chooser.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {

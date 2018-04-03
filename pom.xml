@@ -33,8 +33,9 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- Because shade plugins are used, we do not need to copy libs. -->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
                             <mainClass>wagner.stephanie.lizzie.Lizzie</mainClass>
                         </manifest>
                     </archive>
@@ -46,26 +47,54 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <!-- 只包含运行库，测试用的库不copy -->
-                            <includeScope>runtime</includeScope>
-                            <outputDirectory>${project.build.directory}/distribution/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
+
+                <!-- Because shade plugins are used, we do not need to copy libs. -->
+                <!--<executions>-->
+                <!--<execution>-->
+                <!--<id>copy-dependencies</id>-->
+                <!--<phase>package</phase>-->
+                <!--<goals>-->
+                <!--<goal>copy-dependencies</goal>-->
+                <!--</goals>-->
+
+                <!--<configuration>-->
+                <!--&lt;!&ndash; Only copy runtime libraries, excluding test libraries. &ndash;&gt;-->
+                <!--<includeScope>runtime</includeScope>-->
+                <!--<outputDirectory>${project.build.directory}/distribution/lib</outputDirectory>-->
+                <!--</configuration>-->
+                <!--</execution>-->
+                <!--</executions>-->
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20.1</version>
+                <version>2.21.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>wagner.stephanie.lizzie.Lizzie</mainClass>
+                                </transformer>
+                            </transformers>
+                            <outputDirectory>${project.build.directory}/distribution</outputDirectory>
+                            <dependencyReducedPomLocation>${project.build.directory}/distribution/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

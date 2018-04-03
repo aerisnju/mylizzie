@@ -90,7 +90,9 @@
                                 </transformer>
                             </transformers>
                             <outputDirectory>${project.build.directory}/distribution</outputDirectory>
-                            <dependencyReducedPomLocation>${project.build.directory}/distribution/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                            <dependencyReducedPomLocation>
+                                ${project.build.directory}/distribution/dependency-reduced-pom.xml
+                            </dependencyReducedPomLocation>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                         </configuration>
                     </execution>

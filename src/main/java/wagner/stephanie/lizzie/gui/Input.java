@@ -76,7 +76,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_O) {
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
             Lizzie.optionDialog.setVisible(true);
-        } else if (e.getKeyCode() == KeyEvent.VK_C) {
+        } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.ALT_MASK) != 0) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.clearBoardAndState();
         } else if (e.getKeyCode() == KeyEvent.VK_G) {

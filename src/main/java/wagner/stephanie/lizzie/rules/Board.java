@@ -474,7 +474,7 @@ public class Board implements Closeable {
     /**
      * Goes to the next coordinate, thread safe
      */
-    public void nextMove() {
+    public boolean nextMove() {
         synchronized (this) {
             BoardHistoryNode oldHead = history.getHead();
             if (history.next() != null) {
@@ -494,6 +494,9 @@ public class Board implements Closeable {
                         Lizzie.leelaz.ponder();
                     });
                 }
+                return true;
+            } else {
+                return false;
             }
         }
     }
@@ -505,7 +508,7 @@ public class Board implements Closeable {
     /**
      * Goes to the previous coordinate, thread safe
      */
-    public void previousMove() {
+    public boolean previousMove() {
         synchronized (this) {
             BoardHistoryNode oldHead = history.getHead();
             if (history.previous() != null) {
@@ -515,6 +518,10 @@ public class Board implements Closeable {
                     Lizzie.leelaz.undo();
                     Lizzie.leelaz.ponder();
                 });
+
+                return true;
+            } else {
+                return false;
             }
         }
     }
@@ -542,13 +549,17 @@ public class Board implements Closeable {
 
     private void goForward(int count) {
         for (int i = 0; i < count; ++i) {
-            nextMove();
+            if (!nextMove()) {
+                break;
+            }
         }
     }
 
     private void goBackward(int count) {
         for (int i = 0; i < count; ++i) {
-            previousMove();
+            if (!previousMove()) {
+                break;
+            }
         }
     }
 

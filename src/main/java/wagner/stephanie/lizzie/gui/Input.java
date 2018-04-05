@@ -51,10 +51,6 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() != KeyEvent.VK_W) {
-            Lizzie.analysisFrame.getAnalysisTableModel().setSelectedMove(null);
-        }
-
         if (e.getKeyCode() == KeyEvent.VK_O && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
                 || e.getKeyCode() == KeyEvent.VK_R) {
             Lizzie.board.leaveTryPlayState();
@@ -145,7 +141,6 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        Lizzie.analysisFrame.getAnalysisTableModel().setSelectedMove(null);
         if (e.getWheelRotation() > 0) {
             Lizzie.board.nextMove();
         } else if (e.getWheelRotation() < 0) {

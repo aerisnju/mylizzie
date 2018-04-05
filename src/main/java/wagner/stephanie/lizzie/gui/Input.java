@@ -63,6 +63,10 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 || e.getKeyCode() == KeyEvent.VK_W) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.storeGameByPrompting();
+        } if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+            Lizzie.copyGameToClipboardInSgf();
+        } if (e.getKeyCode() == KeyEvent.VK_V && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+            Lizzie.pasteGameFromClipboardInSgf();
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             Lizzie.board.nextMove();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {

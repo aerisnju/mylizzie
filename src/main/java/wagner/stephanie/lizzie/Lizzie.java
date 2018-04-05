@@ -8,6 +8,9 @@ import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.gui.*;
@@ -18,6 +21,10 @@ import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
@@ -32,6 +39,8 @@ import java.util.stream.Collectors;
  * Main class.
  */
 public class Lizzie {
+    private static final Logger logger = LogManager.getLogger(Lizzie.class);
+
     public static final String SETTING_FILE = "mylizzie.json";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -147,6 +156,40 @@ public class Lizzie {
         });
     }
 
+    public static void copyGameToClipboardInSgf() {
+        try {
+            Game game = snapshotCurrentGame();
+            String sgfContent = writeSgfToString(game);
+
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable transferableString = new StringSelection(sgfContent);
+            clipboard.setContents(transferableString, null);
+        } catch (Exception e) {
+            logger.error("Error in copying game to clipboard.");
+        }
+    }
+
+    public static void pasteGameFromClipboardInSgf() {
+        try {
+            String sgfContent = null;
+            // Read from clipboard
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable clipboardContents = clipboard.getContents(null);
+            if (clipboardContents != null) {
+                if (clipboardContents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    sgfContent = (String) clipboardContents.getTransferData(DataFlavor.stringFlavor);
+                }
+            }
+
+            if (StringUtils.isNotEmpty(sgfContent)) {
+                Game game = Sgf.createFromString(sgfContent);
+                loadGameToBoard(game);
+            }
+        } catch (Exception e) {
+            logger.error("Error in copying game from clipboard.");
+        }
+    }
+
     private static class MoveReplayer {
         private boolean nextIsBlack;
 
@@ -168,45 +211,51 @@ public class Lizzie {
     public static void loadGameByFile(Path gameFilePath) {
         try {
             Game game = Sgf.createFromPath(gameFilePath);
-            GameNode node = game.getRootNode();
-
-            if (game.getProperty("SZ") != null && !game.getProperty("SZ").contains("19")) {
-                JOptionPane.showMessageDialog(frame, "Error: Board size is not 19x19.", "Lizzie", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            MoveReplayer replayer = new MoveReplayer();
-
-            clearBoardAndState();
-
-            // Process pre-placed stones
-            placePreplacedMove(replayer, game.getProperty("AB"), game.getProperty("AW"));
-
-            do {
-                String preplacedBlack = node.getProperty("AB");
-                String preplacedWhite = node.getProperty("AW");
-                if (StringUtils.isNotEmpty(preplacedBlack) || StringUtils.isNotEmpty(preplacedWhite)) {
-                    placePreplacedMove(replayer, preplacedBlack, preplacedWhite);
-                }
-                if (node.isMove()) {
-                    if (StringUtils.isNotEmpty(node.getProperty("B"))) {
-                        int[] coords = node.getCoords();
-                        if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
-                            replayer.playMove(true, coords[0], coords[1]);
-                        }
-                    }
-                    if (StringUtils.isNotEmpty(node.getProperty("W"))) {
-                        int[] coords = node.getCoords();
-                        if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
-                            replayer.playMove(false, coords[0], coords[1]);
-                        }
-                    }
-                }
-            }
-            while ((node = node.getNextNode()) != null);
+            loadGameToBoard(game);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(frame, "Error: cannot load sgf: " + e.getMessage(), "Lizzie", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private static boolean loadGameToBoard(Game game) {
+        GameNode node = game.getRootNode();
+
+        if (game.getProperty("SZ") != null && !game.getProperty("SZ").contains("19")) {
+            JOptionPane.showMessageDialog(frame, "Error: Board size is not 19x19.", "Lizzie", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        MoveReplayer replayer = new MoveReplayer();
+
+        clearBoardAndState();
+
+        // Process pre-placed stones
+        placePreplacedMove(replayer, game.getProperty("AB"), game.getProperty("AW"));
+
+        do {
+            String preplacedBlack = node.getProperty("AB");
+            String preplacedWhite = node.getProperty("AW");
+            if (StringUtils.isNotEmpty(preplacedBlack) || StringUtils.isNotEmpty(preplacedWhite)) {
+                placePreplacedMove(replayer, preplacedBlack, preplacedWhite);
+            }
+            if (node.isMove()) {
+                if (StringUtils.isNotEmpty(node.getProperty("B"))) {
+                    int[] coords = node.getCoords();
+                    if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
+                        replayer.playMove(true, coords[0], coords[1]);
+                    }
+                }
+                if (StringUtils.isNotEmpty(node.getProperty("W"))) {
+                    int[] coords = node.getCoords();
+                    if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
+                        replayer.playMove(false, coords[0], coords[1]);
+                    }
+                }
+            }
+        }
+        while ((node = node.getNextNode()) != null);
+
+        return true;
     }
 
     private static void placePreplacedMove(MoveReplayer replayer, String preplacedBlackStoneString, String preplacedWhiteStoneString) {
@@ -239,71 +288,7 @@ public class Lizzie {
 
     public static void storeGameByFile(Path filePath) {
         try {
-            Game game = new Game();
-
-            game.addProperty("FF", "4"); // SGF version: 4
-            game.addProperty("KM", "7.5"); // Lz only support fixed komi
-            game.addProperty("GM", "1"); // Go game
-            game.addProperty("SZ", "19");
-            game.addProperty("CA", "UTF-8");
-            game.addProperty("AP", "MyLizzie");
-
-            BoardHistoryList historyList = board.getHistory();
-            BoardHistoryNode initialNode = historyList.getInitialNode();
-
-            GameNode previousNode = null;
-            BoardData previousData = null;
-            for (BoardHistoryNode p = initialNode.getNext(); p != null; p = p.getNext()) {
-                GameNode gameNode = new GameNode(previousNode);
-
-                // Move node
-                if (Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) || Objects.equals(p.getData().getLastMoveColor(), Stone.WHITE)) {
-                    int x, y;
-
-                    if (p.getData().getLastMove() == null) {
-                        // Pass
-                        x = 19;
-                        y = 19;
-                    } else {
-                        x = p.getData().getLastMove()[0];
-                        y = p.getData().getLastMove()[1];
-
-                        if (x < 0 || x >= 19 || y < 0 || y >= 19) {
-                            x = 19;
-                            y = 19;
-                        }
-                    }
-
-                    String moveKey = Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) ? "B" : "W";
-                    String moveValue = Util.coordToAlpha.get(x) + Util.coordToAlpha.get(y);
-
-                    gameNode.addProperty(moveKey, moveValue);
-                    if (p.getData().getCalculationCount() > 100) {
-                        gameNode.addProperty("C", String.format("Black: %.1f; White: %.1f", p.getData().getBlackWinrate(), p.getData().getWhiteWinrate()));
-                    }
-                }
-
-                if (p.getData().getMoveNumber() > 0) {
-                    gameNode.setMoveNo(p.getData().getMoveNumber());
-                }
-
-                if (previousNode != null) {
-                    previousNode.addChild(gameNode);
-                    // Ensure we have already added child
-                    if (previousData != null) {
-                        addVariationTrees(previousNode, previousData);
-                    }
-                } else {
-                    game.setRootNode(gameNode);
-                }
-
-                previousNode = gameNode;
-                previousData = p.getData();
-            }
-
-            // Ignore the last node
-            // addVariationTree(previousNode, previousData);
-
+            Game game = snapshotCurrentGame();
             writeSgfToFile(game, filePath);
         } catch (Exception e) {
             if (StringUtils.isEmpty(e.getMessage())) {
@@ -312,6 +297,76 @@ public class Lizzie {
                 JOptionPane.showMessageDialog(frame, "Error: cannot save sgf", "Lizzie", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    @NotNull
+    private static Game snapshotCurrentGame() {
+        Game game = new Game();
+
+        game.addProperty("FF", "4"); // SGF version: 4
+        game.addProperty("KM", "7.5"); // Lz only support fixed komi
+        game.addProperty("GM", "1"); // Go game
+        game.addProperty("SZ", "19");
+        game.addProperty("CA", "UTF-8");
+        game.addProperty("AP", "MyLizzie");
+
+        BoardHistoryList historyList = board.getHistory();
+        BoardHistoryNode initialNode = historyList.getInitialNode();
+
+        GameNode previousNode = null;
+        BoardData previousData = null;
+        for (BoardHistoryNode p = initialNode.getNext(); p != null; p = p.getNext()) {
+            GameNode gameNode = new GameNode(previousNode);
+
+            // Move node
+            if (Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) || Objects.equals(p.getData().getLastMoveColor(), Stone.WHITE)) {
+                int x, y;
+
+                if (p.getData().getLastMove() == null) {
+                    // Pass
+                    x = 19;
+                    y = 19;
+                } else {
+                    x = p.getData().getLastMove()[0];
+                    y = p.getData().getLastMove()[1];
+
+                    if (x < 0 || x >= 19 || y < 0 || y >= 19) {
+                        x = 19;
+                        y = 19;
+                    }
+                }
+
+                String moveKey = Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) ? "B" : "W";
+                String moveValue = Util.coordToAlpha.get(x) + Util.coordToAlpha.get(y);
+
+                gameNode.addProperty(moveKey, moveValue);
+                if (p.getData().getCalculationCount() > 100) {
+                    gameNode.addProperty("C", String.format("Black: %.1f; White: %.1f", p.getData().getBlackWinrate(), p.getData().getWhiteWinrate()));
+                }
+            }
+
+            if (p.getData().getMoveNumber() > 0) {
+                gameNode.setMoveNo(p.getData().getMoveNumber());
+            }
+
+            if (previousNode != null) {
+                previousNode.addChild(gameNode);
+                // Ensure we have already added child
+                if (previousData != null) {
+                    addVariationTrees(previousNode, previousData);
+                }
+            } else {
+                game.setRootNode(gameNode);
+            }
+
+            previousNode = gameNode;
+            previousData = p.getData();
+        }
+
+        // Ignore the last node
+        // addVariationTree(previousNode, previousData);
+
+        return game;
     }
 
     private static void addVariationTrees(GameNode baseNode, BoardData data) {
@@ -386,33 +441,46 @@ public class Lizzie {
         }
     }
 
-    public static void writeSgfToFile(Game game, Path destination) {
-        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destination.toFile()), Charset.forName("UTF-8"))) {
-            writer.write('(');
-
-            // lets write all the root node properties
-            Map<String, String> props = game.getProperties();
-            if (props.size() > 0) {
-                writer.write(";");
-            }
-
-            for (Map.Entry<String, String> entry : props.entrySet()) {
-                writer.write(entry.getKey());
-                writer.write('[');
-                writer.write(entry.getValue());
-                writer.write(']');
-            }
-
-            // write sgf nodes
-            GameNode node = game.getRootNode();
-            writeSgfSubTree(writer, node, 0);
-            writer.write(')');
+    public static String writeSgfToString(Game game) {
+        try (StringWriter writer = new StringWriter()) {
+            writeSgfToStream(game, writer);
+            return writer.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void writeSgfSubTree(OutputStreamWriter writer, GameNode subtreeRoot, int level) throws IOException {
+    public static void writeSgfToFile(Game game, Path destination) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(destination.toFile()), Charset.forName("UTF-8"))) {
+            writeSgfToStream(game, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void writeSgfToStream(Game game, Writer writer) throws IOException {
+        writer.write('(');
+
+        // lets write all the root node properties
+        Map<String, String> props = game.getProperties();
+        if (props.size() > 0) {
+            writer.write(";");
+        }
+
+        for (Map.Entry<String, String> entry : props.entrySet()) {
+            writer.write(entry.getKey());
+            writer.write('[');
+            writer.write(entry.getValue());
+            writer.write(']');
+        }
+
+        // write sgf nodes
+        GameNode node = game.getRootNode();
+        writeSgfSubTree(writer, node, 0);
+        writer.write(')');
+    }
+
+    private static void writeSgfSubTree(Writer writer, GameNode subtreeRoot, int level) throws IOException {
         if (level > 0) {
             writer.write('(');
         }
@@ -437,7 +505,7 @@ public class Lizzie {
         }
     }
 
-    private static void writeNodeProperties(OutputStreamWriter writer, GameNode node) throws IOException {
+    private static void writeNodeProperties(Writer writer, GameNode node) throws IOException {
         for (Map.Entry<String, String> entry : node.getProperties().entrySet()) {
             writer.write(entry.getKey());
             writer.write('[');
@@ -590,20 +658,16 @@ public class Lizzie {
             optionSetting = gson.fromJson(reader, OptionSetting.class);
         } catch (FileNotFoundException e) {
             // Do nothing
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error in reading setting file.", e);
         }
     }
 
     public static void writeSettingFile() {
         try (Writer writer = new FileWriter(SETTING_FILE)) {
             writer.write(gson.toJson(optionSetting));
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error in writing setting file.", e);
         }
     }
 }

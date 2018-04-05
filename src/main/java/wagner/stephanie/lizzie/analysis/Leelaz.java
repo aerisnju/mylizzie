@@ -198,6 +198,7 @@ public class Leelaz implements Closeable {
             close();
         }
 
+        ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor);
         System.exit(isNormalExit() ? 0 : -1);
     }
 

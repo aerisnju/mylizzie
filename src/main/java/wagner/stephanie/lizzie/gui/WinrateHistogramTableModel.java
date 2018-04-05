@@ -1,7 +1,6 @@
 package wagner.stephanie.lizzie.gui;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MultiValuedMap;
 import org.jetbrains.annotations.NotNull;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
@@ -11,13 +10,11 @@ import wagner.stephanie.lizzie.rules.BoardData;
 import wagner.stephanie.lizzie.rules.BoardHistoryNode;
 import wagner.stephanie.lizzie.rules.BoardStateChangeObserver;
 
-import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class WinrateHistogramTableModel extends AbstractTableModel {
     public static final double SIGNIFICANT_OSCILLATION_THRESHOLD = 15.0;
@@ -39,7 +36,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
-                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
 
@@ -51,7 +48,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
-                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
 
@@ -69,7 +66,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 rebuildFilteredHistogramData();
                 if (refreshObserver != null) {
-                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
 
@@ -80,7 +77,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
-                    SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
             }
         });
@@ -104,7 +101,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
                     rebuildFilteredHistogramData();
                     fireTableDataChanged();
                     if (refreshObserver != null) {
-                        SwingUtilities.invokeLater(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                        Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                     }
                 }
             }

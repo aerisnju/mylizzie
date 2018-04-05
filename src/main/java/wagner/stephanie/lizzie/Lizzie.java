@@ -33,6 +33,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -52,6 +54,7 @@ public class Lizzie {
     public static OptionDialog optionDialog;
     public static OptionSetting optionSetting;
     public static WinrateHistogramDialog winrateHistogramDialog;
+    public static ExecutorService miscExecutor = Executors.newSingleThreadExecutor();
 
     static {
         readSettingFile();

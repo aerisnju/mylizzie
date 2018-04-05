@@ -20,6 +20,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 /**
  * @author Cao Hu
@@ -95,29 +96,42 @@ public class WinrateHistogramDialog extends JDialog {
         histogramChartPanel = new ChartPanel(chart);
         panelWinrateHistogram.add(histogramChartPanel);
 
-        winrateHistogramTableModel.setRefreshObserver(model -> {
-            blackSeries.clear();
-            whiteSeries.clear();
-            standardSeries.clear();
+        winrateHistogramTableModel.setRefreshObserver(new Consumer<WinrateHistogramTableModel>() {
+            private long lastRefreshTime = System.currentTimeMillis();
 
-            for (int i = 0; i < model.getHistogramEntryList().size(); ++i) {
-                WinrateHistogramEntry entry = model.getHistogramEntryList().get(i);
+            @Override
+            public void accept(WinrateHistogramTableModel model) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastRefreshTime < 500L) {
+                    return;
+                }
 
-                standardSeries.add(entry.getMoveNumber(), 50);
-                if (checkBoxHistogramShowBlack.isSelected()) {
-                    blackSeries.add(entry.getMoveNumber(), entry.getBlackWinrate());
+                lastRefreshTime = currentTime;
+
+                blackSeries.clear();
+                whiteSeries.clear();
+                standardSeries.clear();
+
+                for (int i = 0; i < model.getHistogramEntryList().size(); ++i) {
+                    WinrateHistogramEntry entry = model.getHistogramEntryList().get(i);
+
+                    standardSeries.add(entry.getMoveNumber(), 50);
+                    if (checkBoxHistogramShowBlack.isSelected()) {
+                        blackSeries.add(entry.getMoveNumber(), entry.getBlackWinrate());
+                    }
+                    if (checkBoxHistogramShowWhite.isSelected()) {
+                        whiteSeries.add(entry.getMoveNumber(), entry.getWhiteWinrate());
+                    }
                 }
-                if (checkBoxHistogramShowWhite.isSelected()) {
-                    whiteSeries.add(entry.getMoveNumber(), entry.getWhiteWinrate());
+                if (model.getHistogramEntryList().size() < 50) {
+                    for (int i = model.getHistogramEntryList().size() - 1; i <= 50; ++i) {
+                        standardSeries.add(i, 50);
+                    }
                 }
+
+                histogramChartPanel.repaint();
+
             }
-            if (model.getHistogramEntryList().size() < 50) {
-                for (int i = model.getHistogramEntryList().size() - 1; i <= 50; ++i) {
-                    standardSeries.add(i, 50);
-                }
-            }
-
-            histogramChartPanel.repaint();
         });
 
         if (Lizzie.optionSetting.getWinrateHistogramWindowWidth() >= 10 && Lizzie.optionSetting.getWinrateHistogramWindowHeight() >= 10) {

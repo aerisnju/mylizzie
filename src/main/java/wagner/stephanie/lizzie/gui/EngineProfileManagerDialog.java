@@ -13,6 +13,7 @@ import javax.swing.*;
 import com.google.common.collect.ImmutableList;
 import com.jgoodies.forms.factories.*;
 import com.jgoodies.forms.layout.*;
+import org.apache.commons.collections4.CollectionUtils;
 import wagner.stephanie.lizzie.Lizzie;
 
 /**
@@ -66,6 +67,14 @@ public class EngineProfileManagerDialog extends JDialog {
     private void initVariables() {
         userApproved = false;
         profileList = Lizzie.optionSetting.getEngineProfileList();
+
+        if (CollectionUtils.isNotEmpty(profileList)) {
+            textFieldProfile1.setText(profileList.get(0));
+            textFieldProfile2.setText(profileList.get(1));
+            textFieldProfile3.setText(profileList.get(2));
+            textFieldProfile4.setText(profileList.get(3));
+            textFieldProfile5.setText(profileList.get(4));
+        }
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {

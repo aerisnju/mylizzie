@@ -197,8 +197,8 @@ public class BoardRenderer {
                         drawString(g, x + scaledMargin / 2, y + scaledMargin + squareLength * i, "Open Sans", "" + (i + 1), stoneRadius * 4 / 5, stoneRadius);
                         drawString(g, x - scaledMargin / 2 + +boardLength, y + scaledMargin + squareLength * i, "Open Sans", "" + (i + 1), stoneRadius * 4 / 5, stoneRadius);
                     } else {
-                        drawString(g, x + scaledMargin / 2, y + scaledMargin + squareLength * i, "Open Sans", "" + (19 - i), stoneRadius * 4 / 5, stoneRadius);
-                        drawString(g, x - scaledMargin / 2 + +boardLength, y + scaledMargin + squareLength * i, "Open Sans", "" + (19 - i), stoneRadius * 4 / 5, stoneRadius);
+                        drawString(g, x + scaledMargin / 2, y + scaledMargin + squareLength * i, "Open Sans", "" + (Board.BOARD_SIZE - i), stoneRadius * 4 / 5, stoneRadius);
+                        drawString(g, x - scaledMargin / 2 + +boardLength, y + scaledMargin + squareLength * i, "Open Sans", "" + (Board.BOARD_SIZE - i), stoneRadius * 4 / 5, stoneRadius);
                     }
                 }
             }

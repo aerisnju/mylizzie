@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
  */
 public class Lizzie {
     private static final Logger logger = LogManager.getLogger(Lizzie.class);
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
 
     public static final String SETTING_FILE = "mylizzie.json";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -194,7 +195,18 @@ public class Lizzie {
     }
 
     public static void promptForChangeExistingMove() {
-
+        ChangeMoveDialog changeMoveDialog = new ChangeMoveDialog(frame);
+        changeMoveDialog.setVisible(true);
+        if (changeMoveDialog.isUserApproved()) {
+            int moveNumber = changeMoveDialog.getMoveNumber();
+            String correctedMove = changeMoveDialog.getCorrectedMove();
+            int[] convertedCoords = Board.convertDisplayNameToCoordinates(correctedMove);
+            if (Board.isValid(convertedCoords)) {
+                Lizzie.miscExecutor.execute(() -> board.changeMove(moveNumber, convertedCoords));
+            } else {
+                JOptionPane.showMessageDialog(frame, resourceBundle.getString("Lizzie.prompt.invalidCoordinates"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private static class MoveReplayer {

@@ -188,4 +188,10 @@ public class BoardHistoryList extends AbstractCollection<BoardData> {
     public int size() {
         return initialNode.distanceToEnd();
     }
+
+    public BoardHistoryNode getEndNode() {
+        BoardHistoryNode p;
+        for (p = initialNode; p.getNext() != null; p = p.getNext()) ;
+        return p;
+    }
 }

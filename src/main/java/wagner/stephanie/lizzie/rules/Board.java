@@ -217,6 +217,10 @@ public class Board implements Closeable {
         return x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE;
     }
 
+    public static boolean isValid(int[] coords) {
+        return ArrayUtils.isNotEmpty(coords) && coords.length == 2 && isValid(coords[0], coords[1]);
+    }
+
     /**
      * The pass. Thread safe
      *
@@ -606,5 +610,45 @@ public class Board implements Closeable {
         } else {
             return nextNode.getData().getLastMove();
         }
+    }
+
+    public void changeMove(int moveNumber, int[] convertedCoords) {
+        if (moveNumber <= 0) {
+            return;
+        }
+
+        int endMoveNumber = history.getEndNode().getData().getMoveNumber();
+        if (moveNumber > endMoveNumber) {
+            return;
+        }
+
+        // Does not support change move in try play state
+        leaveTryPlayState();
+
+        int currentMoveNumber = history.getMoveNumber();
+
+        // Go to that number preceding
+        gotoMove(moveNumber - 1);
+
+        BoardHistoryNode needRestruct = history.getHead().getNext().getNext();
+
+        // Fix move
+        if (Board.isValid(convertedCoords)) {
+            place(convertedCoords[0], convertedCoords[1]);
+        } else {
+            pass();
+        }
+
+        if (needRestruct != null) {
+            for (BoardData data : needRestruct) {
+                if (Board.isValid(data.getLastMove())) {
+                    place(data.getLastMove()[0], data.getLastMove()[1]);
+                } else {
+                    pass();
+                }
+            }
+        }
+
+        gotoMove(currentMoveNumber);
     }
 }

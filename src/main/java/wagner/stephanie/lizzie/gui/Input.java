@@ -70,6 +70,9 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.copyGameToClipboardInSgf();
         } else if (e.getKeyCode() == KeyEvent.VK_V && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
             Lizzie.pasteGameFromClipboardInSgf();
+        } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.ALT_MASK) != 0) {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.clearBoardAndState();
         } else if (e.getKeyCode() == KeyEvent.VK_C) {
             Lizzie.promptForChangeExistingMove();
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -85,9 +88,6 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_O) {
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
             Lizzie.optionDialog.setVisible(true);
-        } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.ALT_MASK) != 0) {
-            Lizzie.board.leaveTryPlayState();
-            Lizzie.clearBoardAndState();
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
                     , resourceBundle.getString("LizzieFrame.prompt.gotoDialogMessage"), "Lizzie", JOptionPane.QUESTION_MESSAGE);

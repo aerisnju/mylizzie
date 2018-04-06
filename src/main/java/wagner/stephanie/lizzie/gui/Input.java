@@ -4,8 +4,15 @@ import wagner.stephanie.lizzie.Lizzie;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ResourceBundle;
 
 public class Input implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener {
+    private ResourceBundle resourceBundle;
+
+    public Input() {
+        resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -59,10 +66,12 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 || e.getKeyCode() == KeyEvent.VK_W) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.storeGameByPrompting();
-        } if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+        } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
             Lizzie.copyGameToClipboardInSgf();
-        } if (e.getKeyCode() == KeyEvent.VK_V && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+        } else if (e.getKeyCode() == KeyEvent.VK_V && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
             Lizzie.pasteGameFromClipboardInSgf();
+        } else if (e.getKeyCode() == KeyEvent.VK_C) {
+            Lizzie.promptForChangeExistingMove();
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             Lizzie.board.nextMove();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -81,7 +90,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.clearBoardAndState();
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
             String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
-                    , "Enter move number you want to go:\ne.g. 78 - Jump to move No. 78\n-15 - move backward 15 steps\n+15 move forward 15 steps.", "Lizzie", JOptionPane.QUESTION_MESSAGE);
+                    , resourceBundle.getString("LizzieFrame.prompt.gotoDialogMessage"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
             if (inputMoveNumberString != null && !(inputMoveNumberString = inputMoveNumberString.trim()).isEmpty()) {
                 try {
                     int moveNumber = Integer.parseInt(inputMoveNumberString);

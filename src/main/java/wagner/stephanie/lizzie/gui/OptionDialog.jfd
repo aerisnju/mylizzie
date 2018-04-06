@@ -1,11 +1,15 @@
 JFDML JFormDesigner: "6.0.2.0.116" Java: "1.8.0_152-release" encoding: "UTF-8"
 
 new FormModel {
+	"i18n.bundlePackage": "wagner.stephanie.lizzie.i18n"
+	"i18n.bundleName": "GuiBundle"
+	"i18n.autoExternalize": true
+	"i18n.keyPrefix": "OptionDialog"
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 			name: "this"
-			"title": "Options"
+			"title": new FormMessage( null, "OptionDialog.this.title" )
 			"modal": true
 			"$locationPolicy": 1
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
@@ -18,84 +22,84 @@ new FormModel {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelVariationLimit"
-						"text": "Variation limit:"
+						"text": new FormMessage( null, "OptionDialog.labelVariationLimit.text" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonV5"
-						"text": "5"
+						"text": new FormMessage( null, "OptionDialog.radioButtonV5.text" )
 						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonV10"
-						"text": "10"
+						"text": new FormMessage( null, "OptionDialog.radioButtonV10.text" )
 						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonV15"
-						"text": "15"
+						"text": new FormMessage( null, "OptionDialog.radioButtonV15.text" )
 						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonV30"
-						"text": "30"
+						"text": new FormMessage( null, "OptionDialog.radioButtonV30.text" )
 						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonUnlimited"
-						"text": "Unlimited"
+						"text": new FormMessage( null, "OptionDialog.radioButtonUnlimited.text" )
 						"selected": true
 						"$buttonGroup": new FormReference( "buttonGroupVariationLimit" )
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelAxisSetting"
-						"text": "Axis setting:"
+						"text": new FormMessage( null, "OptionDialog.labelAxisSetting.text" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonA1Top"
-						"text": "A1 is on top(Yehu)"
+						"text": new FormMessage( null, "OptionDialog.radioButtonA1Top.text" )
 						"$buttonGroup": new FormReference( "buttonGroupAxisSetting" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonA1Bottom"
-						"text": "A1 is on bottom(Yike, Yicheng, Zen, .etc)"
+						"text": new FormMessage( null, "OptionDialog.radioButtonA1Bottom.text" )
 						"$buttonGroup": new FormReference( "buttonGroupAxisSetting" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelBoardDisplay"
-						"text": "Board display:"
+						"text": new FormMessage( null, "OptionDialog.labelBoardDisplay.text" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonBoardClassic"
-						"text": "Classic:"
+						"text": new FormMessage( null, "OptionDialog.radioButtonBoardClassic.text" )
 						"$buttonGroup": new FormReference( "buttonGroupBoardColor" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonBoardFancy"
-						"text": "Fancy"
+						"text": new FormMessage( null, "OptionDialog.radioButtonBoardFancy.text" )
 						"$buttonGroup": new FormReference( "buttonGroupBoardColor" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelSuggestion"
-						"text": "Suggestions:"
+						"text": new FormMessage( null, "OptionDialog.labelSuggestion.text" )
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelAnalysisModeOn"
-						"text": "Analysis mode:"
+						"text": new FormMessage( null, "OptionDialog.labelAnalysisModeOn.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxAnalysisWindowShow"
-						"text": "Show move list"
+						"text": new FormMessage( null, "OptionDialog.checkBoxAnalysisWindowShow.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxMouseMoveShow"
-						"text": "Mouse over show move."
+						"text": new FormMessage( null, "OptionDialog.checkBoxMouseMoveShow.text" )
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelLeelazCommandLine"
-						"text": "Leelaz command line:"
+						"text": new FormMessage( null, "OptionDialog.labelLeelazCommandLine.text" )
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "textFieldLeelazCommandLine"
@@ -103,26 +107,26 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelNotes"
-						"text": "Note: Restarting Lizzie is required after changing the leelaz command line"
+						"text": new FormMessage( null, "OptionDialog.labelNotes.text" )
 						"font": new com.jformdesigner.model.SwingDerivedFont( null, 1, 0, false )
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonResetCommandLine"
-						"text": "Reset"
+						"text": new FormMessage( null, "OptionDialog.buttonResetCommandLine.text" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonResetCommandLineActionPerformed", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelMoveNumber"
-						"text": "Move number:"
+						"text": new FormMessage( null, "OptionDialog.labelMoveNumber.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxShowMoveNumber"
-						"text": "Show"
+						"text": new FormMessage( null, "OptionDialog.checkBoxShowMoveNumber.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxMoveNumberLimit"
-						"text": "Only show last"
+						"text": new FormMessage( null, "OptionDialog.checkBoxMoveNumberLimit.text" )
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "textFieldMoveNumberLimitCount"
@@ -130,36 +134,36 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelMoveNumberLimitLabelTail"
-						"text": "move(s)."
+						"text": new FormMessage( null, "OptionDialog.labelMoveNumberLimitLabelTail.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxPlayoutsInShortForm"
-						"text": "Playouts in short form"
+						"text": new FormMessage( null, "OptionDialog.checkBoxPlayoutsInShortForm.text" )
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelTryPlayingMode"
-						"text": "Try playing mode:"
+						"text": new FormMessage( null, "OptionDialog.labelTryPlayingMode.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxAutoEnterTryPlayingMode"
-						"text": "Automatically enter when placing stone in middle game."
+						"text": new FormMessage( null, "OptionDialog.checkBoxAutoEnterTryPlayingMode.text" )
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelMainWindow"
-						"text": "Main window:"
+						"text": new FormMessage( null, "OptionDialog.labelMainWindow.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxMainWindowAlwaysOnTop"
-						"text": "Always on top"
+						"text": new FormMessage( null, "OptionDialog.checkBoxMainWindowAlwaysOnTop.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxShowBlackSuggestion"
-						"text": "Show black"
+						"text": new FormMessage( null, "OptionDialog.checkBoxShowBlackSuggestion.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelMaxAnalysisTime"
-						"text": "Max time:"
+						"text": new FormMessage( null, "OptionDialog.labelMaxAnalysisTime.text" )
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "textFieldMaxAnalysisTime"
@@ -167,16 +171,16 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelMinute"
-						"text": "minute(s)"
+						"text": new FormMessage( null, "OptionDialog.labelMinute.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxShowWhiteSuggestion"
-						"text": "Show white"
+						"text": new FormMessage( null, "OptionDialog.checkBoxShowWhiteSuggestion.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelColorRed"
-						"text": "R"
+						"text": new FormMessage( null, "OptionDialog.labelColorRed.text" )
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerColorRed"
@@ -184,7 +188,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelColorGreen"
-						"text": "G"
+						"text": new FormMessage( null, "OptionDialog.labelColorGreen.text" )
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerColorGreen"
@@ -192,7 +196,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelColorBlue"
-						"text": "B"
+						"text": new FormMessage( null, "OptionDialog.labelColorBlue.text" )
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
 						name: "spinnerColorBlue"
@@ -200,16 +204,16 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxFancyStones"
-						"text": "Fancy stones"
+						"text": new FormMessage( null, "OptionDialog.checkBoxFancyStones.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelShadow"
-						"text": "Stone shadow:"
+						"text": new FormMessage( null, "OptionDialog.labelShadow.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxShowShadow"
-						"text": "Show. Shadow size:"
+						"text": new FormMessage( null, "OptionDialog.checkBoxShowShadow.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JSpinner" ) {
@@ -218,7 +222,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxShowNextMove"
-						"text": "Show next move"
+						"text": new FormMessage( null, "OptionDialog.checkBoxShowNextMove.text" )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
@@ -233,7 +237,7 @@ new FormModel {
 					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "okButton"
-						"text": "OK"
+						"text": new FormMessage( null, "OptionDialog.okButton.text" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
@@ -241,7 +245,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "cancelButton"
-						"text": "Cancel"
+						"text": new FormMessage( null, "OptionDialog.cancelButton.text" )
 						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelButtonActionPerformed", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2

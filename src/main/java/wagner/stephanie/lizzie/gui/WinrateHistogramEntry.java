@@ -5,14 +5,29 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class WinrateHistogramEntry {
-    public static final List<String> COLUMN_NAMES = ImmutableList.of("Move Number", "Color", "Move", "Black Win%", "White Win%", "Black Win% diff");
+    public static final List<String> COLUMN_NAMES;
     public static final List<Class> COLUMN_CLASSES = ImmutableList.of(Integer.class, String.class, String.class, Double.class, Double.class, Double.class);
 
     public static final String COLOR_BLACK = "B";
     public static final String COLOR_WHITE = "W";
     public static final String COLOR_NONE = "?";
+
+    static {
+        ResourceBundle bundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+
+        // "Move Number", "Color", "Move", "Black Win%", "White Win%", "Black Win% diff"
+        COLUMN_NAMES = ImmutableList.of(
+                bundle.getString("WinrateHistogramDialog.histogramTable.title.moveNumber")
+                , bundle.getString("WinrateHistogramDialog.histogramTable.title.color")
+                , bundle.getString("WinrateHistogramDialog.histogramTable.title.move")
+                , bundle.getString("WinrateHistogramDialog.histogramTable.title.blackWinrate")
+                , bundle.getString("WinrateHistogramDialog.histogramTable.title.whiteWinrate")
+                , bundle.getString("WinrateHistogramDialog.histogramTable.title.blackWinDiff")
+        );
+    }
 
     private int moveNumber;
     private String color;

@@ -193,6 +193,10 @@ public class Lizzie {
         }
     }
 
+    public static void promptForChangeExistingMove() {
+
+    }
+
     private static class MoveReplayer {
         private boolean nextIsBlack;
 

@@ -4,6 +4,7 @@
 
 package wagner.stephanie.lizzie.gui;
 
+import java.util.*;
 import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
@@ -245,6 +246,7 @@ public class OptionDialog extends JDialog {
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner non-commercial license
+        ResourceBundle bundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         labelVariationLimit = new JLabel();
@@ -298,7 +300,7 @@ public class OptionDialog extends JDialog {
         cancelButton = new JButton();
 
         //======== this ========
-        setTitle("Options");
+        setTitle(bundle.getString("OptionDialog.this.title"));
         setModal(true);
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
@@ -312,153 +314,153 @@ public class OptionDialog extends JDialog {
             {
 
                 //---- labelVariationLimit ----
-                labelVariationLimit.setText("Variation limit:");
+                labelVariationLimit.setText(bundle.getString("OptionDialog.labelVariationLimit.text"));
 
                 //---- radioButtonV5 ----
-                radioButtonV5.setText("5");
+                radioButtonV5.setText(bundle.getString("OptionDialog.radioButtonV5.text"));
 
                 //---- radioButtonV10 ----
-                radioButtonV10.setText("10");
+                radioButtonV10.setText(bundle.getString("OptionDialog.radioButtonV10.text"));
 
                 //---- radioButtonV15 ----
-                radioButtonV15.setText("15");
+                radioButtonV15.setText(bundle.getString("OptionDialog.radioButtonV15.text"));
 
                 //---- radioButtonV30 ----
-                radioButtonV30.setText("30");
+                radioButtonV30.setText(bundle.getString("OptionDialog.radioButtonV30.text"));
 
                 //---- radioButtonUnlimited ----
-                radioButtonUnlimited.setText("Unlimited");
+                radioButtonUnlimited.setText(bundle.getString("OptionDialog.radioButtonUnlimited.text"));
                 radioButtonUnlimited.setSelected(true);
 
                 //---- labelAxisSetting ----
-                labelAxisSetting.setText("Axis setting:");
+                labelAxisSetting.setText(bundle.getString("OptionDialog.labelAxisSetting.text"));
 
                 //---- radioButtonA1Top ----
-                radioButtonA1Top.setText("A1 is on top(Yehu)");
+                radioButtonA1Top.setText(bundle.getString("OptionDialog.radioButtonA1Top.text"));
 
                 //---- radioButtonA1Bottom ----
-                radioButtonA1Bottom.setText("A1 is on bottom(Yike, Yicheng, Zen, .etc)");
+                radioButtonA1Bottom.setText(bundle.getString("OptionDialog.radioButtonA1Bottom.text"));
                 radioButtonA1Bottom.setSelected(true);
 
                 //---- labelBoardDisplay ----
-                labelBoardDisplay.setText("Board display:");
+                labelBoardDisplay.setText(bundle.getString("OptionDialog.labelBoardDisplay.text"));
 
                 //---- radioButtonBoardClassic ----
-                radioButtonBoardClassic.setText("Classic:");
+                radioButtonBoardClassic.setText(bundle.getString("OptionDialog.radioButtonBoardClassic.text"));
 
                 //---- radioButtonBoardFancy ----
-                radioButtonBoardFancy.setText("Fancy");
+                radioButtonBoardFancy.setText(bundle.getString("OptionDialog.radioButtonBoardFancy.text"));
                 radioButtonBoardFancy.setSelected(true);
 
                 //---- labelSuggestion ----
-                labelSuggestion.setText("Suggestions:");
+                labelSuggestion.setText(bundle.getString("OptionDialog.labelSuggestion.text"));
 
                 //---- labelAnalysisModeOn ----
-                labelAnalysisModeOn.setText("Analysis mode:");
+                labelAnalysisModeOn.setText(bundle.getString("OptionDialog.labelAnalysisModeOn.text"));
 
                 //---- checkBoxAnalysisWindowShow ----
-                checkBoxAnalysisWindowShow.setText("Show move list");
+                checkBoxAnalysisWindowShow.setText(bundle.getString("OptionDialog.checkBoxAnalysisWindowShow.text"));
                 checkBoxAnalysisWindowShow.setSelected(true);
 
                 //---- checkBoxMouseMoveShow ----
-                checkBoxMouseMoveShow.setText("Mouse over show move.");
+                checkBoxMouseMoveShow.setText(bundle.getString("OptionDialog.checkBoxMouseMoveShow.text"));
 
                 //---- labelLeelazCommandLine ----
-                labelLeelazCommandLine.setText("Leelaz command line:");
+                labelLeelazCommandLine.setText(bundle.getString("OptionDialog.labelLeelazCommandLine.text"));
 
                 //---- textFieldLeelazCommandLine ----
                 textFieldLeelazCommandLine.setText("-g -t2 -wnetwork -b0");
 
                 //---- labelNotes ----
-                labelNotes.setText("Note: Restarting Lizzie is required after changing the leelaz command line");
+                labelNotes.setText(bundle.getString("OptionDialog.labelNotes.text"));
                 labelNotes.setFont(labelNotes.getFont().deriveFont(labelNotes.getFont().getStyle() | Font.BOLD));
 
                 //---- buttonResetCommandLine ----
-                buttonResetCommandLine.setText("Reset");
+                buttonResetCommandLine.setText(bundle.getString("OptionDialog.buttonResetCommandLine.text"));
                 buttonResetCommandLine.addActionListener(e -> buttonResetCommandLineActionPerformed(e));
 
                 //---- labelMoveNumber ----
-                labelMoveNumber.setText("Move number:");
+                labelMoveNumber.setText(bundle.getString("OptionDialog.labelMoveNumber.text"));
 
                 //---- checkBoxShowMoveNumber ----
-                checkBoxShowMoveNumber.setText("Show");
+                checkBoxShowMoveNumber.setText(bundle.getString("OptionDialog.checkBoxShowMoveNumber.text"));
                 checkBoxShowMoveNumber.setSelected(true);
 
                 //---- checkBoxMoveNumberLimit ----
-                checkBoxMoveNumberLimit.setText("Only show last");
+                checkBoxMoveNumberLimit.setText(bundle.getString("OptionDialog.checkBoxMoveNumberLimit.text"));
 
                 //---- textFieldMoveNumberLimitCount ----
                 textFieldMoveNumberLimitCount.setText("30");
 
                 //---- labelMoveNumberLimitLabelTail ----
-                labelMoveNumberLimitLabelTail.setText("move(s).");
+                labelMoveNumberLimitLabelTail.setText(bundle.getString("OptionDialog.labelMoveNumberLimitLabelTail.text"));
 
                 //---- checkBoxPlayoutsInShortForm ----
-                checkBoxPlayoutsInShortForm.setText("Playouts in short form");
+                checkBoxPlayoutsInShortForm.setText(bundle.getString("OptionDialog.checkBoxPlayoutsInShortForm.text"));
 
                 //---- labelTryPlayingMode ----
-                labelTryPlayingMode.setText("Try playing mode:");
+                labelTryPlayingMode.setText(bundle.getString("OptionDialog.labelTryPlayingMode.text"));
 
                 //---- checkBoxAutoEnterTryPlayingMode ----
-                checkBoxAutoEnterTryPlayingMode.setText("Automatically enter when placing stone in middle game.");
+                checkBoxAutoEnterTryPlayingMode.setText(bundle.getString("OptionDialog.checkBoxAutoEnterTryPlayingMode.text"));
 
                 //---- labelMainWindow ----
-                labelMainWindow.setText("Main window:");
+                labelMainWindow.setText(bundle.getString("OptionDialog.labelMainWindow.text"));
 
                 //---- checkBoxMainWindowAlwaysOnTop ----
-                checkBoxMainWindowAlwaysOnTop.setText("Always on top");
+                checkBoxMainWindowAlwaysOnTop.setText(bundle.getString("OptionDialog.checkBoxMainWindowAlwaysOnTop.text"));
 
                 //---- checkBoxShowBlackSuggestion ----
-                checkBoxShowBlackSuggestion.setText("Show black");
+                checkBoxShowBlackSuggestion.setText(bundle.getString("OptionDialog.checkBoxShowBlackSuggestion.text"));
                 checkBoxShowBlackSuggestion.setSelected(true);
 
                 //---- labelMaxAnalysisTime ----
-                labelMaxAnalysisTime.setText("Max time:");
+                labelMaxAnalysisTime.setText(bundle.getString("OptionDialog.labelMaxAnalysisTime.text"));
 
                 //---- textFieldMaxAnalysisTime ----
                 textFieldMaxAnalysisTime.setText("2");
 
                 //---- labelMinute ----
-                labelMinute.setText("minute(s)");
+                labelMinute.setText(bundle.getString("OptionDialog.labelMinute.text"));
 
                 //---- checkBoxShowWhiteSuggestion ----
-                checkBoxShowWhiteSuggestion.setText("Show white");
+                checkBoxShowWhiteSuggestion.setText(bundle.getString("OptionDialog.checkBoxShowWhiteSuggestion.text"));
                 checkBoxShowWhiteSuggestion.setSelected(true);
 
                 //---- labelColorRed ----
-                labelColorRed.setText("R");
+                labelColorRed.setText(bundle.getString("OptionDialog.labelColorRed.text"));
 
                 //---- spinnerColorRed ----
                 spinnerColorRed.setModel(new SpinnerNumberModel(178, 0, 255, 1));
 
                 //---- labelColorGreen ----
-                labelColorGreen.setText("G");
+                labelColorGreen.setText(bundle.getString("OptionDialog.labelColorGreen.text"));
 
                 //---- spinnerColorGreen ----
                 spinnerColorGreen.setModel(new SpinnerNumberModel(140, 0, 255, 1));
 
                 //---- labelColorBlue ----
-                labelColorBlue.setText("B");
+                labelColorBlue.setText(bundle.getString("OptionDialog.labelColorBlue.text"));
 
                 //---- spinnerColorBlue ----
                 spinnerColorBlue.setModel(new SpinnerNumberModel(0, 0, 255, 1));
 
                 //---- checkBoxFancyStones ----
-                checkBoxFancyStones.setText("Fancy stones");
+                checkBoxFancyStones.setText(bundle.getString("OptionDialog.checkBoxFancyStones.text"));
                 checkBoxFancyStones.setSelected(true);
 
                 //---- labelShadow ----
-                labelShadow.setText("Stone shadow:");
+                labelShadow.setText(bundle.getString("OptionDialog.labelShadow.text"));
 
                 //---- checkBoxShowShadow ----
-                checkBoxShowShadow.setText("Show. Shadow size:");
+                checkBoxShowShadow.setText(bundle.getString("OptionDialog.checkBoxShowShadow.text"));
                 checkBoxShowShadow.setSelected(true);
 
                 //---- spinnerShadowSize ----
                 spinnerShadowSize.setModel(new SpinnerNumberModel(100, 0, 999, 1));
 
                 //---- checkBoxShowNextMove ----
-                checkBoxShowNextMove.setText("Show next move");
+                checkBoxShowNextMove.setText(bundle.getString("OptionDialog.checkBoxShowNextMove.text"));
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
@@ -647,14 +649,14 @@ public class OptionDialog extends JDialog {
                 ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
 
                 //---- okButton ----
-                okButton.setText("OK");
+                okButton.setText(bundle.getString("OptionDialog.okButton.text"));
                 okButton.addActionListener(e -> okButtonActionPerformed(e));
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                     new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- cancelButton ----
-                cancelButton.setText("Cancel");
+                cancelButton.setText(bundle.getString("OptionDialog.cancelButton.text"));
                 cancelButton.addActionListener(e -> cancelButtonActionPerformed(e));
                 buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.BOTH,

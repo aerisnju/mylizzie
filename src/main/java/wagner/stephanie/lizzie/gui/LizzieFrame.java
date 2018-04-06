@@ -40,7 +40,7 @@ public class LizzieFrame extends JFrame {
             , "key 'Home' | Go to initial board"
             , "key 'End' | Go to the last move"
             , "key 'S' | Show/hide suggestions (for B or W)"
-
+            , "key 'C' | Change existing move"
     };
     public static final String LIZZIE_TITLE = "Lizzie - Leela Zero Interface";
     public static final String LIZZIE_TRY_PLAY_TITLE = "... Try playing ...";

@@ -68,6 +68,7 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxShowShadow;
     private JSpinner spinnerShadowSize;
     private JCheckBox checkBoxShowNextMove;
+    private JButton buttonManage;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -226,6 +227,8 @@ public class OptionDialog extends JDialog {
     }
 
     private void okButtonActionPerformed(ActionEvent e) {
+        String originalCommandLine = Lizzie.optionSetting.getLeelazCommandLine();
+
         readDialogSetting(Lizzie.optionSetting);
         if (!Lizzie.optionSetting.isShowBlackSuggestion() || !Lizzie.optionSetting.isShowWhiteSuggestion() || !Lizzie.optionSetting.isAnalysisWindowShow()) {
             Lizzie.analysisFrame.getAnalysisTableModel().clearSelectedMove();
@@ -237,10 +240,23 @@ public class OptionDialog extends JDialog {
         Lizzie.frame.getBoardRenderer().forceCachedStoneImageRefresh();
         Lizzie.frame.repaint();
         setVisible(false);
+
+        if (!StringUtils.equals(originalCommandLine, Lizzie.optionSetting.getLeelazCommandLine())) {
+            Lizzie.switchEngineBySetting();
+        }
     }
 
     private void buttonResetCommandLineActionPerformed(ActionEvent e) {
         textFieldLeelazCommandLine.setText(new OptionSetting().getLeelazCommandLine());
+    }
+
+    private void buttonManageActionPerformed(ActionEvent e) {
+        // Show dialog
+        EngineProfileManagerDialog engineProfileManagerDialog = new EngineProfileManagerDialog(this);
+        engineProfileManagerDialog.setVisible(true);
+        if (engineProfileManagerDialog.isUserApproved()) {
+            Lizzie.optionSetting.setEngineProfileList(engineProfileManagerDialog.getProfileList());
+        }
     }
 
     private void initComponents() {
@@ -295,6 +311,7 @@ public class OptionDialog extends JDialog {
         checkBoxShowShadow = new JCheckBox();
         spinnerShadowSize = new JSpinner();
         checkBoxShowNextMove = new JCheckBox();
+        buttonManage = new JButton();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -462,6 +479,10 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxShowNextMove ----
                 checkBoxShowNextMove.setText(bundle.getString("OptionDialog.checkBoxShowNextMove.text"));
 
+                //---- buttonManage ----
+                buttonManage.setText(bundle.getString("OptionDialog.buttonManage.text"));
+                buttonManage.addActionListener(e -> buttonManageActionPerformed(e));
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -472,10 +493,12 @@ public class OptionDialog extends JDialog {
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addComponent(labelLeelazCommandLine)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 388, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(buttonResetCommandLine, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addContainerGap())
+                                    .addComponent(buttonManage)
+                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(buttonResetCommandLine)
+                                    .addContainerGap(20, Short.MAX_VALUE))
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
                                         .addGroup(contentPanelLayout.createSequentialGroup()
@@ -617,8 +640,9 @@ public class OptionDialog extends JDialog {
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)
-                                .addComponent(buttonResetCommandLine)
-                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(buttonManage)
+                                .addComponent(buttonResetCommandLine))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelMoveNumber)

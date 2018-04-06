@@ -15,6 +15,7 @@ import org.jfree.graphics2d.svg.SVGGraphics2D;
 import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.gui.*;
 import wagner.stephanie.lizzie.rules.*;
+import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -71,6 +72,9 @@ public class Lizzie {
      * Launches the game window, and runs the game.
      */
     public static void main(String[] args) throws IOException {
+        // Cleanup for misc executor
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor)));
+
         // Use Nimbus look and feel which looks better
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -206,6 +210,26 @@ public class Lizzie {
             } else {
                 JOptionPane.showMessageDialog(frame, resourceBundle.getString("Lizzie.prompt.invalidCoordinates"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             }
+        }
+    }
+
+    public static void switchEngineByProfileIndex(int profileIndex) {
+        String newCommandLine = CollectionUtils.isEmpty(Lizzie.optionSetting.getEngineProfileList()) ? "" : Lizzie.optionSetting.getEngineProfileList().get(profileIndex);
+        if (StringUtils.isNotEmpty(newCommandLine)) {
+            Lizzie.optionSetting.setLeelazCommandLine(newCommandLine);
+
+            switchEngineBySetting();
+        }
+    }
+
+    public static void switchEngineBySetting() {
+        try {
+            int moveNumber = board.getData().getMoveNumber();
+            leelaz.restartEngine(Lizzie.optionSetting.getLeelazCommandLine());
+            board.gotoMove(0);
+            board.gotoMove(moveNumber);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

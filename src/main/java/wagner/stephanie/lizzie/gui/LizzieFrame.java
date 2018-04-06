@@ -92,6 +92,8 @@ public class LizzieFrame extends JFrame {
                 Lizzie.readGuiPosition();
                 Lizzie.writeSettingFile();
                 Lizzie.leelaz.shutdown();
+
+                System.exit(0);
             }
         });
     }

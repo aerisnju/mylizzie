@@ -58,7 +58,14 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_O && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
+        if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && KeyEvent.VK_0 <= e.getKeyCode() && e.getKeyCode() <= KeyEvent.VK_5) {
+            if (e.getKeyCode() == KeyEvent.VK_0) {
+                Lizzie.switchEngineBySetting();
+            } else {
+                int profileIndex = e.getKeyCode() - KeyEvent.VK_1;
+                Lizzie.switchEngineByProfileIndex(profileIndex);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_O && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
                 || e.getKeyCode() == KeyEvent.VK_R) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.loadGameByPrompting();

@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.analysis;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,10 +26,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class Leelaz implements Closeable {
     private static final Logger logger = LogManager.getLogger(Leelaz.class);
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
 
     private static final long MINUTE = 60 * 1000; // number of milliseconds in a minute
 
     private Process process;
+    private Thread leelazMonitorThread;
     private ExecutorService notificationExecutor;
     private ExecutorService miscExecutor;
 
@@ -59,33 +63,7 @@ public class Leelaz implements Closeable {
         boardStateCount = 0;
 
         normalExit = false;
-        isReadingPonderOutput = false;
-        bestMoves = new ArrayList<>();
-        bestMovesTemp = new ArrayList<>();
-
-        isPondering = false;
-        startPonderTime = System.currentTimeMillis();
-
-        // list of commands for the leelaz process
-        List<String> commands = new ArrayList<>();
-        if (System.getProperty("os.name").toLowerCase().indexOf("windows") > 0) {
-            commands.add("leelaz.exe"); // windows
-        } else {
-            commands.add("./leelaz"); // linux, macosx
-        }
-
-        commands.addAll(ArgumentTokenizer.tokenize(commandline.trim()));
-
-        // run leelaz.exe
-        ProcessBuilder processBuilder = new ProcessBuilder(commands);
-        processBuilder.directory(new File("."));
-        processBuilder.redirectErrorStream(true);
-        process = processBuilder.start();
-
-        initializeStreams();
-
-        // start a thread to continuously read Leelaz output
-        new Thread(this::read).start();
+        startEngine(commandline);
     }
 
     public BestMoveObserverCollection getObserverCollection() {
@@ -183,23 +161,18 @@ public class Leelaz implements Closeable {
             System.out.println("Leelaz process ended.");
 
             shutdown();
-
-            cleanupAndExit();
+            saveRestoreSgf();
         } catch (Exception e) {
             e.printStackTrace();
-            cleanupAndExit();
+            saveRestoreSgf();
         }
     }
 
-    private void cleanupAndExit() {
+    public void saveRestoreSgf() {
         if (!isNormalExit()) {
             JOptionPane.showMessageDialog(null, "Waring: leelaz process is terminated unexpectedly. Please check!", "Lizzie", JOptionPane.ERROR_MESSAGE);
             Lizzie.storeGameByFile(Paths.get("restore.sgf"));
-            close();
         }
-
-        ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor);
-        System.exit(isNormalExit() ? 0 : -1);
     }
 
     /**
@@ -277,7 +250,7 @@ public class Leelaz implements Closeable {
             sendCommand("quit");
 
             try {
-                process.waitFor(5, TimeUnit.SECONDS);
+                process.waitFor(30, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 // Do nothing
             }
@@ -285,6 +258,13 @@ public class Leelaz implements Closeable {
             if (process.isAlive()) {
                 process.destroy();
             }
+        }
+
+        try {
+            inputStream.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -333,8 +313,72 @@ public class Leelaz implements Closeable {
         }
     }
 
+    private void startLeelazMonitoringThread() {
+        if (leelazMonitorThread == null || !leelazMonitorThread.isAlive()) {
+            leelazMonitorThread = new Thread(this::read);
+            leelazMonitorThread.start();
+        }
+    }
+
     @Override
     protected void finalize() throws Throwable {
         close();
+    }
+
+    private void startEngine(String commandline) throws IOException {
+        isReadingPonderOutput = false;
+        bestMoves = new ArrayList<>();
+        bestMovesTemp = new ArrayList<>();
+
+        isPondering = false;
+        startPonderTime = System.currentTimeMillis();
+
+        // list of commands for the leelaz process
+        List<String> commands = new ArrayList<>();
+        if (System.getProperty("os.name").toLowerCase().indexOf("windows") > 0) {
+            commands.add("leelaz.exe"); // windows
+        } else {
+            commands.add("./leelaz"); // linux, macosx
+        }
+
+        commands.addAll(ArgumentTokenizer.tokenize(commandline.trim()));
+
+        // run leelaz.exe
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        processBuilder.directory(new File("."));
+        processBuilder.redirectErrorStream(true);
+        process = processBuilder.start();
+
+        initializeStreams();
+
+        // start a thread to continuously read Leelaz output
+        startLeelazMonitoringThread();
+    }
+
+    public void restartEngine(String commandline) throws IOException, InterruptedException {
+        // Mute the message
+        setNormalExit(true);
+
+        stopPonder();
+        shutdown();
+
+        setNormalExit(false);
+
+        startEngine(commandline);
+
+        // Wait for some time for the engine start
+        waitForEngineStart();
+    }
+
+    private void waitForEngineStart() throws InterruptedException {
+        long startTime = System.currentTimeMillis();
+        ponder();
+        while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 30000) {
+            Thread.sleep(100);
+        }
+
+        if (CollectionUtils.isEmpty(bestMoves)) {
+            JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.engineNotStart"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

@@ -1,8 +1,11 @@
 package wagner.stephanie.lizzie.gui;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class OptionSetting {
@@ -85,6 +88,7 @@ public class OptionSetting {
     private boolean autoEnterTryPlayingMode;
     private boolean mainWindowAlwaysOnTop;
     private int maxAnalysisTimeInMinutes;
+    private List<String> engineProfileList;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -122,6 +126,7 @@ public class OptionSetting {
         autoEnterTryPlayingMode = false;
         mainWindowAlwaysOnTop = false;
         maxAnalysisTimeInMinutes = 2;
+        engineProfileList = ImmutableList.of();
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -292,6 +297,14 @@ public class OptionSetting {
 
     public void setMaxAnalysisTimeInMinutes(int maxAnalysisTimeInMinutes) {
         this.maxAnalysisTimeInMinutes = maxAnalysisTimeInMinutes;
+    }
+
+    public List<String> getEngineProfileList() {
+        return engineProfileList;
+    }
+
+    public void setEngineProfileList(List<String> engineProfileList) {
+        this.engineProfileList = engineProfileList;
     }
 
     public int getMainWindowPosX() {

@@ -170,7 +170,7 @@ public class Leelaz implements Closeable {
 
     public void saveRestoreSgf() {
         if (!isNormalExit()) {
-            JOptionPane.showMessageDialog(null, "Waring: leelaz process is terminated unexpectedly. Please check!", "Lizzie", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.unexpectedProcessEnd"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             Lizzie.storeGameByFile(Paths.get("restore.sgf"));
         }
     }

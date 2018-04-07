@@ -8,6 +8,7 @@ import java.util.*;
 import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
+import wagner.stephanie.lizzie.rules.Board;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -72,6 +73,11 @@ public class OptionDialog extends JDialog {
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
+    private JPanel panelBasicSettings;
+    private JLabel labelBoardSize;
+    private JRadioButton radioButtonBoard19x19;
+    private JRadioButton radioButtonBoard13x13;
+    private JRadioButton radioButtonBoard9x9;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     public OptionDialog(Frame owner) {
@@ -85,6 +91,14 @@ public class OptionDialog extends JDialog {
     }
 
     public void setDialogSetting(OptionSetting setting) {
+        if (setting.getBoardSize().equals(new OptionSetting.BoardSize(9, 9))) {
+            radioButtonBoard9x9.setSelected(true);
+        } else if (setting.getBoardSize().equals(new OptionSetting.BoardSize(13, 13))) {
+            radioButtonBoard13x13.setSelected(true);
+        } else {
+            radioButtonBoard19x19.setSelected(true);
+        }
+
         switch (setting.getVariationLimit()) {
             case 5:
                 radioButtonV5.setSelected(true);
@@ -158,6 +172,14 @@ public class OptionDialog extends JDialog {
     }
 
     public void readDialogSetting(OptionSetting setting) {
+        if (radioButtonBoard9x9.isSelected()) {
+            setting.setBoardSize(new OptionSetting.BoardSize(9, 9));
+        } else if (radioButtonBoard13x13.isSelected()) {
+            setting.setBoardSize(new OptionSetting.BoardSize(13, 13));
+        } else {
+            setting.setBoardSize(new OptionSetting.BoardSize(19, 19));
+        }
+
         int variationLimit;
 
         if (radioButtonV5.isSelected()) {
@@ -238,6 +260,12 @@ public class OptionDialog extends JDialog {
         Lizzie.frame.setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         Lizzie.frame.getBoardRenderer().forceCachedBackgroundImageRefresh();
         Lizzie.frame.getBoardRenderer().forceCachedStoneImageRefresh();
+
+        if (Board.BOARD_SIZE != Lizzie.optionSetting.getBoardSize().getWidth()) {
+            Board.BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
+            Lizzie.clearBoardAndState();
+        }
+
         Lizzie.frame.repaint();
         setVisible(false);
 
@@ -315,6 +343,11 @@ public class OptionDialog extends JDialog {
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
+        panelBasicSettings = new JPanel();
+        labelBoardSize = new JLabel();
+        radioButtonBoard19x19 = new JRadioButton();
+        radioButtonBoard13x13 = new JRadioButton();
+        radioButtonBoard9x9 = new JRadioButton();
 
         //======== this ========
         setTitle(bundle.getString("OptionDialog.this.title"));
@@ -498,7 +531,7 @@ public class OptionDialog extends JDialog {
                                     .addComponent(buttonManage)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(buttonResetCommandLine)
-                                    .addContainerGap(20, Short.MAX_VALUE))
+                                    .addContainerGap(35, Short.MAX_VALUE))
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
                                         .addGroup(contentPanelLayout.createSequentialGroup()
@@ -586,7 +619,7 @@ public class OptionDialog extends JDialog {
                                             .addComponent(checkBoxShowShadow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                                    .addGap(0, 80, Short.MAX_VALUE))))
+                                    .addGap(0, 61, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -687,6 +720,29 @@ public class OptionDialog extends JDialog {
                     new Insets(0, 0, 0, 0), 0, 0));
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
+
+            //======== panelBasicSettings ========
+            {
+                panelBasicSettings.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+                //---- labelBoardSize ----
+                labelBoardSize.setText(bundle.getString("OptionDialog.labelBoardSize.text"));
+                panelBasicSettings.add(labelBoardSize);
+
+                //---- radioButtonBoard19x19 ----
+                radioButtonBoard19x19.setText(bundle.getString("OptionDialog.radioButtonBoard19x19.text"));
+                radioButtonBoard19x19.setSelected(true);
+                panelBasicSettings.add(radioButtonBoard19x19);
+
+                //---- radioButtonBoard13x13 ----
+                radioButtonBoard13x13.setText(bundle.getString("OptionDialog.radioButtonBoard13x13.text"));
+                panelBasicSettings.add(radioButtonBoard13x13);
+
+                //---- radioButtonBoard9x9 ----
+                radioButtonBoard9x9.setText(bundle.getString("OptionDialog.radioButtonBoard9x9.text"));
+                panelBasicSettings.add(radioButtonBoard9x9);
+            }
+            dialogPane.add(panelBasicSettings, BorderLayout.NORTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
         pack();
@@ -709,6 +765,12 @@ public class OptionDialog extends JDialog {
         ButtonGroup buttonGroupBoardColor = new ButtonGroup();
         buttonGroupBoardColor.add(radioButtonBoardClassic);
         buttonGroupBoardColor.add(radioButtonBoardFancy);
+
+        //---- buttonGroupBoardSize ----
+        ButtonGroup buttonGroupBoardSize = new ButtonGroup();
+        buttonGroupBoardSize.add(radioButtonBoard19x19);
+        buttonGroupBoardSize.add(radioButtonBoard13x13);
+        buttonGroupBoardSize.add(radioButtonBoard9x9);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 }

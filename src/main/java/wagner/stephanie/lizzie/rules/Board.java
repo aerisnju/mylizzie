@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Board implements Closeable {
-    public static final int BOARD_SIZE = 19;
+    public static int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
     public final static String alphabet = "ABCDEFGHJKLMNOPQRST";
 
     private BoardHistoryList history;

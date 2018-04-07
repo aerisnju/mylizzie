@@ -261,17 +261,11 @@ public class Lizzie {
         }
     }
 
-    private static boolean loadGameToBoard(Game game) {
-        GameNode node = game.getRootNode();
-
-        if (game.getProperty("SZ") != null && !game.getProperty("SZ").contains("19")) {
-            JOptionPane.showMessageDialog(frame, "Error: Board size is not 19x19.", "Lizzie", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-
-        MoveReplayer replayer = new MoveReplayer();
-
+    private static void loadGameToBoard(Game game) {
         clearBoardAndState();
+
+        GameNode node = game.getRootNode();
+        MoveReplayer replayer = new MoveReplayer();
 
         // Process pre-placed stones
         placePreplacedMove(replayer, game.getProperty("AB"), game.getProperty("AW"));
@@ -298,8 +292,6 @@ public class Lizzie {
             }
         }
         while ((node = node.getNextNode()) != null);
-
-        return true;
     }
 
     private static void placePreplacedMove(MoveReplayer replayer, String preplacedBlackStoneString, String preplacedWhiteStoneString) {
@@ -345,12 +337,13 @@ public class Lizzie {
 
     @NotNull
     private static Game snapshotCurrentGame() {
+        final int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
         Game game = new Game();
 
         game.addProperty("FF", "4"); // SGF version: 4
         game.addProperty("KM", "7.5"); // Lz only support fixed komi
         game.addProperty("GM", "1"); // Go game
-        game.addProperty("SZ", "19");
+        game.addProperty("SZ", String.valueOf(BOARD_SIZE));
         game.addProperty("CA", "UTF-8");
         game.addProperty("AP", "MyLizzie");
 
@@ -368,15 +361,15 @@ public class Lizzie {
 
                 if (p.getData().getLastMove() == null) {
                     // Pass
-                    x = 19;
-                    y = 19;
+                    x = BOARD_SIZE;
+                    y = BOARD_SIZE;
                 } else {
                     x = p.getData().getLastMove()[0];
                     y = p.getData().getLastMove()[1];
 
-                    if (x < 0 || x >= 19 || y < 0 || y >= 19) {
-                        x = 19;
-                        y = 19;
+                    if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+                        x = BOARD_SIZE;
+                        y = BOARD_SIZE;
                     }
                 }
 
@@ -434,6 +427,7 @@ public class Lizzie {
     }
 
     private static void addVariationTree(GameNode baseNode, VariationData variationData) {
+        final int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
         Stone baseColor = baseNode.isBlack() ? Stone.BLACK : Stone.WHITE;
         GameNode previousNode = baseNode;
 
@@ -444,15 +438,15 @@ public class Lizzie {
             int x, y;
             if (variation == null) {
                 // Pass
-                x = 19;
-                y = 19;
+                x = BOARD_SIZE;
+                y = BOARD_SIZE;
             } else {
                 x = variation[0];
                 y = variation[1];
 
-                if (x < 0 || x >= 19 || y < 0 || y >= 19) {
-                    x = 19;
-                    y = 19;
+                if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+                    x = BOARD_SIZE;
+                    y = BOARD_SIZE;
                 }
             }
 

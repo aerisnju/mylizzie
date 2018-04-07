@@ -2,9 +2,10 @@ package wagner.stephanie.lizzie.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,6 +70,52 @@ public class OptionSetting {
         }
     }
 
+    public static class BoardSize {
+        public static final int DEFAULT_SIZE = 19;
+        private int width;
+        private int height;
+
+        public BoardSize() {
+            this(DEFAULT_SIZE, DEFAULT_SIZE);
+        }
+
+        public BoardSize(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            BoardSize boardSize = (BoardSize) o;
+            return width == boardSize.width &&
+                    height == boardSize.height;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(width, height);
+        }
+    }
+
+    private BoardSize boardSize;
     private int variationLimit;
     private boolean a1OnTop;
     private boolean showFancyBoard;
@@ -107,6 +154,7 @@ public class OptionSetting {
     private boolean winrateHistogramWindowShow;
 
     public OptionSetting() {
+        boardSize = new BoardSize();
         variationLimit = Integer.MAX_VALUE;
         a1OnTop = false;
         showFancyBoard = true;
@@ -145,6 +193,14 @@ public class OptionSetting {
 
         lastChooserLocation = ".";
         winrateHistogramWindowShow = true;
+    }
+
+    public BoardSize getBoardSize() {
+        return boardSize;
+    }
+
+    public void setBoardSize(BoardSize boardSize) {
+        this.boardSize = boardSize;
     }
 
     public int getVariationLimit() {
@@ -417,5 +473,90 @@ public class OptionSetting {
 
     public void setWinrateHistogramWindowShow(boolean winrateHistogramWindowShow) {
         this.winrateHistogramWindowShow = winrateHistogramWindowShow;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OptionSetting that = (OptionSetting) o;
+        return new EqualsBuilder()
+                .append(variationLimit, that.variationLimit)
+                .append(a1OnTop, that.a1OnTop)
+                .append(showFancyBoard, that.showFancyBoard)
+                .append(showFancyStone, that.showFancyStone)
+                .append(showShadow, that.showShadow)
+                .append(shadowSize, that.shadowSize)
+                .append(playoutsInShortForm, that.playoutsInShortForm)
+                .append(showNextMove, that.showNextMove)
+                .append(analysisWindowShow, that.analysisWindowShow)
+                .append(mouseOverShowMove, that.mouseOverShowMove)
+                .append(showBlackSuggestion, that.showBlackSuggestion)
+                .append(showWhiteSuggestion, that.showWhiteSuggestion)
+                .append(showMoveNumber, that.showMoveNumber)
+                .append(numberOfLastMovesShown, that.numberOfLastMovesShown)
+                .append(autoEnterTryPlayingMode, that.autoEnterTryPlayingMode)
+                .append(mainWindowAlwaysOnTop, that.mainWindowAlwaysOnTop)
+                .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
+                .append(mainWindowPosX, that.mainWindowPosX)
+                .append(mainWindowPosY, that.mainWindowPosY)
+                .append(mainWindowWidth, that.mainWindowWidth)
+                .append(mainWindowHeight, that.mainWindowHeight)
+                .append(analysisWindowPosX, that.analysisWindowPosX)
+                .append(analysisWindowPosY, that.analysisWindowPosY)
+                .append(analysisWindowWidth, that.analysisWindowWidth)
+                .append(analysisWindowHeight, that.analysisWindowHeight)
+                .append(winrateHistogramWindowPosX, that.winrateHistogramWindowPosX)
+                .append(winrateHistogramWindowPosY, that.winrateHistogramWindowPosY)
+                .append(winrateHistogramWindowWidth, that.winrateHistogramWindowWidth)
+                .append(winrateHistogramWindowHeight, that.winrateHistogramWindowHeight)
+                .append(winrateHistogramWindowShow, that.winrateHistogramWindowShow)
+                .append(boardSize, that.boardSize)
+                .append(boardColor, that.boardColor)
+                .append(leelazCommandLine, that.leelazCommandLine)
+                .append(engineProfileList, that.engineProfileList)
+                .append(lastChooserLocation, that.lastChooserLocation)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(boardSize)
+                .append(variationLimit)
+                .append(a1OnTop)
+                .append(showFancyBoard)
+                .append(showFancyStone)
+                .append(showShadow)
+                .append(shadowSize)
+                .append(boardColor)
+                .append(playoutsInShortForm)
+                .append(showNextMove)
+                .append(analysisWindowShow)
+                .append(mouseOverShowMove)
+                .append(showBlackSuggestion)
+                .append(showWhiteSuggestion)
+                .append(leelazCommandLine)
+                .append(showMoveNumber)
+                .append(numberOfLastMovesShown)
+                .append(autoEnterTryPlayingMode)
+                .append(mainWindowAlwaysOnTop)
+                .append(maxAnalysisTimeInMinutes)
+                .append(engineProfileList)
+                .append(mainWindowPosX)
+                .append(mainWindowPosY)
+                .append(mainWindowWidth)
+                .append(mainWindowHeight)
+                .append(analysisWindowPosX)
+                .append(analysisWindowPosY)
+                .append(analysisWindowWidth)
+                .append(analysisWindowHeight)
+                .append(winrateHistogramWindowPosX)
+                .append(winrateHistogramWindowPosY)
+                .append(winrateHistogramWindowWidth)
+                .append(winrateHistogramWindowHeight)
+                .append(lastChooserLocation)
+                .append(winrateHistogramWindowShow)
+                .toHashCode();
     }
 }

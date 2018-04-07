@@ -172,18 +172,7 @@ public class BoardRenderer {
             }
 
             // draw the star points
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
-            final int NUM_STARPOINTS = 3;
-            final int STARPOINT_EDGE_OFFSET = 3;
-            final int STARPOINT_GRID_DISTANCE = 6;
-            for (int i = 0; i < NUM_STARPOINTS; i++) {
-                for (int j = 0; j < NUM_STARPOINTS; j++) {
-                    int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
-                    int centerY = y + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * j);
-                    fillCircle(g, centerX, centerY, starPointRadius);
-                }
-            }
+            drawStartPoints(g);
 
             // draw coordinates if enabled
             if (Lizzie.frame.showCoordinates) {
@@ -208,6 +197,75 @@ public class BoardRenderer {
 
         g0.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
         g0.drawImage(cachedBackgroundImage, 0, 0, null);
+    }
+
+    /**
+     * Draw the star points
+     * @param g graphics2d to draw
+     */
+    private void drawStartPoints(Graphics2D g) {
+        if (Board.BOARD_SIZE == 9) {
+            drawStartPoints9x9(g);
+        } else if (Board.BOARD_SIZE == 13) {
+            drawStartPoints13x13(g);
+        } else {
+            drawStartPoints19x19(g);
+        }
+    }
+
+    private void drawStartPoints19x19(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
+        final int NUM_STARPOINTS = 3;
+        final int STARPOINT_EDGE_OFFSET = 3;
+        final int STARPOINT_GRID_DISTANCE = 6;
+        for (int i = 0; i < NUM_STARPOINTS; i++) {
+            for (int j = 0; j < NUM_STARPOINTS; j++) {
+                int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
+                int centerY = y + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * j);
+                fillCircle(g, centerX, centerY, starPointRadius);
+            }
+        }
+    }
+
+    private void drawStartPoints13x13(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
+        final int NUM_STARPOINTS = 2;
+        final int STARPOINT_EDGE_OFFSET = 3;
+        final int STARPOINT_GRID_DISTANCE = 6;
+        for (int i = 0; i < NUM_STARPOINTS; i++) {
+            for (int j = 0; j < NUM_STARPOINTS; j++) {
+                int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
+                int centerY = y + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * j);
+                fillCircle(g, centerX, centerY, starPointRadius);
+            }
+        }
+
+        // Draw center
+        int centerX = x + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;
+        int centerY = y + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;
+        fillCircle(g, centerX, centerY, starPointRadius);
+    }
+
+    private void drawStartPoints9x9(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
+        final int NUM_STARPOINTS = 2;
+        final int STARPOINT_EDGE_OFFSET = 2;
+        final int STARPOINT_GRID_DISTANCE = 4;
+        for (int i = 0; i < NUM_STARPOINTS; i++) {
+            for (int j = 0; j < NUM_STARPOINTS; j++) {
+                int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
+                int centerY = y + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * j);
+                fillCircle(g, centerX, centerY, starPointRadius);
+            }
+        }
+
+        // Draw center
+        int centerX = x + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;
+        int centerY = y + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;
+        fillCircle(g, centerX, centerY, starPointRadius);
     }
 
     /**
@@ -552,7 +610,7 @@ public class BoardRenderer {
         int availableLength;
 
         // decrease boardLength until the availableLength will result in square board intersections
-        double margin = Lizzie.frame.showCoordinates ? MARGIN_WITH_COORDS : MARGIN;
+        double margin = (Lizzie.frame.showCoordinates ? MARGIN_WITH_COORDS : MARGIN) / Board.BOARD_SIZE * 19.0;
         boardLength++;
         do {
             boardLength--;

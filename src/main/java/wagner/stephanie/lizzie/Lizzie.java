@@ -228,6 +228,7 @@ public class Lizzie {
             leelaz.restartEngine(Lizzie.optionSetting.getLeelazCommandLine());
             board.gotoMove(0);
             board.gotoMove(moveNumber);
+            SwingUtilities.invokeLater(() -> frame.setEngineProfile(Lizzie.optionSetting.getLeelazCommandLine()));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

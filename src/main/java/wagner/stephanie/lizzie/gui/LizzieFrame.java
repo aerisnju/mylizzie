@@ -56,6 +56,8 @@ public class LizzieFrame extends JFrame {
         }
     }
 
+    private String engineProfile = Lizzie.optionSetting.getLeelazCommandLine();
+
     private BufferedImage cachedImage;
     private BoardRenderer boardRenderer;
     private BufferStrategy bs;
@@ -69,7 +71,9 @@ public class LizzieFrame extends JFrame {
      * Creates a window and refreshes the game state at FPS.
      */
     public LizzieFrame() {
-        super(LIZZIE_TITLE);
+        super();
+        setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
+
         boardRenderer = new BoardRenderer();
 
         setVisible(true);
@@ -109,6 +113,13 @@ public class LizzieFrame extends JFrame {
     // Toggle show/hide move number
     public void toggleShowMoveNumber() {
         Lizzie.optionSetting.setShowMoveNumber(!Lizzie.optionSetting.isShowMoveNumber());
+    }
+
+    public void setEngineProfile(String engineProfile) {
+        this.engineProfile = engineProfile;
+        if (getTitle().startsWith(LIZZIE_TITLE)) {
+            setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
+        }
     }
 
     /**
@@ -293,6 +304,6 @@ public class LizzieFrame extends JFrame {
     }
 
     public void restoreDefaultTitle() {
-        setTitle(LIZZIE_TITLE);
+        setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
     }
 }

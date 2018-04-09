@@ -113,7 +113,11 @@ public class Board implements Closeable {
             if (isInTryPlayState()) {
                 if (!tryPlayState.isMainStreamConnected()) {
                     gotoMove(getTryPlayStateBeginMoveNumber());
-                    tryPlayState.getMainStreamEnd().addTryPlayHistory(tryPlayState.getMainStreamEnd().getNext());
+                    BoardHistoryNode tryPlayBeginNode = tryPlayState.getMainStreamEnd().getNext();
+                    if (tryPlayBeginNode != null) {
+                        tryPlayState.getMainStreamEnd().addTryPlayHistory(tryPlayBeginNode);
+                    }
+
                     tryPlayState.restoreMainStream();
 
                     observerCollection.mainStreamCut(tryPlayState.getMainStreamEnd(), history.getHead());

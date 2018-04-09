@@ -142,6 +142,10 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             } else {
                 Lizzie.optionSetting.setShowWhiteSuggestion(!Lizzie.optionSetting.isShowWhiteSuggestion());
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_E) {
+            String engineCommand = JOptionPane.showInputDialog(Lizzie.frame
+                    , resourceBundle.getString("LizzieFrame.prompt.enterEngineCommand"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
+            Lizzie.leelaz.sendCommand(engineCommand);
         }
 
         Lizzie.frame.repaint();

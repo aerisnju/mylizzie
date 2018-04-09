@@ -350,10 +350,10 @@ public class Lizzie {
         BoardHistoryList historyList = board.getHistory();
         BoardHistoryNode initialNode = historyList.getInitialNode();
 
-        GameNode previousNode = null;
-        BoardData previousData = null;
+        GameNode previousSgfNode = null;
+        BoardHistoryNode previousNode = null;
         for (BoardHistoryNode p = initialNode.getNext(); p != null; p = p.getNext()) {
-            GameNode gameNode = new GameNode(previousNode);
+            GameNode gameNode = new GameNode(previousSgfNode);
 
             // Move node
             if (Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) || Objects.equals(p.getData().getLastMoveColor(), Stone.WHITE)) {
@@ -386,24 +386,79 @@ public class Lizzie {
                 gameNode.setMoveNo(p.getData().getMoveNumber());
             }
 
-            if (previousNode != null) {
-                previousNode.addChild(gameNode);
-                // Ensure we have already added child
-                if (previousData != null) {
-                    addVariationTrees(previousNode, previousData);
-                }
+            if (previousSgfNode != null) {
+                previousSgfNode.addChild(gameNode);
+                // Ensure we have already added child. The previousNode is not null here.
+                //addVariationTrees(previousSgfNode, previousNode.getData());
+                addTryPlayTrees(previousSgfNode, previousNode);
             } else {
                 game.setRootNode(gameNode);
             }
 
-            previousNode = gameNode;
-            previousData = p.getData();
+            previousSgfNode = gameNode;
+            previousNode = p;
         }
 
         // Ignore the last node
         // addVariationTree(previousNode, previousData);
 
         return game;
+    }
+
+    private static void addTryPlayTrees(GameNode baseSgfNode, BoardHistoryNode baseNode) {
+        if (CollectionUtils.isEmpty(baseNode.getTryPlayHistory())) {
+            return;
+        }
+
+        for (BoardHistoryNode node : baseNode.getTryPlayHistory()) {
+            addTryPlayTree(baseSgfNode, baseNode, node);
+        }
+    }
+
+    private static void addTryPlayTree(GameNode baseSgfNode, BoardHistoryNode baseNode, BoardHistoryNode tryPlayBeginNode) {
+        final int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
+        GameNode previousSgfNode = baseSgfNode;
+
+        for (BoardHistoryNode p = tryPlayBeginNode; p != null; p = p.getNext()) {
+            GameNode gameNode = new GameNode(previousSgfNode);
+
+            // Move node
+            if (Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) || Objects.equals(p.getData().getLastMoveColor(), Stone.WHITE)) {
+                int x, y;
+
+                if (p.getData().getLastMove() == null) {
+                    // Pass
+                    x = BOARD_SIZE;
+                    y = BOARD_SIZE;
+                } else {
+                    x = p.getData().getLastMove()[0];
+                    y = p.getData().getLastMove()[1];
+
+                    if (x < 0 || x >= BOARD_SIZE || y < 0 || y >= BOARD_SIZE) {
+                        x = BOARD_SIZE;
+                        y = BOARD_SIZE;
+                    }
+                }
+
+                String moveKey = Objects.equals(p.getData().getLastMoveColor(), Stone.BLACK) ? "B" : "W";
+                String moveValue = Util.coordToAlpha.get(x) + Util.coordToAlpha.get(y);
+
+                gameNode.addProperty(moveKey, moveValue);
+                if (p.getData().getCalculationCount() > 100) {
+                    gameNode.addProperty("C", String.format("Black: %.1f; White: %.1f", p.getData().getBlackWinrate(), p.getData().getWhiteWinrate()));
+                }
+            }
+
+            if (p.getData().getMoveNumber() > 0) {
+                gameNode.setMoveNo(p.getData().getMoveNumber());
+            }
+
+            if (previousSgfNode != null) {
+                previousSgfNode.addChild(gameNode);
+            }
+
+            previousSgfNode = gameNode;
+        }
     }
 
     private static void addVariationTrees(GameNode baseNode, BoardData data) {

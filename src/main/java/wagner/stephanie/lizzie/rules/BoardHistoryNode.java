@@ -2,6 +2,7 @@ package wagner.stephanie.lizzie.rules;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.OptionalInt;
 
@@ -14,6 +15,8 @@ public class BoardHistoryNode implements Iterable<BoardData> {
 
     private BoardData data;
 
+    private ArrayList<BoardHistoryNode> tryPlayHistory;
+
     /**
      * Initializes a new list node
      */
@@ -21,6 +24,7 @@ public class BoardHistoryNode implements Iterable<BoardData> {
         previous = null;
         next = null;
         this.data = data;
+        tryPlayHistory = new ArrayList<>();
     }
 
     /**
@@ -64,6 +68,17 @@ public class BoardHistoryNode implements Iterable<BoardData> {
 
     public void setNext(BoardHistoryNode next) {
         this.next = next;
+    }
+
+    public ArrayList<BoardHistoryNode> getTryPlayHistory() {
+        return tryPlayHistory;
+    }
+
+    public void addTryPlayHistory(BoardHistoryNode tryPlayBeginNode) {
+        if (!tryPlayHistory.contains(tryPlayBeginNode)) {
+            tryPlayHistory.add(tryPlayBeginNode);
+            tryPlayBeginNode.previous = this;
+        }
     }
 
     public boolean isJustBefore(BoardHistoryNode anotherNode) {

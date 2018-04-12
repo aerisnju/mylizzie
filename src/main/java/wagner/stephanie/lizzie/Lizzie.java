@@ -108,13 +108,8 @@ public class Lizzie {
     }
 
     public static void clearBoardAndState() {
-        board.close();
+        board.clear();
         leelaz.clearBoard();
-        BoardStateChangeObserverCollection observerCollection = board.getObserverCollection();
-        board = new Board();
-        board.setObserverCollection(observerCollection);
-        observerCollection.boardCleared();
-        observerCollection.mainStreamAppended(board.getHistory().getInitialNode(), board.getHistory().getHead());
     }
 
     public static void loadGameByPrompting() {

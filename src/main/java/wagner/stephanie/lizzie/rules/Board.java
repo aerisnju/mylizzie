@@ -31,7 +31,7 @@ public class Board implements Closeable {
     public Board() {
         leelazExecutor = Executors.newSingleThreadExecutor();
         Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
-        Arrays.setAll(stones, value -> Stone.EMPTY);
+        Arrays.fill(stones, Stone.EMPTY);
 
         history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
         tryPlayState = null;
@@ -59,7 +59,11 @@ public class Board implements Closeable {
     }
 
     public void clear() {
-        history.clear();
+        synchronized (this) {
+            history.clear();
+            observerCollection.boardCleared();
+            observerCollection.mainStreamAppended(history.getInitialNode(), history.getHead());
+        }
     }
 
     public BoardStateChangeObserverCollection getObserverCollection() {

@@ -58,7 +58,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && KeyEvent.VK_0 <= e.getKeyCode() && e.getKeyCode() <= KeyEvent.VK_5) {
+        if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && KeyEvent.VK_0 <= e.getKeyCode() && e.getKeyCode() <= KeyEvent.VK_9) {
             if (e.getKeyCode() == KeyEvent.VK_0) {
                 Lizzie.switchEngineBySetting();
             } else {

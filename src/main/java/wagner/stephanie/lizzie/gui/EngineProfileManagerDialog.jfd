@@ -17,7 +17,7 @@ new FormModel {
 				"border": sfield com.jgoodies.forms.factories.Borders DIALOG
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class com.jgoodies.forms.layout.FormLayout ) {
 					"$columnSpecs": "default, labelcompgap, max(pref;200dlu)"
-					"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default"
+					"$rowSpecs": "default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default, linegap, default"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -85,6 +85,54 @@ new FormModel {
 						"gridX": 3
 						"gridY": 9
 					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelProfile6"
+						"text": new FormMessage( null, "EngineProfileManagerDialog.labelProfile6.text" )
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridY": 11
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldProfile6"
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
+						"gridY": 11
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelProfile7"
+						"text": new FormMessage( null, "EngineProfileManagerDialog.labelProfile7.text" )
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridY": 13
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldProfile7"
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
+						"gridY": 13
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelProfile8"
+						"text": new FormMessage( null, "EngineProfileManagerDialog.labelProfile8.text" )
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridY": 15
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldProfile8"
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
+						"gridY": 15
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelProfile9"
+						"text": new FormMessage( null, "EngineProfileManagerDialog.labelProfile9.text" )
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridY": 17
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldProfile9"
+					}, new FormLayoutConstraints( class com.jgoodies.forms.layout.CellConstraints ) {
+						"gridX": 3
+						"gridY": 17
+					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
 				} )
@@ -130,7 +178,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 585, 315 )
+			"size": new java.awt.Dimension( 585, 385 )
 		} )
 	}
 }

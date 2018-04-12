@@ -4,17 +4,20 @@
 
 package wagner.stephanie.lizzie.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.List;
-import javax.swing.*;
-
 import com.google.common.collect.ImmutableList;
-import com.jgoodies.forms.factories.*;
-import com.jgoodies.forms.layout.*;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 import org.apache.commons.collections4.CollectionUtils;
 import wagner.stephanie.lizzie.Lizzie;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * @author Cao Hu
@@ -34,6 +37,14 @@ public class EngineProfileManagerDialog extends JDialog {
     private JTextField textFieldProfile4;
     private JLabel labelProfile5;
     private JTextField textFieldProfile5;
+    private JLabel labelProfile6;
+    private JTextField textFieldProfile6;
+    private JLabel labelProfile7;
+    private JTextField textFieldProfile7;
+    private JLabel labelProfile8;
+    private JTextField textFieldProfile8;
+    private JLabel labelProfile9;
+    private JTextField textFieldProfile9;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -43,6 +54,7 @@ public class EngineProfileManagerDialog extends JDialog {
 
     private boolean userApproved;
     private List<String> profileList;
+    private List<JTextField> profileTextFields;
 
     public EngineProfileManagerDialog(Frame owner) {
         super(owner);
@@ -67,13 +79,13 @@ public class EngineProfileManagerDialog extends JDialog {
     private void initVariables() {
         userApproved = false;
         profileList = Lizzie.optionSetting.getEngineProfileList();
+        profileTextFields = ImmutableList.of(textFieldProfile1, textFieldProfile2, textFieldProfile3, textFieldProfile4
+                , textFieldProfile5, textFieldProfile6, textFieldProfile7, textFieldProfile8, textFieldProfile9);
 
         if (CollectionUtils.isNotEmpty(profileList)) {
-            textFieldProfile1.setText(profileList.get(0));
-            textFieldProfile2.setText(profileList.get(1));
-            textFieldProfile3.setText(profileList.get(2));
-            textFieldProfile4.setText(profileList.get(3));
-            textFieldProfile5.setText(profileList.get(4));
+            for (int i = 0; i < profileList.size(); ++i) {
+                profileTextFields.get(i).setText(profileList.get(i));
+            }
         }
     }
 
@@ -83,13 +95,7 @@ public class EngineProfileManagerDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         userApproved = true;
-        profileList = ImmutableList.of(
-                textFieldProfile1.getText().trim()
-                , textFieldProfile2.getText().trim()
-                , textFieldProfile3.getText().trim()
-                , textFieldProfile4.getText().trim()
-                , textFieldProfile5.getText().trim()
-        );
+        profileList = profileTextFields.stream().map(JTextField::getText).collect(Collectors.toCollection(ArrayList::new));
         dispose();
     }
 
@@ -109,6 +115,14 @@ public class EngineProfileManagerDialog extends JDialog {
         textFieldProfile4 = new JTextField();
         labelProfile5 = new JLabel();
         textFieldProfile5 = new JTextField();
+        labelProfile6 = new JLabel();
+        textFieldProfile6 = new JTextField();
+        labelProfile7 = new JLabel();
+        textFieldProfile7 = new JTextField();
+        labelProfile8 = new JLabel();
+        textFieldProfile8 = new JTextField();
+        labelProfile9 = new JLabel();
+        textFieldProfile9 = new JTextField();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -130,8 +144,8 @@ public class EngineProfileManagerDialog extends JDialog {
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new FormLayout(
-                    "default, $lcgap, [200dlu,pref]",
-                    "4*(default, $lgap), default"));
+                        "default, $lcgap, [200dlu,pref]",
+                        "8*(default, $lgap), default"));
 
                 //---- labelProfile1 ----
                 labelProfile1.setText(bundle.getString("EngineProfileManagerDialog.labelProfile1.text"));
@@ -157,6 +171,26 @@ public class EngineProfileManagerDialog extends JDialog {
                 labelProfile5.setText(bundle.getString("EngineProfileManagerDialog.labelProfile5.text"));
                 contentPanel.add(labelProfile5, CC.xy(1, 9));
                 contentPanel.add(textFieldProfile5, CC.xy(3, 9));
+
+                //---- labelProfile6 ----
+                labelProfile6.setText(bundle.getString("EngineProfileManagerDialog.labelProfile6.text"));
+                contentPanel.add(labelProfile6, CC.xy(1, 11));
+                contentPanel.add(textFieldProfile6, CC.xy(3, 11));
+
+                //---- labelProfile7 ----
+                labelProfile7.setText(bundle.getString("EngineProfileManagerDialog.labelProfile7.text"));
+                contentPanel.add(labelProfile7, CC.xy(1, 13));
+                contentPanel.add(textFieldProfile7, CC.xy(3, 13));
+
+                //---- labelProfile8 ----
+                labelProfile8.setText(bundle.getString("EngineProfileManagerDialog.labelProfile8.text"));
+                contentPanel.add(labelProfile8, CC.xy(1, 15));
+                contentPanel.add(textFieldProfile8, CC.xy(3, 15));
+
+                //---- labelProfile9 ----
+                labelProfile9.setText(bundle.getString("EngineProfileManagerDialog.labelProfile9.text"));
+                contentPanel.add(labelProfile9, CC.xy(1, 17));
+                contentPanel.add(textFieldProfile9, CC.xy(3, 17));
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -164,8 +198,8 @@ public class EngineProfileManagerDialog extends JDialog {
             {
                 buttonBar.setBorder(Borders.createEmptyBorder("5dlu, 0dlu, 0dlu, 0dlu"));
                 buttonBar.setLayout(new FormLayout(
-                    "$glue, $button, $rgap, $button",
-                    "pref"));
+                        "$glue, $button, $rgap, $button",
+                        "pref"));
 
                 //---- okButton ----
                 okButton.setText(bundle.getString("EngineProfileManagerDialog.okButton.text"));
@@ -182,7 +216,7 @@ public class EngineProfileManagerDialog extends JDialog {
             //======== panelNotes ========
             {
                 panelNotes.setLayout(new FlowLayout(FlowLayout.LEFT));
-                ((FlowLayout)panelNotes.getLayout()).setAlignOnBaseline(true);
+                ((FlowLayout) panelNotes.getLayout()).setAlignOnBaseline(true);
 
                 //---- labelProfileManagerNote ----
                 labelProfileManagerNote.setText(bundle.getString("EngineProfileManagerDialog.labelProfileManagerNote.text"));

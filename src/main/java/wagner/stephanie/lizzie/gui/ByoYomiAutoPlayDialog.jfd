@@ -1,0 +1,146 @@
+JFDML JFormDesigner: "6.0.2.0.116" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "wagner.stephanie.lizzie.i18n"
+	"i18n.bundleName": "GuiBundle"
+	"i18n.keyPrefix": "ByoYomiAutoPlayDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {comp panelNotes::l:::x, seq l {space :::p, par l {comp panelCountdown::::507:x, seq {par l {comp panelButtonArea::::501:x, seq {par l {seq {comp labelSettings:::p::p, space :::p, comp checkBoxBlackCountdown:::p::p, space :::p, comp checkBoxWhiteCountdown:::p::p}, seq l {comp labelCountdownTime:::p::p, space :::p, comp spinnerCountdownTime:::p::p, space :::p, comp labelSeconds:::p::p}}, space :0:195:x}}, space :::p}}}}"
+			"$verticalGroup": "par l {seq l {comp panelNotes:::p::p, space :::p, par b {comp labelSettings::b:p::p, comp checkBoxBlackCountdown::b:p::p, comp checkBoxWhiteCountdown::b:p::p}, space :::p, par b {comp labelCountdownTime::b:p::p, comp spinnerCountdownTime::b:p::p, comp labelSeconds::b:p::p}, space :::p, comp panelCountdown:::p::p, space :::x, comp panelButtonArea:::p:47:p, space :::p}}"
+		} ) {
+			name: "this"
+			"title": new FormMessage( null, "ByoYomiAutoPlayDialog.this.title" )
+			"defaultCloseOperation": 2
+			addEvent( new FormEvent( "java.awt.event.WindowListener", "windowClosing", "thisWindowClosing", true ) )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+				"$horizontalGroup": "par l {seq l {space :::p, comp labelNotes::::501:x, space :::p}}"
+				"$verticalGroup": "par l {seq t {space :::p, comp labelNotes::::60:x, space :::p}}"
+			} ) {
+				name: "panelNotes"
+				"background": sfield java.awt.Color white
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelNotes"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelNotes.text" )
+					"verticalAlignment": 1
+				} )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "labelSettings"
+				"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelSettings.text" )
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBoxBlackCountdown"
+				"text": new FormMessage( null, "ByoYomiAutoPlayDialog.checkBoxBlackCountdown.text" )
+			} )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBoxWhiteCountdown"
+				"text": new FormMessage( null, "ByoYomiAutoPlayDialog.checkBoxWhiteCountdown.text" )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "labelCountdownTime"
+				"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelCountdownTime.text" )
+			} )
+			add( new FormComponent( "javax.swing.JSpinner" ) {
+				name: "spinnerCountdownTime"
+				"model": new javax.swing.SpinnerNumberModel( 30, 1, 600, 1 )
+				addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "spinnerCountdownTimeStateChanged", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "labelSeconds"
+				"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelSeconds.text" )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "fill,hidemode 3"
+				"$columnConstraints": "[fill][fill][fill]"
+				"$rowConstraints": "[][][]"
+			} ) {
+				name: "panelCountdown"
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelBlack"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelBlack.text" )
+					"horizontalAlignment": 0
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelCountdownIndicator"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelCountdownIndicator.text" )
+					"horizontalAlignment": 0
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 5, false )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelWhite"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelWhite.text" )
+					"horizontalAlignment": 0
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 2 0"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelBlackToPlay"
+					"horizontalAlignment": 0
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 12, false )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelCountdownValue"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.labelCountdownValue.text" )
+					"horizontalAlignment": 0
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 12, false )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 1"
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelWhiteToPlay"
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 12, false )
+					"horizontalAlignment": 0
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 2 1"
+				} )
+				add( new FormComponent( "javax.swing.JProgressBar" ) {
+					name: "progressBarCountdown"
+					"preferredSize": new java.awt.Dimension( 146, 20 )
+					"maximum": 30
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 2"
+				} )
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+				"$layoutConstraints": "fill,hidemode 3"
+				"$columnConstraints": "[fill][fill][fill]"
+				"$rowConstraints": "[]"
+			} ) {
+				name: "panelButtonArea"
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "buttonStartPause"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.buttonStartPause.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonStartPauseActionPerformed", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 0 0"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "buttonReset"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.buttonReset.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonResetActionPerformed", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 1 0"
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "buttonExit"
+					"text": new FormMessage( null, "ByoYomiAutoPlayDialog.buttonExit.text" )
+					addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonExitActionPerformed", true ) )
+				}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+					"value": "cell 2 0"
+				} )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 515, 335 )
+		} )
+	}
+}

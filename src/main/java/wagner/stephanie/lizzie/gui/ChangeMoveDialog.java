@@ -64,11 +64,11 @@ public class ChangeMoveDialog extends JDialog {
         userApproved = true;
         moveNumber = (int) spinnerMoveNumber.getValue();
         correctedMove = textFieldCoordinates.getText();
-        dispose();
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
-        dispose();
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private void initVariables() {

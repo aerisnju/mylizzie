@@ -7,10 +7,11 @@ import java.awt.event.*;
 import java.util.ResourceBundle;
 
 public class Input implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener {
-    private ResourceBundle resourceBundle;
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+
+    private ByoYomiAutoPlayDialog byoYomiAutoPlayDialog = null;
 
     public Input() {
-        resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
     }
 
     @Override
@@ -146,6 +147,11 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             String engineCommand = JOptionPane.showInputDialog(Lizzie.frame
                     , resourceBundle.getString("LizzieFrame.prompt.enterEngineCommand"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
             Lizzie.leelaz.sendCommand(engineCommand);
+        } else if (e.getKeyCode() == KeyEvent.VK_B) {
+            if (byoYomiAutoPlayDialog == null || !byoYomiAutoPlayDialog.isDisplayable()) {
+                byoYomiAutoPlayDialog = new ByoYomiAutoPlayDialog(Lizzie.frame);
+                byoYomiAutoPlayDialog.setVisible(true);
+            }
         }
 
         Lizzie.frame.repaint();

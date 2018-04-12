@@ -14,6 +14,7 @@ import wagner.stephanie.lizzie.Lizzie;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -90,13 +91,13 @@ public class EngineProfileManagerDialog extends JDialog {
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
-        dispose();
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private void okButtonActionPerformed(ActionEvent e) {
         userApproved = true;
         profileList = profileTextFields.stream().map(JTextField::getText).collect(Collectors.toCollection(ArrayList::new));
-        dispose();
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     private void initComponents() {

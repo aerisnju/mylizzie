@@ -42,6 +42,7 @@ public class LizzieFrame extends JFrame {
             , "key 'S' | Show/hide suggestions (for B or W)"
             , "key 'C' | Change existing move"
             , "key 'E' | Send command to GTP engine"
+            , "key 'B' | Auto play moves"
     };
     public static final String LIZZIE_TITLE = "MyLizzie - Leela Zero Interface";
     public static final String LIZZIE_TRY_PLAY_TITLE = "... Try playing ...";

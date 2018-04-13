@@ -191,7 +191,7 @@ public class LizzieFrame extends JFrame {
 
         Graphics2D g = (Graphics2D) cachedImage.getGraphics();
         int maxSize = Math.min(getWidth(), getHeight());
-        Font font = new Font("Open Sans", Font.PLAIN, (int) (maxSize * 0.04));
+        Font font = new Font("Open Sans", Font.PLAIN, (int) (maxSize * 0.03));
         g.setFont(font);
         int lineHeight = (int) (font.getSize() * 1.15);
 
@@ -200,7 +200,6 @@ public class LizzieFrame extends JFrame {
 
         int commandsX = (int) (getWidth() / 2 - boxWidth / 2);
         int commandsY = (int) (getHeight() / 2 - boxHeight / 2);
-
 
         BufferedImage result = new BufferedImage(boxWidth, boxHeight, BufferedImage.TYPE_INT_ARGB);
         filter.filter(cachedImage.getSubimage(commandsX, commandsY, boxWidth, boxHeight), result);

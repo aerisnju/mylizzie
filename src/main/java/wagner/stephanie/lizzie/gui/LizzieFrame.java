@@ -12,40 +12,44 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The window used to display the game.
  */
 public class LizzieFrame extends JFrame {
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+
     private static final String[] commands = {
-            "left arrow | back"
-            , "right arrow | forward"
-            , "space | toggle pondering"
-            , "right click | back"
-            , "mouse wheel scroll | back/forward"
-            , "key 'P' | pass"
-            , "key 'N' | Show/hide move number"
-            , "key 'O' | Show settings dialog"
-            , "Alt + 'C' | Clear board"
-            , "'R'/Ctrl + O | Read SGF"
-            , "'W'/Ctrl + S | Write SGF"
-            , "Ctrl + C | Copy SGF to clipboard"
-            , "Ctrl + V | Paste SGF from clipboard"
-            , "key 'G' | Go to move"
-            , "key 'V' | Enter/Leave try playing state"
-            , "key 'X' | Drop all successive moves"
-            , "key 'A' | Show/hide analysis window"
-            , "key 'H' | Show/hide winrate histogram window"
-            , "key 'Home' | Go to initial board"
-            , "key 'End' | Go to the last move"
-            , "key 'S' | Show/hide suggestions (for B or W)"
-            , "key 'C' | Change existing move"
-            , "key 'E' | Send command to GTP engine"
-            , "key 'B' | Auto play moves"
+            resourceBundle.getString("LizzieFrame.controls.leftArrow")
+            , resourceBundle.getString("LizzieFrame.controls.rightArrow")
+            , resourceBundle.getString("LizzieFrame.controls.space")
+            , resourceBundle.getString("LizzieFrame.controls.rightClick")
+            , resourceBundle.getString("LizzieFrame.controls.mouseWheelScroll")
+            , resourceBundle.getString("LizzieFrame.controls.keyP")
+            , resourceBundle.getString("LizzieFrame.controls.keyN")
+            , resourceBundle.getString("LizzieFrame.controls.keyO")
+            , resourceBundle.getString("LizzieFrame.controls.keyAltC")
+            , resourceBundle.getString("LizzieFrame.controls.keyCtrlO")
+            , resourceBundle.getString("LizzieFrame.controls.keyCtrlS")
+            , resourceBundle.getString("LizzieFrame.controls.keyCtrlC")
+            , resourceBundle.getString("LizzieFrame.controls.keyCtrlV")
+            , resourceBundle.getString("LizzieFrame.controls.keyG")
+            , resourceBundle.getString("LizzieFrame.controls.keyV")
+            , resourceBundle.getString("LizzieFrame.controls.keyX")
+            , resourceBundle.getString("LizzieFrame.controls.keyA")
+            , resourceBundle.getString("LizzieFrame.controls.keyH")
+            , resourceBundle.getString("LizzieFrame.controls.keyHome")
+            , resourceBundle.getString("LizzieFrame.controls.keyEnd")
+            , resourceBundle.getString("LizzieFrame.controls.keyS")
+            , resourceBundle.getString("LizzieFrame.controls.keyC")
+            , resourceBundle.getString("LizzieFrame.controls.keyE")
+            , resourceBundle.getString("LizzieFrame.controls.keyB")
+            , resourceBundle.getString("LizzieFrame.controls.keyEnter")
     };
     public static final String LIZZIE_TITLE = "MyLizzie - Leela Zero Interface";
-    public static final String LIZZIE_TRY_PLAY_TITLE = "... Try playing ...";
+    public static final String LIZZIE_TRY_PLAY_TITLE = resourceBundle.getString("LizzieFrame.title.tryPlayingMode");
 
     static {
         // load fonts
@@ -191,7 +195,8 @@ public class LizzieFrame extends JFrame {
 
         Graphics2D g = (Graphics2D) cachedImage.getGraphics();
         int maxSize = Math.min(getWidth(), getHeight());
-        Font font = new Font("Open Sans", Font.PLAIN, (int) (maxSize * 0.03));
+
+        Font font = new Font(new JLabel().getFont().getName(), Font.PLAIN, (int) (maxSize * 0.03));
         g.setFont(font);
         int lineHeight = (int) (font.getSize() * 1.15);
 
@@ -238,8 +243,8 @@ public class LizzieFrame extends JFrame {
 
         int maxSize = (int) (Math.min(getWidth(), getHeight()) * 0.98);
 
-        Font font = new Font("Open Sans", Font.PLAIN, (int) (maxSize * 0.03));
-        String commandString = "hold F1 to view controls";
+        Font font = new Font(new JLabel().getFont().getName(), Font.PLAIN, (int) (maxSize * 0.03));
+        String commandString = resourceBundle.getString("LizzieFrame.controls.keyF1");
         int strokeRadius = 2;
 
         int showCommandsHeight = (int) (font.getSize() * 1.1);

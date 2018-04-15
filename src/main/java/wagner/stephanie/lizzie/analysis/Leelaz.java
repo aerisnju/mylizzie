@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.analysis;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -10,14 +11,13 @@ import wagner.stephanie.lizzie.util.ArgumentTokenizer;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
 import javax.swing.*;
-import java.io.*;
-import java.nio.file.Paths;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * an interface with leelaz.exe go engine. Can be adapted for GTP, but is specifically designed for GCP's Leela Zero.
@@ -30,13 +30,8 @@ public class Leelaz implements Closeable {
 
     private static final long MINUTE = 60 * 1000; // number of milliseconds in a minute
 
-    private Process process;
-    private Thread leelazMonitorThread;
     private ExecutorService notificationExecutor;
     private ExecutorService miscExecutor;
-
-    private BufferedInputStream inputStream;
-    private BufferedOutputStream outputStream;
 
     private boolean isReadingPonderOutput;
     private List<MoveData> bestMoves;
@@ -50,6 +45,8 @@ public class Leelaz implements Closeable {
     private BestMoveObserverCollection observerCollection;
 
     private int boardStateCount;
+
+    private GtpClient leelazEngine;
 
     /**
      * Initializes the leelaz process and starts reading output
@@ -95,14 +92,6 @@ public class Leelaz implements Closeable {
     }
 
     /**
-     * Initializes the input and output streams
-     */
-    private void initializeStreams() {
-        inputStream = new BufferedInputStream(process.getInputStream());
-        outputStream = new BufferedOutputStream(process.getOutputStream());
-    }
-
-    /**
      * Parse a line of Leelaz output
      *
      * @param line output line
@@ -142,51 +131,31 @@ public class Leelaz implements Closeable {
         }
     }
 
-    /**
-     * Continually reads and processes output from leelaz
-     */
-    private void read() {
-        try {
-            int c;
-            StringBuilder line = new StringBuilder();
-            while ((c = inputStream.read()) != -1) {
-                line.append((char) c);
-                if ((c == '\n')) {
-                    final String lineString = line.toString();
-                    miscExecutor.execute(() -> parseLine(lineString));
-                    line = new StringBuilder();
-                }
-            }
-            // this line will be reached when Leelaz shuts down
-            System.out.println("Leelaz process ended.");
-
-            shutdown();
-            saveRestoreSgf();
-        } catch (Exception e) {
-            e.printStackTrace();
-            saveRestoreSgf();
-        }
-    }
-
-    public void saveRestoreSgf() {
+    public void exitNotification(int exitCode) {
         if (!isNormalExit()) {
-            JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.unexpectedProcessEnd"), "Lizzie", JOptionPane.ERROR_MESSAGE);
-            Lizzie.storeGameByFile(Paths.get("restore.sgf"));
+            // Prevent hang in callbacks
+            miscExecutor.execute(() -> JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.unexpectedProcessEnd"), "Lizzie", JOptionPane.ERROR_MESSAGE));
+        } else {
+            setNormalExit(false);
         }
     }
 
     /**
-     * Sends a command for leelaz to execute
+     * Post a command for leelaz to execute
      *
-     * @param command a GTP command containing no newline characters
+     * @param command a GTP command
      */
-    public void sendCommand(String command) {
-        try {
-            outputStream.write((command + "\n").getBytes());
-            outputStream.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public ListenableFuture<List<String>> postGtpCommand(String command) {
+        return leelazEngine.postCommand(command);
+    }
+
+    /**
+     * Post a command for leelaz to execute
+     *
+     * @param command a GTP command
+     */
+    public List<String> sendGtpCommand(String command) {
+        return leelazEngine.sendCommand(command);
     }
 
     /**
@@ -194,32 +163,30 @@ public class Leelaz implements Closeable {
      * @param move  coordinate of the coordinate
      */
     public void playMove(Stone color, String move) {
+        String colorString;
+        switch (color) {
+            case BLACK:
+                colorString = "B";
+                break;
+            case WHITE:
+                colorString = "W";
+                break;
+            default:
+                throw new IllegalArgumentException("The stone color must be BLACK or WHITE, but was " + color.toString());
+        }
+
         synchronized (this) {
-            String colorString;
-            switch (color) {
-                case BLACK:
-                    colorString = "B";
-                    break;
-                case WHITE:
-                    colorString = "W";
-                    break;
-                default:
-                    throw new IllegalArgumentException("The stone color must be BLACK or WHITE, but was " + color.toString());
-            }
-
-            sendCommand("play " + colorString + " " + move);
+            ListenableFuture<List<String>> future = postGtpCommand("play " + colorString + " " + move);
+            future.addListener(() -> ++boardStateCount, notificationExecutor);
             bestMoves = new ArrayList<>();
-
-            ++boardStateCount;
         }
     }
 
     public void undo() {
         synchronized (this) {
-            sendCommand("undo");
+            ListenableFuture<List<String>> future = postGtpCommand("undo");
+            future.addListener(() -> --boardStateCount, notificationExecutor);
             bestMoves = new ArrayList<>();
-
-            --boardStateCount;
         }
     }
 
@@ -229,7 +196,7 @@ public class Leelaz implements Closeable {
     public void ponder() {
         isPondering = true;
         startPonderTime = System.currentTimeMillis();
-        sendCommand("time_left b 0 0");
+        postGtpCommand("time_left b 0 0");
     }
 
     public void togglePonder() {
@@ -237,48 +204,12 @@ public class Leelaz implements Closeable {
         if (isPondering) {
             ponder();
         } else {
-            sendCommand("name"); // ends pondering
-        }
-    }
-
-    /**
-     * End the process
-     */
-    public void shutdown() {
-        if (process.isAlive()) {
-            stopPonder();
-            sendCommand("quit");
-
-            try {
-                process.waitFor(30, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                // Do nothing
-            }
-
-            if (process.isAlive()) {
-                process.destroy();
-            }
-        }
-
-        try {
-            inputStream.close();
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<MoveData> getBestMoves() {
-        synchronized (this) {
-            return bestMoves;
+            postGtpCommand("name"); // ends pondering
         }
     }
 
     public void clearBoard() {
-        if (isPondering) {
-            sendCommand("name"); // ends pondering
-        }
-        sendCommand("clear_board");
+        postGtpCommand("clear_board");
         boardStateCount = 0;
         if (isPondering) {
             ponder();
@@ -287,13 +218,18 @@ public class Leelaz implements Closeable {
 
     public void stopPonder() {
         if (isPondering) {
-            sendCommand("name"); // ends pondering
+            postGtpCommand("name"); // ends pondering
             isPondering = false;
         }
     }
 
     @Override
     public void close() {
+        if (leelazEngine != null) {
+            setNormalExit(true);
+            leelazEngine.shutdown();
+        }
+
         if (notificationExecutor != null) {
             try {
                 ThreadPoolUtil.shutdownAndAwaitTermination(notificationExecutor);
@@ -310,13 +246,6 @@ public class Leelaz implements Closeable {
             } catch (Exception e) {
                 logger.error("Cannot close misc executor.", e);
             }
-        }
-    }
-
-    private void startLeelazMonitoringThread() {
-        if (leelazMonitorThread == null || !leelazMonitorThread.isAlive()) {
-            leelazMonitorThread = new Thread(this::read);
-            leelazMonitorThread.start();
         }
     }
 
@@ -344,25 +273,15 @@ public class Leelaz implements Closeable {
         commands.addAll(ArgumentTokenizer.tokenize(commandline.trim()));
 
         // run leelaz.exe
-        ProcessBuilder processBuilder = new ProcessBuilder(commands);
-        processBuilder.directory(new File("."));
-        processBuilder.redirectErrorStream(true);
-        process = processBuilder.start();
-
-        initializeStreams();
-
-        // start a thread to continuously read Leelaz output
-        startLeelazMonitoringThread();
+        leelazEngine = new GeneralGtpClient(commands);
+        leelazEngine.registerStderrLineConsumer(this::parseLine);
+        leelazEngine.registerEngineExitObserver(this::exitNotification);
+        leelazEngine.start();
     }
 
     public void restartEngine(String commandline) throws IOException, InterruptedException {
-        // Mute the message
         setNormalExit(true);
-
-        stopPonder();
-        shutdown();
-
-        setNormalExit(false);
+        leelazEngine.shutdown();
 
         startEngine(commandline);
 
@@ -372,9 +291,11 @@ public class Leelaz implements Closeable {
 
     private void waitForEngineStart() throws InterruptedException {
         long startTime = System.currentTimeMillis();
+
         ponder();
+
         while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 30000) {
-            Thread.sleep(100);
+            Thread.sleep(250);
         }
 
         if (CollectionUtils.isEmpty(bestMoves)) {

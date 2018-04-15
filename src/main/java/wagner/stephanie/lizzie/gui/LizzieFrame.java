@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
@@ -98,10 +99,14 @@ public class LizzieFrame extends JFrame {
         // shut down leelaz, then shut down the program when the window is closed
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                if (Lizzie.board.getHistory().getInitialNode().getNext() != null) {
+                    Lizzie.storeGameByFile(Paths.get("restore.sgf"));
+                }
+
                 Lizzie.leelaz.setNormalExit(true);
                 Lizzie.readGuiPosition();
                 Lizzie.writeSettingFile();
-                Lizzie.leelaz.shutdown();
+                Lizzie.leelaz.close();
 
                 System.exit(0);
             }

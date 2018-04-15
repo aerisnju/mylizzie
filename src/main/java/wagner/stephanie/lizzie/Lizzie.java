@@ -7,12 +7,15 @@ import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
+import wagner.stephanie.lizzie.analysis.GnuGoScoreEstimator;
 import wagner.stephanie.lizzie.analysis.Leelaz;
+import wagner.stephanie.lizzie.analysis.ScoreEstimator;
 import wagner.stephanie.lizzie.gui.*;
 import wagner.stephanie.lizzie.rules.*;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
@@ -31,7 +34,9 @@ import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -57,6 +62,7 @@ public class Lizzie {
     public static OptionSetting optionSetting;
     public static WinrateHistogramDialog winrateHistogramDialog;
     public static ExecutorService miscExecutor = Executors.newSingleThreadExecutor();
+    public static ScoreEstimator gnuGoEstimator = null;
 
     static {
         readSettingFile();
@@ -68,13 +74,23 @@ public class Lizzie {
         }
     }
 
+    public static void exitLizzie(int exitCode) {
+        ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor);
+        if (gnuGoEstimator != null) {
+            try {
+                gnuGoEstimator.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        System.exit(exitCode);
+    }
+
     /**
      * Launches the game window, and runs the game.
      */
     public static void main(String[] args) throws IOException {
-        // Cleanup for misc executor
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor)));
-
         // Use Nimbus look and feel which looks better
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -105,6 +121,10 @@ public class Lizzie {
 
         analysisDialog.setVisible(optionSetting.isAnalysisWindowShow());
         winrateHistogramDialog.setVisible(optionSetting.isWinrateHistogramWindowShow());
+
+        if (Files.exists(Paths.get("gnugo")) || Files.exists(Paths.get("gnugo.exe"))) {
+            gnuGoEstimator = new GnuGoScoreEstimator("./gnugo --mode gtp");
+        }
     }
 
     public static void clearBoardAndState() {

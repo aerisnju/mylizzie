@@ -48,6 +48,7 @@ public class LizzieFrame extends JFrame {
             , resourceBundle.getString("LizzieFrame.controls.keyE")
             , resourceBundle.getString("LizzieFrame.controls.keyB")
             , resourceBundle.getString("LizzieFrame.controls.keyEnter")
+            , resourceBundle.getString("LizzieFrame.controls.keyT")
     };
     public static final String LIZZIE_TITLE = "MyLizzie - Leela Zero Interface";
     public static final String LIZZIE_TRY_PLAY_TITLE = resourceBundle.getString("LizzieFrame.title.tryPlayingMode");
@@ -108,7 +109,7 @@ public class LizzieFrame extends JFrame {
                 Lizzie.writeSettingFile();
                 Lizzie.leelaz.close();
 
-                System.exit(0);
+                Lizzie.exitLizzie(0);
             }
         });
     }

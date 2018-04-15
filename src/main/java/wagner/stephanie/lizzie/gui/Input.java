@@ -152,6 +152,12 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 byoYomiAutoPlayDialog = new ByoYomiAutoPlayDialog(Lizzie.frame);
                 byoYomiAutoPlayDialog.setVisible(true);
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_T) {
+            if (Lizzie.gnuGoEstimator == null || !Lizzie.gnuGoEstimator.isRunning()) {
+                JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noGnuGoEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.scoreEstimation") + Lizzie.gnuGoEstimator.estimateScoreRaw(), "Lizzie", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
 
         Lizzie.frame.repaint();

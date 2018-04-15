@@ -202,6 +202,14 @@ public class Board implements Closeable {
         }
     }
 
+    public static String convertCoordinatesToName(int[] coords) {
+        if (ArrayUtils.isEmpty(coords) || coords.length != 2) {
+            return "Pass";
+        } else {
+            return convertCoordinatesToName(coords[0], coords[1]);
+        }
+    }
+
     public static String convertCoordinatesToDisplayName(int x, int y) {
         if (isValid(x, y)) {
             // coordinates take the form C16 A19 Q5 K10 etc. I is not used.
@@ -212,6 +220,14 @@ public class Board implements Closeable {
             }
         } else {
             return "Pass";
+        }
+    }
+
+    public static String convertCoordinatesToDisplayName(int[] coords) {
+        if (ArrayUtils.isEmpty(coords) || coords.length != 2) {
+            return "Pass";
+        } else {
+            return convertCoordinatesToDisplayName(coords[0], coords[1]);
         }
     }
 

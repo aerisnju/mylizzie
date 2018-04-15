@@ -287,6 +287,8 @@ public class Leelaz implements Closeable {
 
         // Wait for some time for the engine start
         waitForEngineStart();
+
+        notificationExecutor.execute(observerCollection::engineRestarted);
     }
 
     private void waitForEngineStart() throws InterruptedException {

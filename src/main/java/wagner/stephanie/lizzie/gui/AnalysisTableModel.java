@@ -5,16 +5,23 @@ import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
 import wagner.stephanie.lizzie.analysis.MoveData;
 import wagner.stephanie.lizzie.rules.Board;
-import wagner.stephanie.lizzie.rules.BoardStateChangeObserver;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
-import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class AnalysisTableModel extends AbstractTableModel {
-    private static final List<String> COLUMN_NAMES = ImmutableList.of("Move", "Win", "PO", "PV");
-    private static final List<Class> COLUMN_CLASSES = ImmutableList.of(String.class, Double.class, Integer.class, String.class);
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+
+    private static final List<String> COLUMN_NAMES = ImmutableList.of(
+            resourceBundle.getString("AnalysisFrame.analysisTable.title.move")
+            , resourceBundle.getString("AnalysisFrame.analysisTable.title.winrate")
+            , resourceBundle.getString("AnalysisFrame.analysisTable.title.probability")
+            , resourceBundle.getString("AnalysisFrame.analysisTable.title.calculation")
+            , resourceBundle.getString("AnalysisFrame.analysisTable.title.variation")
+    );
+    private static final List<Class> COLUMN_CLASSES = ImmutableList.of(String.class, Double.class, Double.class, Integer.class, String.class);
 
     private JTable hostTable;
     private List<MoveData> bestMoves;
@@ -166,8 +173,10 @@ public class AnalysisTableModel extends AbstractTableModel {
             case 1:
                 return data.getWinrate();
             case 2:
-                return data.getPlayouts();
+                return data.getProbability();
             case 3:
+                return data.getPlayouts();
+            case 4:
                 return data.getVariationDisplayString();
             default:
                 return "";

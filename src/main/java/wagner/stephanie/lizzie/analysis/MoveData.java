@@ -16,6 +16,7 @@ public class MoveData {
     private String coordinate;
     private int playouts;
     private double winrate;
+    private double probability;
     private List<String> variation;
 
     /**
@@ -29,7 +30,7 @@ public class MoveData {
         coordinate = data[0];
         playouts = Integer.parseInt(data[2]);
         winrate = Double.parseDouble(data[4].substring(0, data[4].length() - 2));
-
+        probability = Double.parseDouble(data[6].substring(0, data[6].length() - 2));
         variation = new ArrayList<>();
         variation.addAll(Arrays.asList(data).subList(8, data.length));
     }
@@ -56,6 +57,14 @@ public class MoveData {
 
     public void setWinrate(double winrate) {
         this.winrate = winrate;
+    }
+
+    public double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
     }
 
     public List<String> getVariation() {

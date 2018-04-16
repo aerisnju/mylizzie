@@ -8,9 +8,12 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ResourceBundle;
 
 @SuppressWarnings("serial")
 public class AnalysisFrame extends JPanel {
+    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+
     private JTable analysisTable;
     private AnalysisTableModel analysisTableModel;
 
@@ -32,8 +35,9 @@ public class AnalysisFrame extends JPanel {
 
         analysisTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         analysisTable.getColumnModel().getColumn(1).setPreferredWidth(50);
-        analysisTable.getColumnModel().getColumn(2).setPreferredWidth(50);
-        analysisTable.getColumnModel().getColumn(3).setPreferredWidth(650);
+        analysisTable.getColumnModel().getColumn(2).setPreferredWidth(65);
+        analysisTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        analysisTable.getColumnModel().getColumn(4).setPreferredWidth(650);
 
         // Create the scroll pane and add the table to it.
         // Official programming recommend, or the table head will not show
@@ -79,7 +83,7 @@ public class AnalysisFrame extends JPanel {
      */
     public static JDialog createAnalysisDialog(JFrame owner) {
         // Create and set up the window.
-        JDialog dialog = new JDialog(owner, "Leela Analyzer");
+        JDialog dialog = new JDialog(owner, resourceBundle.getString("AnalysisFrame.title"));
 
         // Create and set up the content pane.
         final AnalysisFrame newContentPane = new AnalysisFrame();

@@ -1,6 +1,7 @@
 package wagner.stephanie.lizzie.gui;
 
 import wagner.stephanie.lizzie.Lizzie;
+import wagner.stephanie.lizzie.rules.Board;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -156,8 +157,21 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             if (Lizzie.gnuGoEstimator == null || !Lizzie.gnuGoEstimator.isRunning()) {
                 JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noGnuGoEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.scoreEstimation") + Lizzie.gnuGoEstimator.estimateScoreRaw(), "Lizzie", JOptionPane.INFORMATION_MESSAGE);
+                String estimatedRawScore = Lizzie.gnuGoEstimator.estimateScoreRaw();
+                Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.gnuGoEstimator.estimateInfluences());
+                JOptionPane.showMessageDialog(Lizzie.frame
+                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Board.BOARD_SIZE == 19 ? 7.5 : 7.0, estimatedRawScore)
+                        , "Lizzie"
+                        , JOptionPane.INFORMATION_MESSAGE);
             }
+        }
+
+        if (e.getKeyCode() != KeyEvent.VK_T
+                && e.getKeyCode() != KeyEvent.VK_O
+                && e.getKeyCode() != KeyEvent.VK_W
+                && e.getKeyCode() != KeyEvent.VK_S
+                && e.getKeyCode() != KeyEvent.VK_R) {
+            Lizzie.frame.getBoardRenderer().updateInfluences(null);
         }
 
         Lizzie.frame.repaint();

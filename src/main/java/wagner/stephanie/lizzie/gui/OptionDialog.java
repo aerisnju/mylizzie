@@ -262,7 +262,7 @@ public class OptionDialog extends JDialog {
         Lizzie.frame.getBoardRenderer().forceCachedStoneImageRefresh();
 
         if (Board.BOARD_SIZE != Lizzie.optionSetting.getBoardSize().getWidth()) {
-            Board.BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
+            Board.changeBoardSize(Lizzie.optionSetting.getBoardSize().getWidth());
             Lizzie.clearBoardAndState();
         }
 

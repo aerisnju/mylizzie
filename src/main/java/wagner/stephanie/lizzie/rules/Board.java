@@ -14,12 +14,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class Board implements Closeable {
-    public static int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
     public final static String alphabet = "ABCDEFGHJKLMNOPQRST";
+    public static int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
+    private static List<Consumer<Integer>> boardSizeChangeObserver = new CopyOnWriteArrayList<>();
 
     private BoardHistoryList history;
     private BoardTryPlayState tryPlayState;
@@ -675,5 +678,18 @@ public class Board implements Closeable {
         }
 
         gotoMove(currentMoveNumber);
+    }
+
+    public static void registerBoardSizeChangeObserver(Consumer<Integer> observer) {
+        boardSizeChangeObserver.add(observer);
+    }
+
+    public static void unregisterBoardSizeChangeObserver(Consumer<Integer> observer) {
+        boardSizeChangeObserver.remove(observer);
+    }
+
+    public static void changeBoardSize(final int newSize) {
+        BOARD_SIZE = newSize;
+        Lizzie.miscExecutor.execute(() -> boardSizeChangeObserver.forEach(observer -> observer.accept(newSize)));
     }
 }

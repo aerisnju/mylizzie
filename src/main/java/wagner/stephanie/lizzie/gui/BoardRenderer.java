@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.gui;
 
+import org.apache.commons.lang3.ArrayUtils;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
 import wagner.stephanie.lizzie.analysis.MoveData;
@@ -19,12 +20,16 @@ public class BoardRenderer {
     private static final double MARGIN_WITH_COORDS = 0.06;
     private static final double STARPOINT_DIAMETER = 0.015;
 
+    private static final AlphaComposite COMPOSITE_6 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
+
     private int x, y;
     private int boardLength;
 
     private int scaledMargin, availableLength, squareLength, stoneRadius;
     private List<MoveData> bestMoves = null;
     private MoveData branch = null;
+
+    private double[] influences = null;
 
     private BufferedImage cachedBackgroundImage = null;
     private AtomicBoolean cachedBackgroundImageForceRefresh = new AtomicBoolean(false);
@@ -102,6 +107,10 @@ public class BoardRenderer {
         cachedStonesImageForceRefresh.set(true);
     }
 
+    public void updateInfluences(double[] influences) {
+        this.influences = influences;
+    }
+
     /**
      * Draw a go board
      */
@@ -127,6 +136,9 @@ public class BoardRenderer {
         if (!Lizzie.frame.isPlayingAgainstLeelaz)
             drawLeelazSuggestions(g);
 //        timer.lap("leelaz");
+
+        drawInfluences(g);
+//        timer.lap("influences");
 
 //        timer.print();
     }
@@ -201,6 +213,7 @@ public class BoardRenderer {
 
     /**
      * Draw the star points
+     *
      * @param g graphics2d to draw
      */
     private void drawStartPoints(Graphics2D g) {
@@ -573,6 +586,41 @@ public class BoardRenderer {
         }
     }
 
+    private void drawInfluences(Graphics2D g) {
+        if (ArrayUtils.isNotEmpty(influences) && influences.length == Board.BOARD_SIZE * Board.BOARD_SIZE) {
+            Composite oldComposite = g.getComposite();
+            g.setComposite(COMPOSITE_6);
+            try {
+                for (int i = 0; i < Board.BOARD_SIZE; i++) {
+                    for (int j = 0; j < Board.BOARD_SIZE; j++) {
+                        int influenceX = x + scaledMargin + squareLength * i;
+                        int influenceY = y + scaledMargin + squareLength * j;
+                        drawInfluence(g, influenceX, influenceY, influences[Board.getIndex(Board.BOARD_SIZE - 1 - j, i)]);
+                    }
+                }
+            } finally {
+                g.setComposite(oldComposite);
+            }
+        }
+    }
+
+    private static final Color COLOR_INFLUENCE_BLACK = Color.DARK_GRAY;
+    private static final Color COLOR_INFLUENCE_WHITE = Color.WHITE;
+
+    private void drawInfluence(Graphics2D g, int influenceX, int influenceY, double influence) {
+        if (Math.abs(influence) < 0.01) {
+            return;
+        }
+
+        if (influence < 0) {
+            g.setColor(COLOR_INFLUENCE_BLACK);
+        } else {
+            g.setColor(COLOR_INFLUENCE_WHITE);
+        }
+        int radius = (int) (stoneRadius * 0.5 * Math.abs(influence));
+        fillSquare(g, influenceX, influenceY, radius);
+    }
+
     private void drawWoodenBoard(Graphics2D g) {
         if (Lizzie.optionSetting.isShowFancyBoard()) {
             // fancy version
@@ -766,6 +814,20 @@ public class BoardRenderer {
      */
     private void drawCircle(Graphics2D g, int centerX, int centerY, int radius) {
         g.drawOval(centerX - radius, centerY - radius, 2 * radius + 1, 2 * radius + 1);
+    }
+
+    /**
+     * Fills in a square centered at (centerX, centerY) with radius $radius$
+     */
+    private void fillSquare(Graphics2D g, int centerX, int centerY, int radius) {
+        g.fillRect(centerX - radius, centerY - radius, 2 * radius + 1, 2 * radius + 1);
+    }
+
+    /**
+     * Draws the outline of a squre centered at (centerX, centerY) with radius $radius$
+     */
+    private void drawSquare(Graphics2D g, int centerX, int centerY, int radius) {
+        g.drawRect(centerX - radius, centerY - radius, 2 * radius + 1, 2 * radius + 1);
     }
 
     /**

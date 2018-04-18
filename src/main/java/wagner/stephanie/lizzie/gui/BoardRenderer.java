@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class BoardRenderer {
     private static final double MARGIN = 0.03; // percentage of the boardLength to offset before drawing black lines
@@ -26,7 +27,7 @@ public class BoardRenderer {
     private int boardLength;
 
     private int scaledMargin, availableLength, squareLength, stoneRadius;
-    private List<MoveData> bestMoves = null;
+    private AtomicReference<List<MoveData>> bestMovesUpdated = new AtomicReference<>();
     private MoveData branch = null;
 
     private double[] influences = null;
@@ -50,7 +51,7 @@ public class BoardRenderer {
         bestMoveObserver = new BestMoveObserver() {
             @Override
             public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
-                bestMoves = newBestMoves;
+                bestMovesUpdated.set(newBestMoves);
 
                 if (Lizzie.frame != null) {
                     Lizzie.frame.repaint();
@@ -512,6 +513,7 @@ public class BoardRenderer {
      * Draw all of Leelaz's suggestions as colored stones with winrate/playout statistics overlayed
      */
     private void drawLeelazSuggestions(Graphics2D g) {
+        List<MoveData> bestMoves = bestMovesUpdated.get();
         if ((Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowBlackSuggestion()
                 || !Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowWhiteSuggestion()) && !bestMoves.isEmpty()) {
             int maxPlayouts = bestMoves.stream().max(Comparator.comparingInt(MoveData::getPlayouts)).get().getPlayouts();

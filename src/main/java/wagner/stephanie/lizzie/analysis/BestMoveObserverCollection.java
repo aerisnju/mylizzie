@@ -3,6 +3,7 @@ package wagner.stephanie.lizzie.analysis;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -11,7 +12,7 @@ public class BestMoveObserverCollection extends AbstractCollection<BestMoveObser
     private List<BestMoveObserver> observerList;
 
     public BestMoveObserverCollection() {
-        observerList = new LinkedList<>();
+        observerList = new CopyOnWriteArrayList<>();
     }
 
     public List<BestMoveObserver> getObserverList() {

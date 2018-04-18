@@ -35,17 +35,19 @@ public class AnalysisTableModel extends AbstractTableModel {
 
         bestMoveObserver = new BestMoveObserver() {
             @Override
-            public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
-                bestMoves = newBestMoves;
+            public void bestMovesUpdated(int boardStateCount, final List<MoveData> newBestMoves) {
+                SwingUtilities.invokeLater(() -> {
+                    bestMoves = newBestMoves;
 
-                refreshSelectedMove();
-                if (hostTable != null) {
-                    fireTableDataChanged();
-                    int selectedIndex = getSelectedMoveIndex();
-                    if (selectedIndex >= 0) {
-                        SwingUtilities.invokeLater(() -> hostTable.setRowSelectionInterval(selectedIndex, selectedIndex));
+                    refreshSelectedMove();
+                    if (hostTable != null) {
+                        fireTableDataChanged();
+                        int selectedIndex = getSelectedMoveIndex();
+                        if (selectedIndex >= 0) {
+                            hostTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+                        }
                     }
-                }
+                });
             }
 
             @Override

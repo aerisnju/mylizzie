@@ -147,7 +147,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_E) {
             String engineCommand = JOptionPane.showInputDialog(Lizzie.frame
                     , resourceBundle.getString("LizzieFrame.prompt.enterEngineCommand"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
-            Lizzie.leelaz.postGtpCommand(engineCommand);
+            Lizzie.leelaz.postRawGtpCommand(engineCommand);
         } else if (e.getKeyCode() == KeyEvent.VK_B) {
             if (byoYomiAutoPlayDialog == null || !byoYomiAutoPlayDialog.isDisplayable()) {
                 byoYomiAutoPlayDialog = new ByoYomiAutoPlayDialog(Lizzie.frame);

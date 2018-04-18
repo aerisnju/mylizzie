@@ -293,8 +293,7 @@ public class Board implements Closeable {
 
             // update leelaz with pass
             leelazExecutor.execute(() -> {
-                Lizzie.leelaz.playMove(color, "pass");
-                Lizzie.leelaz.ponder();
+                Lizzie.leelaz.play(color, "pass");
             });
         }
     }
@@ -375,8 +374,7 @@ public class Board implements Closeable {
             final Stone colorToPlay = color;
             final String locationToPlay = convertCoordinatesToName(x, y);
             leelazExecutor.execute(() -> {
-                Lizzie.leelaz.playMove(colorToPlay, locationToPlay);
-                Lizzie.leelaz.ponder();
+                Lizzie.leelaz.play(colorToPlay, locationToPlay);
             });
         }
     }
@@ -520,14 +518,12 @@ public class Board implements Closeable {
                 final Stone colorToPlay = history.getLastMoveColor();
                 if (history.getData().getLastMove() == null) {
                     leelazExecutor.execute(() -> {
-                        Lizzie.leelaz.playMove(colorToPlay, "pass");
-                        Lizzie.leelaz.ponder();
+                        Lizzie.leelaz.play(colorToPlay, "pass");
                     });
                 } else {
                     final String locationToPlay = convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]);
                     leelazExecutor.execute(() -> {
-                        Lizzie.leelaz.playMove(colorToPlay, locationToPlay);
-                        Lizzie.leelaz.ponder();
+                        Lizzie.leelaz.play(colorToPlay, locationToPlay);
                     });
                 }
                 return true;
@@ -552,7 +548,6 @@ public class Board implements Closeable {
 
                 leelazExecutor.execute(() -> {
                     Lizzie.leelaz.undo();
-                    Lizzie.leelaz.ponder();
                 });
 
                 return true;
@@ -584,18 +579,26 @@ public class Board implements Closeable {
     }
 
     private void goForward(int count) {
-        for (int i = 0; i < count; ++i) {
-            if (!nextMove()) {
-                break;
+        try (AutoCloseable closeable = Lizzie.leelaz.batchOperation()) {
+            for (int i = 0; i < count; ++i) {
+                if (!nextMove()) {
+                    break;
+                }
             }
+        } catch (Exception e) {
+            // Ignore
         }
     }
 
     private void goBackward(int count) {
-        for (int i = 0; i < count; ++i) {
-            if (!previousMove()) {
-                break;
+        try (AutoCloseable closeable = Lizzie.leelaz.batchOperation()) {
+            for (int i = 0; i < count; ++i) {
+                if (!previousMove()) {
+                    break;
+                }
             }
+        } catch (Exception e) {
+            // Ignore
         }
     }
 

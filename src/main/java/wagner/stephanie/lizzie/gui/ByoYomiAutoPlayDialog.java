@@ -127,7 +127,11 @@ public class ByoYomiAutoPlayDialog extends JDialog {
             if (checkBoxBlackCountdown.isSelected() && nextBlack.get() || checkBoxWhiteCountdown.isSelected() && !nextBlack.get()) {
                 resetCountdown();
                 startOrResumeCountdown();
+
+                Lizzie.leelaz.startPonder();
             } else {
+                Lizzie.leelaz.stopPonder();
+
                 resetCountdown();
             }
         } else {
@@ -268,18 +272,18 @@ public class ByoYomiAutoPlayDialog extends JDialog {
             GroupLayout panelNotesLayout = new GroupLayout(panelNotes);
             panelNotes.setLayout(panelNotesLayout);
             panelNotesLayout.setHorizontalGroup(
-                panelNotesLayout.createParallelGroup()
-                    .addGroup(panelNotesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(labelNotes, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
-                        .addContainerGap())
+                    panelNotesLayout.createParallelGroup()
+                            .addGroup(panelNotesLayout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addComponent(labelNotes, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+                                    .addContainerGap())
             );
             panelNotesLayout.setVerticalGroup(
-                panelNotesLayout.createParallelGroup()
-                    .addGroup(GroupLayout.Alignment.TRAILING, panelNotesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(labelNotes, GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
-                        .addContainerGap())
+                    panelNotesLayout.createParallelGroup()
+                            .addGroup(GroupLayout.Alignment.TRAILING, panelNotesLayout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addComponent(labelNotes, GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                                    .addContainerGap())
             );
         }
 
@@ -305,15 +309,15 @@ public class ByoYomiAutoPlayDialog extends JDialog {
         //======== panelCountdown ========
         {
             panelCountdown.setLayout(new MigLayout(
-                "fill,hidemode 3",
-                // columns
-                "[fill]" +
-                "[fill]" +
-                "[fill]",
-                // rows
-                "[]" +
-                "[]" +
-                "[]"));
+                    "fill,hidemode 3",
+                    // columns
+                    "[fill]" +
+                            "[fill]" +
+                            "[fill]",
+                    // rows
+                    "[]" +
+                            "[]" +
+                            "[]"));
 
             //---- labelBlack ----
             labelBlack.setText(bundle.getString("ByoYomiAutoPlayDialog.labelBlack.text"));
@@ -356,13 +360,13 @@ public class ByoYomiAutoPlayDialog extends JDialog {
         //======== panelButtonArea ========
         {
             panelButtonArea.setLayout(new MigLayout(
-                "fill,hidemode 3",
-                // columns
-                "[fill]" +
-                "[fill]" +
-                "[fill]",
-                // rows
-                "[]"));
+                    "fill,hidemode 3",
+                    // columns
+                    "[fill]" +
+                            "[fill]" +
+                            "[fill]",
+                    // rows
+                    "[]"));
 
             //---- buttonStartPause ----
             buttonStartPause.setText(bundle.getString("ByoYomiAutoPlayDialog.buttonStartPause.text"));
@@ -383,51 +387,51 @@ public class ByoYomiAutoPlayDialog extends JDialog {
         GroupLayout contentPaneLayout = new GroupLayout(contentPane);
         contentPane.setLayout(contentPaneLayout);
         contentPaneLayout.setHorizontalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addComponent(panelNotes, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(contentPaneLayout.createParallelGroup()
-                        .addComponent(panelCountdown, GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
+                contentPaneLayout.createParallelGroup()
+                        .addComponent(panelNotes, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(contentPaneLayout.createSequentialGroup()
-                            .addGroup(contentPaneLayout.createParallelGroup()
-                                .addComponent(panelButtonArea, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
-                                .addGroup(contentPaneLayout.createSequentialGroup()
-                                    .addGroup(contentPaneLayout.createParallelGroup()
+                                .addContainerGap()
+                                .addGroup(contentPaneLayout.createParallelGroup()
+                                        .addComponent(panelCountdown, GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
                                         .addGroup(contentPaneLayout.createSequentialGroup()
-                                            .addComponent(labelSettings)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxBlackCountdown)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxWhiteCountdown))
-                                        .addGroup(contentPaneLayout.createSequentialGroup()
-                                            .addComponent(labelCountdownTime)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(spinnerCountdownTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelSeconds)))
-                                    .addGap(0, 195, Short.MAX_VALUE)))
-                            .addContainerGap())))
+                                                .addGroup(contentPaneLayout.createParallelGroup()
+                                                        .addComponent(panelButtonArea, GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+                                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                                                .addGroup(contentPaneLayout.createParallelGroup()
+                                                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                                                                .addComponent(labelSettings)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(checkBoxBlackCountdown)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(checkBoxWhiteCountdown))
+                                                                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                                                                .addComponent(labelCountdownTime)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(spinnerCountdownTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(labelSeconds)))
+                                                                .addGap(0, 195, Short.MAX_VALUE)))
+                                                .addContainerGap())))
         );
         contentPaneLayout.setVerticalGroup(
-            contentPaneLayout.createParallelGroup()
-                .addGroup(contentPaneLayout.createSequentialGroup()
-                    .addComponent(panelNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(labelSettings)
-                        .addComponent(checkBoxBlackCountdown)
-                        .addComponent(checkBoxWhiteCountdown))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(labelCountdownTime)
-                        .addComponent(spinnerCountdownTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelSeconds))
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(panelCountdown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelButtonArea, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap())
+                contentPaneLayout.createParallelGroup()
+                        .addGroup(contentPaneLayout.createSequentialGroup()
+                                .addComponent(panelNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelSettings)
+                                        .addComponent(checkBoxBlackCountdown)
+                                        .addComponent(checkBoxWhiteCountdown))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelCountdownTime)
+                                        .addComponent(spinnerCountdownTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(labelSeconds))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(panelCountdown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(panelButtonArea, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
         pack();
         setLocationRelativeTo(getOwner());

@@ -33,12 +33,8 @@ public class Board implements Closeable {
 
     public Board() {
         leelazExecutor = Executors.newSingleThreadExecutor();
-        Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
-        Arrays.fill(stones, Stone.EMPTY);
-
-        history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
+        initBoardHistoryList();
         tryPlayState = null;
-
         observerCollection = new BoardStateChangeObserverCollection();
 
         bestMoveObserver = new BestMoveObserver() {
@@ -61,9 +57,17 @@ public class Board implements Closeable {
         Lizzie.leelaz.registerBestMoveObserver(bestMoveObserver);
     }
 
+    private void initBoardHistoryList() {
+        Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
+        Arrays.fill(stones, Stone.EMPTY);
+
+        history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
+    }
+
     public void clear() {
         synchronized (this) {
-            history.clear();
+            // We don't use history.clear() because it will not update board size
+            initBoardHistoryList();
             observerCollection.boardCleared();
             observerCollection.mainStreamAppended(history.getInitialNode(), history.getHead());
         }

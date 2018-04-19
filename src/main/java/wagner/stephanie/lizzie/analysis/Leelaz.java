@@ -228,6 +228,7 @@ public class Leelaz implements Closeable {
     public AutoCloseable batchOperation() {
         return new AutoCloseable() {
             private boolean ponderingState = pondering;
+
             {
                 stopPonder();
             }
@@ -295,11 +296,11 @@ public class Leelaz implements Closeable {
     }
 
     public synchronized void togglePonder() {
-        pondering = !pondering;
-        if (pondering) {
-            forceStartPonder();
+        if (pondering && ponderingTempStop) {
+            syncPonderingStartState();
         } else {
-            forceStopPonder();
+            pondering = !pondering;
+            syncPonderingState();
         }
     }
 

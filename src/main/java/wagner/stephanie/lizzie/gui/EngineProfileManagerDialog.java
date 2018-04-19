@@ -5,6 +5,7 @@
 package wagner.stephanie.lizzie.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Ints;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
@@ -84,7 +85,7 @@ public class EngineProfileManagerDialog extends JDialog {
                 , textFieldProfile5, textFieldProfile6, textFieldProfile7, textFieldProfile8, textFieldProfile9);
 
         if (CollectionUtils.isNotEmpty(profileList)) {
-            for (int i = 0; i < profileList.size(); ++i) {
+            for (int i = 0; i < Ints.min(profileList.size(), profileTextFields.size()); ++i) {
                 profileTextFields.get(i).setText(profileList.get(i));
             }
         }

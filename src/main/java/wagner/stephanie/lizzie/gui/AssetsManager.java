@@ -1,5 +1,8 @@
 package wagner.stephanie.lizzie.gui;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.eclipse.collections.api.list.FixedSizeList;
+import org.eclipse.collections.impl.list.fixed.ArrayAdapter;
 import org.jetbrains.annotations.Contract;
 
 import javax.imageio.ImageIO;
@@ -14,9 +17,11 @@ public class AssetsManager {
     private static final AssetsManager assetsManagerSingleton = new AssetsManager();
 
     private Map<String, BufferedImage> imageAssetsCache;
+    private Map<FixedSizeList<String>, BufferedImage> imageAssetsFallbackCache;
 
     private AssetsManager() {
         imageAssetsCache = new HashMap<>();
+        imageAssetsFallbackCache = new HashMap<>();
     }
 
     @Contract(pure = true)
@@ -66,7 +71,35 @@ public class AssetsManager {
         return null;
     }
 
-    public synchronized BufferedImage getImageAssetSync(String assetPath) throws IOException {
-        return getImageAsset(assetPath);
+    private BufferedImage getImageAssetNoExcept(String assetPath) {
+        try {
+            return getImageAsset(assetPath);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public BufferedImage getImageAssetFallThrough(String... assetPaths) throws IOException {
+        if (ArrayUtils.isEmpty(assetPaths)) {
+            return null;
+        }
+
+        FixedSizeList<String> request = ArrayAdapter.adapt(assetPaths);
+        BufferedImage resultAsset = imageAssetsFallbackCache.get(request);
+        if (resultAsset == null) {
+            resultAsset = getImageAssetNoExcept(request.getFirst());
+            if (resultAsset == null) {
+                resultAsset = getImageAssetFallThrough(ArrayUtils.subarray(assetPaths, 1, assetPaths.length));
+                if (resultAsset != null) {
+                    imageAssetsFallbackCache.put(request, resultAsset);
+                }
+                return resultAsset;
+            } else {
+                imageAssetsFallbackCache.put(request, resultAsset);
+                return resultAsset;
+            }
+        } else {
+            return resultAsset;
+        }
     }
 }

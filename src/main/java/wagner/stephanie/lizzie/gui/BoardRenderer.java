@@ -22,6 +22,8 @@ public class BoardRenderer {
     private static final double STARPOINT_DIAMETER = 0.015;
 
     private static final AlphaComposite COMPOSITE_6 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
+    private static final AlphaComposite COMPOSITE_75 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
+    private static final AlphaComposite COMPOSITE_5 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 
     private int x, y;
     private int boardLength;
@@ -185,7 +187,7 @@ public class BoardRenderer {
             }
 
             // draw the star points
-            drawStartPoints(g);
+            drawStarPoints(g);
 
             // draw coordinates if enabled
             if (Lizzie.frame.showCoordinates) {
@@ -217,17 +219,17 @@ public class BoardRenderer {
      *
      * @param g graphics2d to draw
      */
-    private void drawStartPoints(Graphics2D g) {
+    private void drawStarPoints(Graphics2D g) {
         if (Board.BOARD_SIZE == 9) {
-            drawStartPoints9x9(g);
+            drawStarPoints9x9(g);
         } else if (Board.BOARD_SIZE == 13) {
-            drawStartPoints13x13(g);
+            drawStarPoints13x13(g);
         } else {
-            drawStartPoints19x19(g);
+            drawStarPoints19x19(g);
         }
     }
 
-    private void drawStartPoints19x19(Graphics2D g) {
+    private void drawStarPoints19x19(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
         final int NUM_STARPOINTS = 3;
@@ -242,7 +244,7 @@ public class BoardRenderer {
         }
     }
 
-    private void drawStartPoints13x13(Graphics2D g) {
+    private void drawStarPoints13x13(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
         final int NUM_STARPOINTS = 2;
@@ -262,7 +264,7 @@ public class BoardRenderer {
         fillCircle(g, centerX, centerY, starPointRadius);
     }
 
-    private void drawStartPoints9x9(Graphics2D g) {
+    private void drawStarPoints9x9(Graphics2D g) {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
         final int NUM_STARPOINTS = 2;
@@ -358,7 +360,7 @@ public class BoardRenderer {
 
                 // check if board is empty to prevent overwriting stones if there are under-the-stones situations
                 if (Lizzie.board.getStones()[Board.getIndex(coords[0], coords[1])] == Stone.EMPTY)
-                    drawStone(g, gShadow, stoneX, stoneY, color.unGhosted());
+                    drawVariationStone(g, gShadow, stoneX, stoneY, color.unGhosted());
             }
         }
 
@@ -801,6 +803,71 @@ public class BoardRenderer {
                 break;
 
             default:
+        }
+    }
+
+    /**
+     * Draws a stone centered at (centerX, centerY)
+     */
+    private void drawVariationStone(Graphics2D g, Graphics2D gShadow, int centerX, int centerY, Stone color) {
+        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // if no shadow graphics is supplied, just draw onto the same graphics
+        if (gShadow == null)
+            gShadow = g;
+
+        Composite oldComposite = g.getComposite();
+        if (Lizzie.optionSetting.isVariationTransparent()) {
+            if (color == Stone.BLACK) {
+                g.setComposite(COMPOSITE_5);
+            } else {
+                g.setComposite(COMPOSITE_75);
+            }
+        }
+
+        try {
+            switch (color) {
+                case BLACK:
+                    if (Lizzie.optionSetting.isShowFancyStone()) {
+                        drawShadow(gShadow, centerX, centerY, false);
+                        try {
+                            g.drawImage(AssetsManager.getAssetsManager().getImageAssetFallThrough("assets/black1.png", "assets/black0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        drawShadow(gShadow, centerX, centerY, true);
+                        g.setColor(Color.BLACK);
+                        fillCircle(g, centerX, centerY, stoneRadius);
+                    }
+                    break;
+
+                case WHITE:
+                    if (Lizzie.optionSetting.isShowFancyStone()) {
+                        drawShadow(gShadow, centerX, centerY, false);
+                        try {
+                            g.drawImage(AssetsManager.getAssetsManager().getImageAssetFallThrough("assets/white1.png", "assets/white0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        drawShadow(gShadow, centerX, centerY, true);
+                        g.setColor(Color.WHITE);
+                        fillCircle(g, centerX, centerY, stoneRadius);
+                        g.setColor(Color.BLACK);
+                        drawCircle(g, centerX, centerY, stoneRadius);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } finally {
+            g.setComposite(oldComposite);
         }
     }
 

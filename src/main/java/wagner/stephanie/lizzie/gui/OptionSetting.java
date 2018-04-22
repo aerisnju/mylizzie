@@ -136,6 +136,7 @@ public class OptionSetting {
     private boolean mainWindowAlwaysOnTop;
     private int maxAnalysisTimeInMinutes;
     private List<String> engineProfileList;
+    private boolean variationTransparent;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -175,6 +176,7 @@ public class OptionSetting {
         mainWindowAlwaysOnTop = false;
         maxAnalysisTimeInMinutes = 2;
         engineProfileList = ImmutableList.of();
+        variationTransparent = false;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -363,6 +365,14 @@ public class OptionSetting {
         this.engineProfileList = engineProfileList;
     }
 
+    public boolean isVariationTransparent() {
+        return variationTransparent;
+    }
+
+    public void setVariationTransparent(boolean variationTransparent) {
+        this.variationTransparent = variationTransparent;
+    }
+
     public int getMainWindowPosX() {
         return mainWindowPosX;
     }
@@ -478,8 +488,11 @@ public class OptionSetting {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
+
         OptionSetting that = (OptionSetting) o;
+
         return new EqualsBuilder()
                 .append(variationLimit, that.variationLimit)
                 .append(a1OnTop, that.a1OnTop)
@@ -498,6 +511,7 @@ public class OptionSetting {
                 .append(autoEnterTryPlayingMode, that.autoEnterTryPlayingMode)
                 .append(mainWindowAlwaysOnTop, that.mainWindowAlwaysOnTop)
                 .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
+                .append(variationTransparent, that.variationTransparent)
                 .append(mainWindowPosX, that.mainWindowPosX)
                 .append(mainWindowPosY, that.mainWindowPosY)
                 .append(mainWindowWidth, that.mainWindowWidth)
@@ -521,7 +535,7 @@ public class OptionSetting {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
+        return new HashCodeBuilder(17, 37)
                 .append(boardSize)
                 .append(variationLimit)
                 .append(a1OnTop)
@@ -543,6 +557,7 @@ public class OptionSetting {
                 .append(mainWindowAlwaysOnTop)
                 .append(maxAnalysisTimeInMinutes)
                 .append(engineProfileList)
+                .append(variationTransparent)
                 .append(mainWindowPosX)
                 .append(mainWindowPosY)
                 .append(mainWindowWidth)

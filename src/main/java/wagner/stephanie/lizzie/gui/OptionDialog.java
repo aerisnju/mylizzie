@@ -70,6 +70,7 @@ public class OptionDialog extends JDialog {
     private JSpinner spinnerShadowSize;
     private JCheckBox checkBoxShowNextMove;
     private JButton buttonManage;
+    private JCheckBox checkBoxTransparentVariation;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -169,6 +170,8 @@ public class OptionDialog extends JDialog {
         checkBoxMainWindowAlwaysOnTop.setSelected(setting.isMainWindowAlwaysOnTop());
 
         textFieldMaxAnalysisTime.setText(String.valueOf(setting.getMaxAnalysisTimeInMinutes()));
+
+        checkBoxTransparentVariation.setSelected(setting.isVariationTransparent());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -242,6 +245,8 @@ public class OptionDialog extends JDialog {
         } catch (NumberFormatException e) {
             // no operation
         }
+
+        setting.setVariationTransparent(checkBoxTransparentVariation.isSelected());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -340,6 +345,7 @@ public class OptionDialog extends JDialog {
         spinnerShadowSize = new JSpinner();
         checkBoxShowNextMove = new JCheckBox();
         buttonManage = new JButton();
+        checkBoxTransparentVariation = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -516,6 +522,9 @@ public class OptionDialog extends JDialog {
                 buttonManage.setText(bundle.getString("OptionDialog.buttonManage.text"));
                 buttonManage.addActionListener(e -> buttonManageActionPerformed(e));
 
+                //---- checkBoxTransparentVariation ----
+                checkBoxTransparentVariation.setText(bundle.getString("OptionDialog.checkBoxTransparentVariation.text"));
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -545,7 +554,9 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonV30)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(radioButtonUnlimited))
+                                            .addComponent(radioButtonUnlimited)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxTransparentVariation))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAxisSetting)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -626,7 +637,9 @@ public class OptionDialog extends JDialog {
                         .addGroup(contentPanelLayout.createSequentialGroup()
                             .addContainerGap()
                             .addGroup(contentPanelLayout.createParallelGroup()
-                                .addComponent(radioButtonUnlimited)
+                                .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addComponent(radioButtonUnlimited)
+                                    .addComponent(checkBoxTransparentVariation))
                                 .addComponent(radioButtonV30)
                                 .addComponent(radioButtonV15)
                                 .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)

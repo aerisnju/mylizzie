@@ -15,6 +15,7 @@ import org.jfree.graphics2d.svg.SVGGraphics2D;
 import wagner.stephanie.lizzie.analysis.GnuGoScoreEstimator;
 import wagner.stephanie.lizzie.analysis.Leelaz;
 import wagner.stephanie.lizzie.analysis.ScoreEstimator;
+import wagner.stephanie.lizzie.analysis.ZenScoreEstimator;
 import wagner.stephanie.lizzie.gui.*;
 import wagner.stephanie.lizzie.rules.*;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
@@ -61,7 +62,7 @@ public class Lizzie {
     public static OptionSetting optionSetting;
     public static WinrateHistogramDialog winrateHistogramDialog;
     public static ExecutorService miscExecutor = Executors.newSingleThreadExecutor();
-    public static ScoreEstimator gnuGoEstimator = null;
+    public static ScoreEstimator scoreEstimator = null;
 
     static {
         readSettingFile();
@@ -75,9 +76,9 @@ public class Lizzie {
 
     public static void exitLizzie(int exitCode) {
         ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor);
-        if (gnuGoEstimator != null) {
+        if (scoreEstimator != null) {
             try {
-                gnuGoEstimator.close();
+                scoreEstimator.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -121,8 +122,11 @@ public class Lizzie {
         analysisDialog.setVisible(optionSetting.isAnalysisWindowShow());
         winrateHistogramDialog.setVisible(optionSetting.isWinrateHistogramWindowShow());
 
-        if (Files.exists(Paths.get("gnugo")) || Files.exists(Paths.get("gnugo.exe"))) {
-            gnuGoEstimator = new GnuGoScoreEstimator("./gnugo --mode gtp");
+        if (Files.exists(Paths.get("Zen.dll")) && Files.exists(Paths.get("YAZenGtp.exe"))) {
+            scoreEstimator = new ZenScoreEstimator("YAZenGtp.exe");
+        }
+        else if (Files.exists(Paths.get("gnugo")) || Files.exists(Paths.get("gnugo.exe"))) {
+            scoreEstimator = new GnuGoScoreEstimator("./gnugo --mode gtp");
         }
     }
 

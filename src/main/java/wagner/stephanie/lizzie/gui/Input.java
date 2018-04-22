@@ -154,13 +154,13 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 byoYomiAutoPlayDialog.setVisible(true);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_T) {
-            if (Lizzie.gnuGoEstimator == null || !Lizzie.gnuGoEstimator.isRunning()) {
-                JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noGnuGoEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            if (Lizzie.scoreEstimator == null || !Lizzie.scoreEstimator.isRunning()) {
+                JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noEstimatorEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             } else {
-                String estimatedRawScore = Lizzie.gnuGoEstimator.estimateScoreRaw();
-                Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.gnuGoEstimator.estimateInfluences());
+                String estimatedRawScore = Lizzie.scoreEstimator.estimateScoreRaw();
+                Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.scoreEstimator.estimateInfluences());
                 JOptionPane.showMessageDialog(Lizzie.frame
-                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Board.BOARD_SIZE == 19 ? 7.5 : 7.0, estimatedRawScore)
+                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, estimatedRawScore)
                         , "Lizzie"
                         , JOptionPane.INFORMATION_MESSAGE);
             }

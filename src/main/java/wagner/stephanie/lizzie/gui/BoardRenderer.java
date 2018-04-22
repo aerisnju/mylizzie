@@ -597,7 +597,7 @@ public class BoardRenderer {
                     for (int j = 0; j < Board.BOARD_SIZE; j++) {
                         int influenceX = x + scaledMargin + squareLength * i;
                         int influenceY = y + scaledMargin + squareLength * j;
-                        drawInfluence(g, influenceX, influenceY, influences[Board.getIndex(Board.BOARD_SIZE - 1 - j, i)]);
+                        drawInfluence(g, influenceX, influenceY, influences[Board.getIndex(i, j)]);
                     }
                 }
             } finally {
@@ -614,7 +614,7 @@ public class BoardRenderer {
             return;
         }
 
-        if (influence < 0) {
+        if (influence > 0) {
             g.setColor(COLOR_INFLUENCE_BLACK);
         } else {
             g.setColor(COLOR_INFLUENCE_WHITE);

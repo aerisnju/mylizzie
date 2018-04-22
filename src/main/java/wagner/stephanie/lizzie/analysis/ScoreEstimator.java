@@ -6,6 +6,10 @@ import java.io.Closeable;
 import java.util.List;
 
 public interface ScoreEstimator extends Closeable {
+    void setKomi(double komi);
+
+    double getKomi();
+
     ImmutablePair<String, Double> estimateScore();
 
     String estimateScoreRaw();
@@ -15,4 +19,6 @@ public interface ScoreEstimator extends Closeable {
     List<String> estimateInfluencesRaw();
 
     boolean isRunning();
+
+    String getEstimatorName();
 }

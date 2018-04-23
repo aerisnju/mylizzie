@@ -352,16 +352,9 @@ public class Leelaz implements Closeable {
         startPonderTime = System.currentTimeMillis();
 
         // list of commands for the leelaz process
-        List<String> commands = new ArrayList<>();
-        if (System.getProperty("os.name").toLowerCase().indexOf("windows") > 0) {
-            commands.add("leelaz.exe"); // windows
-        } else {
-            commands.add("./leelaz"); // linux, macosx
-        }
+        List<String> commands = ArgumentTokenizer.tokenize(commandline.trim());
 
-        commands.addAll(ArgumentTokenizer.tokenize(commandline.trim()));
-
-        // run leelaz.exe
+        // run leelaz
         leelazEngine = new GeneralGtpClient(commands);
         leelazEngine.registerStderrLineConsumer(this::parseLine);
         leelazEngine.registerEngineExitObserver(this::exitNotification);

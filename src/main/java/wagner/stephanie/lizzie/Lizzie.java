@@ -2,6 +2,7 @@ package wagner.stephanie.lizzie;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
@@ -33,6 +34,7 @@ import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,11 +68,46 @@ public class Lizzie {
 
     static {
         readSettingFile();
+
+        migrateSettings();
+
         // Sometimes gson will fail to parse the file
         if (optionSetting == null
                 || optionSetting.getBoardColor() == null
                 || StringUtils.isEmpty(optionSetting.getLeelazCommandLine())) {
             optionSetting = new OptionSetting();
+        }
+    }
+
+    private static void migrateSettings() {
+        if (isNeedMigration()) {
+            List<String> engineProfileList = optionSetting.getEngineProfileList();
+            String currentEngineProfile = optionSetting.getLeelazCommandLine();
+
+            optionSetting.setEngineProfileList(engineProfileList.stream()
+                    .map(Lizzie::migrateEngineProfile)
+                    .collect(Collectors.toCollection(ArrayList::new)));
+            optionSetting.setLeelazCommandLine(migrateEngineProfile(currentEngineProfile));
+        }
+    }
+
+    private static String migrateEngineProfile(String oldProfile) {
+        if (StringUtils.isEmpty(oldProfile)) {
+            return oldProfile;
+        } else {
+            return "./leelaz " + oldProfile;
+        }
+    }
+
+    private static boolean isNeedMigration() {
+        try (Reader reader = new FileReader(SETTING_FILE)) {
+            Type mapType = new TypeToken<LinkedHashMap<String, Object>>() {
+            }.getType();
+            LinkedHashMap<String, Object> rawSettings = gson.fromJson(reader, mapType);
+            Integer version = (Integer) rawSettings.get("version");
+            return version == null || version < new OptionSetting().getVersion();
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -124,8 +161,7 @@ public class Lizzie {
 
         if (Files.exists(Paths.get("Zen.dll")) && Files.exists(Paths.get("YAZenGtp.exe"))) {
             scoreEstimator = new ZenScoreEstimator("YAZenGtp.exe");
-        }
-        else if (Files.exists(Paths.get("gnugo")) || Files.exists(Paths.get("gnugo.exe"))) {
+        } else if (Files.exists(Paths.get("gnugo")) || Files.exists(Paths.get("gnugo.exe"))) {
             scoreEstimator = new GnuGoScoreEstimator("./gnugo --mode gtp");
         }
     }

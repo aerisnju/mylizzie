@@ -425,7 +425,7 @@ public class OptionDialog extends JDialog {
                 labelLeelazCommandLine.setText(bundle.getString("OptionDialog.labelLeelazCommandLine.text"));
 
                 //---- textFieldLeelazCommandLine ----
-                textFieldLeelazCommandLine.setText("-g -t2 -wnetwork -b0");
+                textFieldLeelazCommandLine.setText("./leelaz -g -t2 -wnetwork -b0");
 
                 //---- labelNotes ----
                 labelNotes.setText(bundle.getString("OptionDialog.labelNotes.text"));

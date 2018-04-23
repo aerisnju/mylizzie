@@ -115,6 +115,7 @@ public class OptionSetting {
         }
     }
 
+    private int version;
     private BoardSize boardSize;
     private int variationLimit;
     private boolean a1OnTop;
@@ -155,6 +156,7 @@ public class OptionSetting {
     private boolean winrateHistogramWindowShow;
 
     public OptionSetting() {
+        version = 1;
         boardSize = new BoardSize();
         variationLimit = Integer.MAX_VALUE;
         a1OnTop = false;
@@ -169,7 +171,7 @@ public class OptionSetting {
         mouseOverShowMove = false;
         showBlackSuggestion = true;
         showWhiteSuggestion = true;
-        leelazCommandLine = "-g -t2 -wnetwork -b0";
+        leelazCommandLine = "./leelaz -g -t2 -wnetwork -b0";
         showMoveNumber = true;
         numberOfLastMovesShown = Integer.MAX_VALUE;
         autoEnterTryPlayingMode = false;
@@ -195,6 +197,14 @@ public class OptionSetting {
 
         lastChooserLocation = ".";
         winrateHistogramWindowShow = true;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public BoardSize getBoardSize() {

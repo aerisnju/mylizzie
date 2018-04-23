@@ -15,14 +15,14 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator {
 
     @Override
     public ImmutablePair<String, Double> estimateScore() {
-        List<String> response = estimateInfluencesRaw();
+        List<String> response = gtpClient.sendCommand("territory_statistics area");;
         MutableIntList influences = GtpClient.parseResponseIntTable(response);
         int blackTerritoryCount = influences.count(value -> value >= 300);
         int whiteTerritoryCount = influences.count(value -> value <= -300);
 
         MutableIntList prisoners = getPrisoners();
 
-        double score = blackTerritoryCount - whiteTerritoryCount - getKomi() + prisoners.get(0) - prisoners.get(1);
+        double score = blackTerritoryCount - whiteTerritoryCount - getKomi();
         String color = "B";
         if (score < 0) {
             color = "W";

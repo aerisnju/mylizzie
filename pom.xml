@@ -6,7 +6,7 @@
 
     <groupId>org.github.aerisnju</groupId>
     <artifactId>mylizzie</artifactId>
-    <version>2.0.180418</version>
+    <version>2.0.180423</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -275,6 +275,13 @@
             <groupId>org.eclipse.collections</groupId>
             <artifactId>eclipse-collections</artifactId>
             <version>9.1.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jtrim2/jtrim-image-transform -->
+        <dependency>
+            <groupId>org.jtrim2</groupId>
+            <artifactId>jtrim-image</artifactId>
+            <version>2.0.3</version>
         </dependency>
     </dependencies>
 </project>

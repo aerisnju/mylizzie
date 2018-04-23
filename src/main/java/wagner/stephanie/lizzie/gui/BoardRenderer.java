@@ -22,7 +22,6 @@ public class BoardRenderer {
     private static final double STARPOINT_DIAMETER = 0.015;
 
     private static final AlphaComposite COMPOSITE_6 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f);
-    private static final AlphaComposite COMPOSITE_75 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f);
     private static final AlphaComposite COMPOSITE_5 = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 
     private int x, y;
@@ -823,18 +822,14 @@ public class BoardRenderer {
 
         Composite oldComposite = g.getComposite();
         if (Lizzie.optionSetting.isVariationTransparent()) {
-            if (color == Stone.BLACK) {
-                g.setComposite(COMPOSITE_5);
-            } else {
-                g.setComposite(COMPOSITE_75);
-            }
+            g.setComposite(COMPOSITE_5);
         }
 
         try {
             switch (color) {
                 case BLACK:
                     if (Lizzie.optionSetting.isShowFancyStone()) {
-                        drawShadow(gShadow, centerX, centerY, false);
+                        drawShadow(gShadow, centerX, centerY, true);
                         try {
                             g.drawImage(AssetsManager.getAssetsManager().getImageAssetFallThrough("assets/black1.png", "assets/black0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
                         } catch (IOException e) {
@@ -849,7 +844,7 @@ public class BoardRenderer {
 
                 case WHITE:
                     if (Lizzie.optionSetting.isShowFancyStone()) {
-                        drawShadow(gShadow, centerX, centerY, false);
+                        drawShadow(gShadow, centerX, centerY, true);
                         try {
                             g.drawImage(AssetsManager.getAssetsManager().getImageAssetFallThrough("assets/white1.png", "assets/white0.png"), centerX - stoneRadius, centerY - stoneRadius, stoneRadius * 2 + 1, stoneRadius * 2 + 1, null);
                         } catch (IOException e) {

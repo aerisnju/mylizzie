@@ -1,7 +1,6 @@
 package wagner.stephanie.lizzie.util;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Utility class which can tokenize a String into a list of String arguments,
@@ -25,7 +24,7 @@ public abstract class ArgumentTokenizer {
      * @param arguments A String containing one or more command-line style arguments to be tokenized.
      * @return A list of parsed and properly escaped arguments.
      */
-    public static List<String> tokenize(String arguments) {
+    public static ArrayList<String> tokenize(String arguments) {
         return tokenize(arguments, false);
     }
 
@@ -36,8 +35,8 @@ public abstract class ArgumentTokenizer {
      * @param stringify whether or not to include escape special characters
      * @return A list of parsed and properly escaped arguments.
      */
-    public static List<String> tokenize(String arguments, boolean stringify) {
-        LinkedList<String> argList = new LinkedList<String>();
+    public static ArrayList<String> tokenize(String arguments, boolean stringify) {
+        ArrayList<String> argList = new ArrayList<>();
         StringBuilder currArg = new StringBuilder();
         boolean escaped = false;
         int state = NO_TOKEN_STATE;  // start in the NO_TOKEN_STATE

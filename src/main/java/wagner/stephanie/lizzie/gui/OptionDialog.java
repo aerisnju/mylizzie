@@ -187,7 +187,6 @@ public class OptionDialog extends JDialog {
         }
 
         int variationLimit;
-
         if (radioButtonV5.isSelected()) {
             variationLimit = 5;
         } else if (radioButtonV10.isSelected()) {

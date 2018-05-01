@@ -15,14 +15,17 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator {
 
     @Override
     public ImmutablePair<String, Double> estimateScore() {
-        List<String> response = gtpClient.sendCommand("territory_statistics area");;
-        MutableIntList influences = GtpClient.parseResponseIntTable(response);
-        int blackTerritoryCount = influences.count(value -> value >= 300);
-        int whiteTerritoryCount = influences.count(value -> value <= -300);
+        MutableIntList scoreStatistics = getScoreStatistics();
+        int blackTerritoryCount = scoreStatistics.get(6);
+        int whiteTerritoryCount = scoreStatistics.get(7);
+        int blackDeadCount = scoreStatistics.get(4);
+        int whiteDeadCount = scoreStatistics.get(5);
+        int blackPrisonerCount = scoreStatistics.get(2);
+        int whitePrisonerCount = scoreStatistics.get(3);
 
-        MutableIntList prisoners = getPrisoners();
-
-        double score = blackTerritoryCount - whiteTerritoryCount - getKomi();
+        double score = blackTerritoryCount + blackPrisonerCount - blackDeadCount
+                - (whiteTerritoryCount + whitePrisonerCount - whiteDeadCount)
+                - getKomi();
         String color = "B";
         if (score < 0) {
             color = "W";
@@ -65,7 +68,7 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator {
 
     @Override
     public List<String> estimateInfluencesRaw() {
-        return gtpClient.sendCommand("territory_statistics");
+        return gtpClient.sendCommand("territory_statistics territory");
     }
 
     @Override
@@ -73,8 +76,8 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator {
         return "Zen";
     }
 
-    private MutableIntList getPrisoners() {
-        List<String> response = gtpClient.sendCommand("prisoner_count");
+    private MutableIntList getScoreStatistics() {
+        List<String> response = gtpClient.sendCommand("score_statistics");
         return GtpClient.parseResponseIntTable(response);
     }
 }

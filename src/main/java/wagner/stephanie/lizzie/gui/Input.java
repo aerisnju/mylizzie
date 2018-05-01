@@ -89,7 +89,12 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             Lizzie.board.previousMove();
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            Lizzie.leelaz.togglePonder();
+            if (Lizzie.optionSetting.isAutoStartAnalyzingAfterPlacingMoves()) {
+                Lizzie.leelaz.setThinking(true);
+                Lizzie.leelaz.togglePonder();
+            } else {
+                Lizzie.leelaz.toggleThinking();
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_P) {
             Lizzie.board.pass();
         } else if (e.getKeyCode() == KeyEvent.VK_N) {

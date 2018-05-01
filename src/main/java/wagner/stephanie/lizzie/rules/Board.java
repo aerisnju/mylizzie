@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -578,28 +579,28 @@ public class Board implements Closeable {
         }
     }
 
-    private void goForward(int count) {
-        try (AutoCloseable closeable = Lizzie.leelaz.batchOperation()) {
+    private void goForward(final int count) {
+        Lizzie.leelaz.batchOperation(() -> {
             for (int i = 0; i < count; ++i) {
                 if (!nextMove()) {
                     break;
                 }
             }
-        } catch (Exception e) {
-            // Ignore
-        }
+
+            syncLeelazExecutor();
+        });
     }
 
-    private void goBackward(int count) {
-        try (AutoCloseable closeable = Lizzie.leelaz.batchOperation()) {
+    private void goBackward(final int count) {
+        Lizzie.leelaz.batchOperation(() -> {
             for (int i = 0; i < count; ++i) {
                 if (!previousMove()) {
                     break;
                 }
             }
-        } catch (Exception e) {
-            // Ignore
-        }
+
+            syncLeelazExecutor();
+        });
     }
 
     public void dropSuccessiveMoves() {
@@ -685,6 +686,20 @@ public class Board implements Closeable {
         }
 
         gotoMove(currentMoveNumber);
+    }
+
+    public void syncLeelazExecutor(){
+        try {
+            leelazExecutor.submit(() -> {
+                try {
+                    Lizzie.leelaz.postRawGtpCommand("name").get();
+                } catch (InterruptedException | ExecutionException e) {
+                    // Ignore
+                }
+            }).get();
+        } catch (InterruptedException | ExecutionException e) {
+            // Ignore
+        }
     }
 
     public static void registerBoardSizeChangeObserver(Consumer<Integer> observer) {

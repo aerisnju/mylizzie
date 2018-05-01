@@ -71,6 +71,7 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxShowNextMove;
     private JButton buttonManage;
     private JCheckBox checkBoxTransparentVariation;
+    private JCheckBox checkBoxAutoStartThinkingAfterPlacingMoves;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -172,6 +173,8 @@ public class OptionDialog extends JDialog {
         textFieldMaxAnalysisTime.setText(String.valueOf(setting.getMaxAnalysisTimeInMinutes()));
 
         checkBoxTransparentVariation.setSelected(setting.isVariationTransparent());
+
+        checkBoxAutoStartThinkingAfterPlacingMoves.setSelected(setting.isAutoStartAnalyzingAfterPlacingMoves());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -247,6 +250,8 @@ public class OptionDialog extends JDialog {
         }
 
         setting.setVariationTransparent(checkBoxTransparentVariation.isSelected());
+
+        setting.setAutoStartAnalyzingAfterPlacingMoves(checkBoxAutoStartThinkingAfterPlacingMoves.isSelected());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -346,6 +351,7 @@ public class OptionDialog extends JDialog {
         checkBoxShowNextMove = new JCheckBox();
         buttonManage = new JButton();
         checkBoxTransparentVariation = new JCheckBox();
+        checkBoxAutoStartThinkingAfterPlacingMoves = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -525,6 +531,10 @@ public class OptionDialog extends JDialog {
                 //---- checkBoxTransparentVariation ----
                 checkBoxTransparentVariation.setText(bundle.getString("OptionDialog.checkBoxTransparentVariation.text"));
 
+                //---- checkBoxAutoStartThinkingAfterPlacingMoves ----
+                checkBoxAutoStartThinkingAfterPlacingMoves.setText(bundle.getString("OptionDialog.checkBoxAutoStartThinkingAfterPlacingMoves.text"));
+                checkBoxAutoStartThinkingAfterPlacingMoves.setSelected(true);
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -540,7 +550,7 @@ public class OptionDialog extends JDialog {
                                     .addComponent(buttonManage)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(buttonResetCommandLine)
-                                    .addContainerGap(35, Short.MAX_VALUE))
+                                    .addContainerGap(40, Short.MAX_VALUE))
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
                                         .addGroup(contentPanelLayout.createSequentialGroup()
@@ -563,18 +573,6 @@ public class OptionDialog extends JDialog {
                                             .addComponent(radioButtonA1Top)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonA1Bottom))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelAnalysisModeOn)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxAnalysisWindowShow)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxMouseMoveShow)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(labelMaxAnalysisTime)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelMinute))
                                         .addComponent(labelNotes)
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelMoveNumber)
@@ -629,8 +627,23 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxShowShadow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                                    .addGap(0, 61, Short.MAX_VALUE))))
+                                            .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelAnalysisModeOn)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addComponent(checkBoxAutoStartThinkingAfterPlacingMoves)
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                    .addComponent(checkBoxAnalysisWindowShow)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(checkBoxMouseMoveShow)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(labelMaxAnalysisTime)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(labelMinute)))))
+                                    .addGap(0, 66, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -684,6 +697,8 @@ public class OptionDialog extends JDialog {
                                 .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(labelMinute))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(checkBoxAutoStartThinkingAfterPlacingMoves)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)
                                 .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -704,7 +719,7 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelMainWindow)
                                 .addComponent(checkBoxMainWindowAlwaysOnTop))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

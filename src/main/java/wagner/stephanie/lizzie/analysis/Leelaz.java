@@ -5,6 +5,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jtrim2.utils.ObjectFinalizer;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Stone;
 import wagner.stephanie.lizzie.util.ArgumentTokenizer;
@@ -18,9 +19,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * an interface with leelaz.exe go engine. Can be adapted for GTP, but is specifically designed for GCP's Leela Zero.
@@ -33,15 +36,18 @@ public class Leelaz implements Closeable {
 
     private static final long MINUTE = 60 * 1000; // number of milliseconds in a minute
 
+    private final ObjectFinalizer objectFinalizer;
+
     private ExecutorService notificationExecutor;
     private ExecutorService miscExecutor;
 
     private boolean readingPonderOutput;
-    private List<MoveData> bestMoves;
-    private List<MoveData> bestMovesTemp;
+    private volatile List<MoveData> bestMoves;
+    private List<MoveData> bestMovesNext;
 
+    /* 'thinking' is the logical state of analyzing and 'pondering' is the actual engine state. */
+    private boolean thinking;
     private boolean pondering;
-    private boolean ponderingTempStop;
     private long startPonderTime;
 
     private boolean normalExit;
@@ -58,13 +64,15 @@ public class Leelaz implements Closeable {
      * @throws IOException if any exception
      */
     public Leelaz(String commandline) throws IOException {
+        objectFinalizer = new ObjectFinalizer(this::doCleanup, "Shutdown engine");
+
         observerCollection = new BestMoveObserverCollection();
         notificationExecutor = Executors.newSingleThreadExecutor();
         miscExecutor = Executors.newSingleThreadExecutor();
         boardStateCount = new AtomicInteger(0);
 
         normalExit = false;
-        ponderingTempStop = false;
+        pondering = false;
         startEngine(commandline);
     }
 
@@ -101,8 +109,12 @@ public class Leelaz implements Closeable {
         this.normalExit = normalExit;
     }
 
-    public synchronized boolean isPondering() {
-        return pondering;
+    public synchronized boolean isThinking() {
+        return thinking;
+    }
+
+    public synchronized void setThinking(boolean thinking) {
+        this.thinking = thinking;
     }
 
     /**
@@ -119,24 +131,22 @@ public class Leelaz implements Closeable {
         if (line.startsWith("~begin")) {
             if (System.currentTimeMillis() - startPonderTime > Lizzie.optionSetting.getMaxAnalysisTimeInMinutes() * MINUTE) {
                 // we have pondered for enough time. pause pondering
-                tempStopPonder();
+                miscExecutor.execute(this::endPondering);
             }
 
             readingPonderOutput = true;
-            bestMovesTemp = new ArrayList<>(32);
+            bestMovesNext = new ArrayList<>(32);
         } else if (line.startsWith("~end")) {
             readingPonderOutput = false;
-            synchronized (this) {
-                bestMoves = bestMovesTemp;
-            }
-            final int currentBoardStateCount = boardStateCount.get();
-            final List<MoveData> currentBestMoves = bestMovesTemp; // Does not need clone because we always allocate a new one
-            notificationExecutor.execute(() -> observerCollection.bestMovesUpdated(currentBoardStateCount, currentBestMoves));
+            bestMoves = bestMovesNext;
 
+            final int currentBoardStateCount = boardStateCount.get();
+            final List<MoveData> currentBestMoves = bestMovesNext; // Does not need clone because we always allocate a new one
+            notificationExecutor.execute(() -> observerCollection.bestMovesUpdated(currentBoardStateCount, currentBestMoves));
         } else {
             if (readingPonderOutput) {
                 if (Character.isLetter(line.charAt(0))) {
-                    bestMovesTemp.add(new MoveData(line));
+                    bestMovesNext.add(new MoveData(line));
                 }
             } else {
                 final String lineToPrint = line;
@@ -145,32 +155,38 @@ public class Leelaz implements Closeable {
         }
     }
 
-    public void exitNotification(int exitCode) {
+    private void exitNotification(int exitCode) {
         if (!isNormalExit()) {
             // Prevent hang in callbacks
-            miscExecutor.execute(() -> JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.unexpectedProcessEnd"), "Lizzie", JOptionPane.ERROR_MESSAGE));
+            new Thread(() -> JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.unexpectedProcessEnd"), "Lizzie", JOptionPane.ERROR_MESSAGE)).start();
         } else {
             setNormalExit(false);
         }
     }
 
-    public ListenableFuture<List<String>> postRawGtpCommand(String command) {
-        return leelazEngine.postCommand(command);
-    }
-
     /**
-     * Post a command for leelaz to execute
+     * Post a command for leelaz to execute, only with pondering state sync
      *
      * @param command a GTP command
      */
-    public ListenableFuture<List<String>> postGtpCommand(String command) {
-        ListenableFuture<List<String>> future = postRawGtpCommand(command);
-        syncPonderingStartState();
-        return future;
+    public synchronized ListenableFuture<List<String>> postRawGtpCommand(String command) {
+        pondering = isPonderingCommand(command);
+        return leelazEngine.postCommand(command);
     }
 
-    public List<String> sendRawGtpCommand(String command) {
-        return leelazEngine.sendCommand(command);
+    private boolean isPonderingCommand(String command) {
+        return StringUtils.startsWithIgnoreCase(command, "time_left b 0 0");
+    }
+
+    /**
+     * Post a command for leelaz to execute, with thinking and pondering state sync
+     *
+     * @param command a GTP command
+     */
+    public synchronized ListenableFuture<List<String>> postGtpCommand(String command) {
+        ListenableFuture<List<String>> future = postRawGtpCommand(command);
+        syncThinkingState();
+        return future;
     }
 
     /**
@@ -206,101 +222,78 @@ public class Leelaz implements Closeable {
         }
 
         ListenableFuture<List<String>> future = postGtpCommand("play " + colorString + " " + move);
-        future.addListener(() -> {
-            boardStateCount.incrementAndGet();
-            clearBestMovesAndNotify();
-        }, notificationExecutor);
+        future.addListener(() -> clearBestMovesAndNotify(boardStateCount.incrementAndGet()), notificationExecutor);
     }
 
     public void undo() {
         ListenableFuture<List<String>> future = postGtpCommand("undo");
-        future.addListener(() -> {
-            boardStateCount.decrementAndGet();
-            clearBestMovesAndNotify();
-        }, notificationExecutor);
+        future.addListener(() -> clearBestMovesAndNotify(boardStateCount.decrementAndGet()), notificationExecutor);
     }
 
-    private void clearBestMovesAndNotify() {
+    private void clearBestMovesAndNotify(int newBoardStateCount) {
         bestMoves = Collections.emptyList();
-        observerCollection.bestMovesUpdated(boardStateCount.get(), Collections.emptyList());
+        observerCollection.bestMovesUpdated(newBoardStateCount, Collections.emptyList());
     }
 
-    public AutoCloseable batchOperation() {
-        return new AutoCloseable() {
-            private boolean ponderingState = pondering;
+    public void batchOperation(Runnable operation) {
+        boolean originalThinkingState = thinking;
 
-            {
-                stopPonder();
-            }
+        stopThinking();
+        try {
+            operation.run();
+        } finally {
+            thinking = originalThinkingState;
+            syncThinkingState();
+        }
+    }
 
-            @Override
-            public void close() throws Exception {
-                if (ponderingState) {
-                    startPonder();
-                }
-            }
-        };
+    public synchronized void beginPondering() {
+        postRawGtpCommand("time_left b 0 0");
+        startPonderTime = System.currentTimeMillis();
+    }
+
+    public synchronized void endPondering() {
+        postRawGtpCommand("name");
     }
 
     /**
-     * this initializes leelaz's pondering mode at its current position
+     * this initializes leelaz's thinking mode at its current position
      */
-    public synchronized void forceStartPonder() {
-        pondering = true;
-        ponderingTempStop = false;
-        startPonderTime = System.currentTimeMillis();
-        postRawGtpCommand("time_left b 0 0");
+    public synchronized void startThinking() {
+        thinking = true;
+        syncThinkingState();
     }
 
-    public synchronized void tempStopPonder() {
-        postRawGtpCommand("name");
-        ponderingTempStop = true;
+    public synchronized void stopThinking() {
+        thinking = false;
+        syncThinkingState();
     }
 
-    public synchronized void forceStopPonder() {
-        postRawGtpCommand("name"); // ends pondering
-        pondering = false;
-        ponderingTempStop = false;
-    }
-
-    public synchronized void startPonder() {
-        if (!pondering || ponderingTempStop) {
-            forceStartPonder();
-        }
-    }
-
-    public synchronized void stopPonder() {
-        if (pondering) {
-            forceStopPonder();
-        }
-    }
-
-    public synchronized void syncPonderingState() {
-        if (pondering) {
-            forceStartPonder();
-        } else {
-            forceStopPonder();
-        }
-    }
-
-    public synchronized void syncPonderingStartState() {
-        if (pondering) {
-            forceStartPonder();
-        }
-    }
-
-    public synchronized void syncPonderingStopState() {
-        if (!pondering) {
-            forceStopPonder();
+    /**
+     * If it is thinking, make sure it is pondering.
+     * If it is not thinking, make sure it stops pondering.
+     */
+    public synchronized void syncThinkingState() {
+        if (thinking && !pondering) {
+            beginPondering();
+        } else if (!thinking && pondering) {
+            endPondering();
         }
     }
 
     public synchronized void togglePonder() {
-        if (pondering && ponderingTempStop) {
-            syncPonderingStartState();
+        if (pondering = !pondering) {
+            beginPondering();
         } else {
-            pondering = !pondering;
-            syncPonderingState();
+            endPondering();
+        }
+    }
+
+    public synchronized void toggleThinking() {
+        if (thinking) {
+            stopThinking();
+        } else {
+            startThinking();
         }
     }
 
@@ -308,12 +301,16 @@ public class Leelaz implements Closeable {
         ListenableFuture<List<String>> future = postGtpCommand("clear_board");
         future.addListener(() -> {
             boardStateCount.set(0);
-            clearBestMovesAndNotify();
+            clearBestMovesAndNotify(0);
         }, notificationExecutor);
     }
 
     @Override
     public void close() {
+        objectFinalizer.doFinalize();
+    }
+
+    private void doCleanup() {
         if (leelazEngine != null) {
             setNormalExit(true);
             leelazEngine.shutdown();
@@ -338,17 +335,12 @@ public class Leelaz implements Closeable {
         }
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        close();
-    }
-
     private void startEngine(String commandline) throws IOException {
         readingPonderOutput = false;
         bestMoves = Collections.emptyList();
-        bestMovesTemp = new ArrayList<>(32);
+        bestMovesNext = new ArrayList<>(32);
 
-        pondering = false;
+        thinking = false;
         startPonderTime = System.currentTimeMillis();
 
         // list of commands for the leelaz process
@@ -376,7 +368,7 @@ public class Leelaz implements Closeable {
     private void waitForEngineStart() throws InterruptedException {
         long startTime = System.currentTimeMillis();
 
-        forceStartPonder();
+        startThinking();
 
         while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 30000) {
             Thread.sleep(250);

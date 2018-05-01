@@ -141,7 +141,7 @@ public class Lizzie {
         }
 
         leelaz = new Leelaz(optionSetting.getLeelazCommandLine());
-        leelaz.forceStartPonder();
+        leelaz.startThinking();
 
         board = new Board();
         frame = new LizzieFrame();
@@ -315,41 +315,45 @@ public class Lizzie {
         }
     }
 
-    private static void loadGameToBoard(Game game) {
-        try (AutoCloseable closeable = Lizzie.leelaz.batchOperation()) {
-            clearBoardAndState();
+    private static void loadGameToBoard(final Game game) {
+        Lizzie.leelaz.batchOperation(() -> {
+            try {
+                clearBoardAndState();
 
-            GameNode node = game.getRootNode();
-            MoveReplayer replayer = new MoveReplayer();
+                GameNode node = game.getRootNode();
+                MoveReplayer replayer = new MoveReplayer();
 
-            // Process pre-placed stones
-            placePreplacedMove(replayer, game.getProperty("AB"), game.getProperty("AW"));
+                // Process pre-placed stones
+                placePreplacedMove(replayer, game.getProperty("AB"), game.getProperty("AW"));
 
-            do {
-                String preplacedBlack = node.getProperty("AB");
-                String preplacedWhite = node.getProperty("AW");
-                if (StringUtils.isNotEmpty(preplacedBlack) || StringUtils.isNotEmpty(preplacedWhite)) {
-                    placePreplacedMove(replayer, preplacedBlack, preplacedWhite);
-                }
-                if (node.isMove()) {
-                    if (StringUtils.isNotEmpty(node.getProperty("B"))) {
-                        int[] coords = node.getCoords();
-                        if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
-                            replayer.playMove(true, coords[0], coords[1]);
+                do {
+                    String preplacedBlack = node.getProperty("AB");
+                    String preplacedWhite = node.getProperty("AW");
+                    if (StringUtils.isNotEmpty(preplacedBlack) || StringUtils.isNotEmpty(preplacedWhite)) {
+                        placePreplacedMove(replayer, preplacedBlack, preplacedWhite);
+                    }
+                    if (node.isMove()) {
+                        if (StringUtils.isNotEmpty(node.getProperty("B"))) {
+                            int[] coords = node.getCoords();
+                            if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
+                                replayer.playMove(true, coords[0], coords[1]);
+                            }
+                        }
+                        if (StringUtils.isNotEmpty(node.getProperty("W"))) {
+                            int[] coords = node.getCoords();
+                            if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
+                                replayer.playMove(false, coords[0], coords[1]);
+                            }
                         }
                     }
-                    if (StringUtils.isNotEmpty(node.getProperty("W"))) {
-                        int[] coords = node.getCoords();
-                        if (coords != null && coords[0] < 19 && coords[0] >= 0 && coords[1] < 19 && coords[1] >= 0) {
-                            replayer.playMove(false, coords[0], coords[1]);
-                        }
-                    }
                 }
+                while ((node = node.getNextNode()) != null);
+            } catch (Exception e) {
+                // Ignore
+            } finally {
+                board.syncLeelazExecutor();
             }
-            while ((node = node.getNextNode()) != null);
-        } catch (Exception e) {
-            // Ignore
-        }
+        });
     }
 
     private static void placePreplacedMove(MoveReplayer replayer, String preplacedBlackStoneString, String preplacedWhiteStoneString) {

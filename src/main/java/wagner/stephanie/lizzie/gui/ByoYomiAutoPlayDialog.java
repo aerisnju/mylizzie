@@ -128,9 +128,9 @@ public class ByoYomiAutoPlayDialog extends JDialog {
                 resetCountdown();
                 startOrResumeCountdown();
 
-                Lizzie.leelaz.startPonder();
+                Lizzie.leelaz.startThinking();
             } else {
-                Lizzie.leelaz.stopPonder();
+                Lizzie.leelaz.stopThinking();
 
                 resetCountdown();
             }

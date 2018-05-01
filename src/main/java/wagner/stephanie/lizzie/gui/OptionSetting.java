@@ -138,6 +138,7 @@ public class OptionSetting {
     private int maxAnalysisTimeInMinutes;
     private List<String> engineProfileList;
     private boolean variationTransparent;
+    private boolean autoStartAnalyzingAfterPlacingMoves;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -179,6 +180,7 @@ public class OptionSetting {
         maxAnalysisTimeInMinutes = 2;
         engineProfileList = ImmutableList.of();
         variationTransparent = false;
+        autoStartAnalyzingAfterPlacingMoves = true;
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -383,6 +385,14 @@ public class OptionSetting {
         this.variationTransparent = variationTransparent;
     }
 
+    public boolean isAutoStartAnalyzingAfterPlacingMoves() {
+        return autoStartAnalyzingAfterPlacingMoves;
+    }
+
+    public void setAutoStartAnalyzingAfterPlacingMoves(boolean autoStartAnalyzingAfterPlacingMoves) {
+        this.autoStartAnalyzingAfterPlacingMoves = autoStartAnalyzingAfterPlacingMoves;
+    }
+
     public int getMainWindowPosX() {
         return mainWindowPosX;
     }
@@ -498,12 +508,10 @@ public class OptionSetting {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
         OptionSetting that = (OptionSetting) o;
-
         return new EqualsBuilder()
+                .append(version, that.version)
                 .append(variationLimit, that.variationLimit)
                 .append(a1OnTop, that.a1OnTop)
                 .append(showFancyBoard, that.showFancyBoard)
@@ -522,6 +530,7 @@ public class OptionSetting {
                 .append(mainWindowAlwaysOnTop, that.mainWindowAlwaysOnTop)
                 .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
                 .append(variationTransparent, that.variationTransparent)
+                .append(autoStartAnalyzingAfterPlacingMoves, that.autoStartAnalyzingAfterPlacingMoves)
                 .append(mainWindowPosX, that.mainWindowPosX)
                 .append(mainWindowPosY, that.mainWindowPosY)
                 .append(mainWindowWidth, that.mainWindowWidth)
@@ -546,6 +555,7 @@ public class OptionSetting {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
+                .append(version)
                 .append(boardSize)
                 .append(variationLimit)
                 .append(a1OnTop)
@@ -568,6 +578,7 @@ public class OptionSetting {
                 .append(maxAnalysisTimeInMinutes)
                 .append(engineProfileList)
                 .append(variationTransparent)
+                .append(autoStartAnalyzingAfterPlacingMoves)
                 .append(mainWindowPosX)
                 .append(mainWindowPosY)
                 .append(mainWindowWidth)

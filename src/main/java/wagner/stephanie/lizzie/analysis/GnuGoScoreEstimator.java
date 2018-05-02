@@ -1,7 +1,6 @@
 package wagner.stephanie.lizzie.analysis;
 
 import com.google.common.primitives.Doubles;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.eclipse.collections.api.list.primitive.MutableDoubleList;
 import org.eclipse.collections.impl.list.mutable.primitive.DoubleArrayList;
@@ -9,6 +8,9 @@ import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class GnuGoScoreEstimator extends GtpBasedScoreEstimator {
     public GnuGoScoreEstimator(String commandLine) {
@@ -17,7 +19,25 @@ public class GnuGoScoreEstimator extends GtpBasedScoreEstimator {
 
     @Override
     public ImmutablePair<String, Double> estimateScore() {
-        throw new NotImplementedException("Not implemented");
+        final String rawScore = estimateScoreRaw();
+        try {
+            final Pattern SCORE_REGEX = Pattern.compile("([BbWw])\\+?\\b([0-9]*\\.?[0-9]+)\\b");
+            final Matcher matcher = SCORE_REGEX.matcher(rawScore);
+            if (matcher.find()) {
+                final String color = matcher.group(1).toUpperCase();
+                final String scoreString = matcher.group(2);
+                final Double score = Double.valueOf(scoreString);
+
+                return ImmutablePair.of(color, score);
+            } else {
+                // Should not happen
+                return ImmutablePair.of("B", 0.0);
+            }
+        } catch (PatternSyntaxException | NumberFormatException | NullPointerException e) {
+            // Syntax error in the regular expression. This SHOULD NOT HAPPEN!
+            e.printStackTrace();
+            return ImmutablePair.of("B", 0.0);
+        }
     }
 
     @Override

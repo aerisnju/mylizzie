@@ -1,5 +1,7 @@
 package wagner.stephanie.lizzie.gui;
 
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
@@ -9,6 +11,12 @@ import java.util.ResourceBundle;
 
 public class Input implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
+    private static final ImmutableMap<String, String> COLOR_DISPLAY_STRING = ImmutableMap.of(
+            "B", resourceBundle.getString("LizzieFrame.prompt.colorBlack")
+            , "b", resourceBundle.getString("LizzieFrame.prompt.colorBlack")
+            , "W", resourceBundle.getString("LizzieFrame.prompt.colorWhite")
+            , "w", resourceBundle.getString("LizzieFrame.prompt.colorWhite")
+    );
 
     private ByoYomiAutoPlayDialog byoYomiAutoPlayDialog = null;
 
@@ -162,10 +170,14 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             if (Lizzie.scoreEstimator == null || !Lizzie.scoreEstimator.isRunning()) {
                 JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noEstimatorEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             } else {
-                String estimatedRawScore = Lizzie.scoreEstimator.estimateScoreRaw();
+                ImmutablePair<String, Double> estimatedScore = Lizzie.scoreEstimator.estimateScore();
+                String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(estimatedScore.getLeft(), "?");
+                double score = estimatedScore.getRight();
+
                 Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.scoreEstimator.estimateInfluences());
+
                 JOptionPane.showMessageDialog(Lizzie.frame
-                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, estimatedRawScore)
+                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, score)
                         , "Lizzie"
                         , JOptionPane.INFORMATION_MESSAGE);
             }

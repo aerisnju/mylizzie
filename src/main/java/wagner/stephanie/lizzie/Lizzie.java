@@ -116,7 +116,7 @@ public class Lizzie {
         if (scoreEstimator != null) {
             try {
                 scoreEstimator.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

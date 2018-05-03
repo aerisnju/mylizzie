@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-public interface GtpClient extends Closeable {
+public interface GtpClient extends AutoCloseable {
     default List<String> sendCommand(String command) {
         ListenableFuture<List<String>> commandFuture = postCommand(command);
         try {

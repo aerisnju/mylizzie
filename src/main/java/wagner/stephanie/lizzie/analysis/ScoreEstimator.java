@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import java.io.Closeable;
 import java.util.List;
 
-public interface ScoreEstimator extends Closeable {
+public interface ScoreEstimator extends AutoCloseable {
     void setKomi(double komi);
 
     double getKomi();

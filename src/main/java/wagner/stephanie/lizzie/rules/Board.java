@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.jtrim2.utils.ObjectFinalizer;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
 import wagner.stephanie.lizzie.analysis.MoveData;
@@ -25,6 +26,8 @@ public class Board implements Closeable {
     public static int BOARD_SIZE = Lizzie.optionSetting.getBoardSize().getWidth();
     private static List<Consumer<Integer>> boardSizeChangeObserver = new CopyOnWriteArrayList<>();
 
+    private final ObjectFinalizer objectFinalizer;
+
     private BoardHistoryList history;
     private BoardTryPlayState tryPlayState;
     private BoardStateChangeObserverCollection observerCollection;
@@ -33,6 +36,8 @@ public class Board implements Closeable {
     private ExecutorService leelazExecutor;
 
     public Board() {
+        objectFinalizer = new ObjectFinalizer(this::doCleanup, "Board.cleanup");
+
         leelazExecutor = Executors.newSingleThreadExecutor();
         initBoardHistoryList();
         tryPlayState = null;
@@ -610,8 +615,7 @@ public class Board implements Closeable {
         }
     }
 
-    @Override
-    public void close() {
+    private void doCleanup() {
         ThreadPoolUtil.shutdownAndAwaitTermination(leelazExecutor);
         if (bestMoveObserver != null) {
             Lizzie.leelaz.unregisterBestMoveObserver(bestMoveObserver);
@@ -620,9 +624,8 @@ public class Board implements Closeable {
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
+    public void close() {
+        objectFinalizer.doFinalize();
     }
 
     public void playBestMove() {

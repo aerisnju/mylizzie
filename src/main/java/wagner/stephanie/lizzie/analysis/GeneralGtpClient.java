@@ -5,6 +5,7 @@ import com.zaxxer.nuprocess.NuAbstractProcessHandler;
 import com.zaxxer.nuprocess.NuProcess;
 import com.zaxxer.nuprocess.NuProcessBuilder;
 import com.zaxxer.nuprocess.NuProcessHandler;
+import org.jtrim2.utils.ObjectFinalizer;
 import wagner.stephanie.lizzie.util.ArgumentTokenizer;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
@@ -18,6 +19,8 @@ import java.util.function.Consumer;
 
 public class GeneralGtpClient implements GtpClient {
     protected class GeneralGtpProcessHandler extends NuAbstractProcessHandler implements Closeable {
+        private final ObjectFinalizer objectFinalizer;
+
         protected ExecutorService stdoutProcessor;
         protected ExecutorService stderrProcessor;
         protected ExecutorService miscProcessor;
@@ -27,6 +30,8 @@ public class GeneralGtpClient implements GtpClient {
         protected boolean inCommandResponse;
 
         public GeneralGtpProcessHandler() {
+            objectFinalizer = new ObjectFinalizer(this::doCleanup, "GtpClientHandler.cleanup");
+
             stdoutProcessor = Executors.newSingleThreadExecutor();
             stderrProcessor = Executors.newSingleThreadExecutor();
             miscProcessor = Executors.newSingleThreadExecutor();
@@ -136,8 +141,7 @@ public class GeneralGtpClient implements GtpClient {
             engineDiagnosticLineConsumerList.forEach(consumer -> consumer.accept(line));
         }
 
-        @Override
-        public void close() throws IOException {
+        private void doCleanup() {
             if (stdoutProcessor != null) {
                 ThreadPoolUtil.shutdownAndAwaitTermination(stdoutProcessor);
                 stdoutProcessor = null;
@@ -155,12 +159,12 @@ public class GeneralGtpClient implements GtpClient {
         }
 
         @Override
-        protected void finalize() throws Throwable {
-            close();
-            super.finalize();
+        public void close() {
+            objectFinalizer.doFinalize();
         }
     }
 
+    private final ObjectFinalizer objectFinalizer;
     private List<String> gtpCommandLine;
     private NuProcessHandler gtpProcessHandler;
     private NuProcess gtpProcess;
@@ -177,6 +181,8 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     public GeneralGtpClient(List<String> commandLine) {
+        objectFinalizer = new ObjectFinalizer(this::doCleanup, "GtpClient.cleanup");
+
         gtpCommandLine = commandLine;
         stagineCommandQueue = new ConcurrentLinkedQueue<>();
         runningCommandQueue = new ConcurrentLinkedQueue<>();
@@ -297,15 +303,13 @@ public class GeneralGtpClient implements GtpClient {
         engineExitObserverList.remove(observer);
     }
 
-    @Override
-    public void close() throws IOException {
+    private void doCleanup() {
         shutdown();
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
+    public void close() {
+        objectFinalizer.doFinalize();
     }
 
     public static void main(String[] args) throws Exception {

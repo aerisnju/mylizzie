@@ -118,6 +118,11 @@ public class ByoYomiAutoPlayDialog extends JDialog {
             }
         };
         Lizzie.board.registerBoardStateChangeObserver(boardStateChangeObserver);
+
+        spinnerCountdownTime.setValue(Lizzie.optionSetting.getByoYomiSetting().getByoYomiTime());
+        labelCountdownValue.setText(String.valueOf(spinnerCountdownTime.getValue()));
+
+        checkBoxStopThinkingWhenCountDown.setSelected(Lizzie.optionSetting.getByoYomiSetting().isStopThinkingWhenCountingDown());
     }
 
     private void boardPlayerChanged() {
@@ -185,6 +190,10 @@ public class ByoYomiAutoPlayDialog extends JDialog {
         countdownSystemStop();
         stopCountdown();
         Lizzie.board.unregisterBoardStateChangeObserver(boardStateChangeObserver);
+
+        OptionSetting.ByoYomiSetting byoYomiSetting = Lizzie.optionSetting.getByoYomiSetting();
+        byoYomiSetting.setByoYomiTime((Integer) spinnerCountdownTime.getValue());
+        byoYomiSetting.setStopThinkingWhenCountingDown(checkBoxStopThinkingWhenCountDown.isSelected());
     }
 
     private void buttonResetActionPerformed(ActionEvent e) {

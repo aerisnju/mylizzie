@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.awt.*;
 import java.util.List;
-import java.util.Objects;
 
 public class OptionSetting {
     public static class BoardColor {
@@ -53,20 +52,25 @@ public class OptionSetting {
             return new Color(red, green, blue);
         }
 
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             BoardColor that = (BoardColor) o;
-            return red == that.red &&
-                    green == that.green &&
-                    blue == that.blue;
+            return new EqualsBuilder()
+                    .append(red, that.red)
+                    .append(green, that.green)
+                    .append(blue, that.blue)
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(red, green, blue);
+            return new HashCodeBuilder(17, 37)
+                    .append(red)
+                    .append(green)
+                    .append(blue)
+                    .toHashCode();
         }
     }
 
@@ -105,13 +109,63 @@ public class OptionSetting {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             BoardSize boardSize = (BoardSize) o;
-            return width == boardSize.width &&
-                    height == boardSize.height;
+            return new EqualsBuilder()
+                    .append(width, boardSize.width)
+                    .append(height, boardSize.height)
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(width, height);
+            return new HashCodeBuilder(17, 37)
+                    .append(width)
+                    .append(height)
+                    .toHashCode();
+        }
+    }
+
+    public static class ByoYomiSetting {
+        private int byoYomiTime;
+        private boolean stopThinkingWhenCountingDown;
+
+        public ByoYomiSetting() {
+            byoYomiTime = 30;
+            stopThinkingWhenCountingDown = true;
+        }
+
+        public int getByoYomiTime() {
+            return byoYomiTime;
+        }
+
+        public void setByoYomiTime(int byoYomiTime) {
+            this.byoYomiTime = byoYomiTime;
+        }
+
+        public boolean isStopThinkingWhenCountingDown() {
+            return stopThinkingWhenCountingDown;
+        }
+
+        public void setStopThinkingWhenCountingDown(boolean stopThinkingWhenCountingDown) {
+            this.stopThinkingWhenCountingDown = stopThinkingWhenCountingDown;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ByoYomiSetting that = (ByoYomiSetting) o;
+            return new EqualsBuilder()
+                    .append(byoYomiTime, that.byoYomiTime)
+                    .append(stopThinkingWhenCountingDown, that.stopThinkingWhenCountingDown)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(byoYomiTime)
+                    .append(stopThinkingWhenCountingDown)
+                    .toHashCode();
         }
     }
 
@@ -156,6 +210,8 @@ public class OptionSetting {
     private String lastChooserLocation;
     private boolean winrateHistogramWindowShow;
 
+    private ByoYomiSetting byoYomiSetting;
+
     public OptionSetting() {
         version = 1;
         boardSize = new BoardSize();
@@ -199,6 +255,7 @@ public class OptionSetting {
 
         lastChooserLocation = ".";
         winrateHistogramWindowShow = true;
+        byoYomiSetting = new ByoYomiSetting();
     }
 
     public int getVersion() {
@@ -505,6 +562,14 @@ public class OptionSetting {
         this.winrateHistogramWindowShow = winrateHistogramWindowShow;
     }
 
+    public ByoYomiSetting getByoYomiSetting() {
+        return byoYomiSetting;
+    }
+
+    public void setByoYomiSetting(ByoYomiSetting byoYomiSetting) {
+        this.byoYomiSetting = byoYomiSetting;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -549,6 +614,7 @@ public class OptionSetting {
                 .append(leelazCommandLine, that.leelazCommandLine)
                 .append(engineProfileList, that.engineProfileList)
                 .append(lastChooserLocation, that.lastChooserLocation)
+                .append(byoYomiSetting, that.byoYomiSetting)
                 .isEquals();
     }
 
@@ -593,6 +659,7 @@ public class OptionSetting {
                 .append(winrateHistogramWindowHeight)
                 .append(lastChooserLocation)
                 .append(winrateHistogramWindowShow)
+                .append(byoYomiSetting)
                 .toHashCode();
     }
 }

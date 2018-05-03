@@ -165,6 +165,9 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             if (byoYomiAutoPlayDialog == null || !byoYomiAutoPlayDialog.isDisplayable()) {
                 byoYomiAutoPlayDialog = new ByoYomiAutoPlayDialog(Lizzie.frame);
                 byoYomiAutoPlayDialog.setVisible(true);
+            } else {
+                byoYomiAutoPlayDialog.dispatchEvent(new WindowEvent(byoYomiAutoPlayDialog, WindowEvent.WINDOW_CLOSING));
+                byoYomiAutoPlayDialog = null;
             }
         } else if (e.getKeyCode() == KeyEvent.VK_T) {
             if (Lizzie.scoreEstimator == null || !Lizzie.scoreEstimator.isRunning()) {

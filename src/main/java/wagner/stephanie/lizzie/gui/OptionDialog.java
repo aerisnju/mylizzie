@@ -4,6 +4,7 @@
 
 package wagner.stephanie.lizzie.gui;
 
+import java.awt.event.KeyEvent;
 import java.util.*;
 import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.StringUtils;
@@ -85,11 +86,13 @@ public class OptionDialog extends JDialog {
     public OptionDialog(Frame owner) {
         super(owner);
         initComponents();
+        initOther();
     }
 
     public OptionDialog(Dialog owner) {
         super(owner);
         initComponents();
+        initOther();
     }
 
     public void setDialogSetting(OptionSetting setting) {
@@ -258,6 +261,10 @@ public class OptionDialog extends JDialog {
     }
 
     private void okButtonActionPerformed(ActionEvent e) {
+        doApplySettings();
+    }
+
+    private void doApplySettings() {
         String originalCommandLine = Lizzie.optionSetting.getLeelazCommandLine();
 
         readDialogSetting(Lizzie.optionSetting);
@@ -799,5 +806,15 @@ public class OptionDialog extends JDialog {
         buttonGroupBoardSize.add(radioButtonBoard13x13);
         buttonGroupBoardSize.add(radioButtonBoard9x9);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
+    }
+
+    private void initOther() {
+        getRootPane().registerKeyboardAction(e -> setVisible(false),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        getRootPane().registerKeyboardAction(e -> doApplySettings(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 }

@@ -71,8 +71,6 @@ public class Leelaz implements Closeable {
         miscExecutor = Executors.newSingleThreadExecutor();
         boardStateCount = new AtomicInteger(0);
 
-        normalExit = false;
-        pondering = false;
         startEngine(commandline);
     }
 
@@ -335,13 +333,16 @@ public class Leelaz implements Closeable {
         }
     }
 
-    private void startEngine(String commandline) throws IOException {
-        readingPonderOutput = false;
-        bestMoves = Collections.emptyList();
-        bestMovesNext = new ArrayList<>(32);
+    private void startEngine(String commandline) {
+        boardStateCount.set(0);
+        normalExit = false;
 
         thinking = false;
-        startPonderTime = System.currentTimeMillis();
+        pondering = false;
+        readingPonderOutput = false;
+
+        bestMoves = Collections.emptyList();
+        bestMovesNext = new ArrayList<>(32);
 
         // list of commands for the leelaz process
         List<String> commands = ArgumentTokenizer.tokenize(commandline.trim());
@@ -370,8 +371,8 @@ public class Leelaz implements Closeable {
 
         startThinking();
 
-        while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 30000) {
-            Thread.sleep(250);
+        while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 45000) {
+            Thread.sleep(500);
         }
 
         if (CollectionUtils.isEmpty(bestMoves)) {

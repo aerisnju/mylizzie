@@ -30,39 +30,10 @@ public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
         boardStateChangeObserver = new BoardStateChangeObserver() {
             @Override
             public void mainStreamAppended(BoardHistoryNode newNodeBegin, BoardHistoryNode head) {
-                BoardHistoryNode p = newNodeBegin;
-                while (true) {
-                    replayMove(p.getData());
-
-                    if (p == head) {
-                        break;
-                    }
-                    p = p.getNext();
-                }
-
-                Lizzie.frame.getBoardRenderer().updateInfluences(null);
-            }
-
-            private void replayMove(BoardData data) {
-                String move;
-                if (data.getLastMove() == null) {
-                    move = "pass";
-                } else {
-                    move = Board.convertCoordinatesToName(data.getLastMove());
-                }
-
-                if (data.getLastMoveColor() == Stone.BLACK) {
-                    gtpClient.postCommand(String.format("play %s %s", "B", move));
-                } else if (data.getLastMoveColor() == Stone.WHITE) {
-                    gtpClient.postCommand(String.format("play %s %s", "W", move));
-                }
-
-                Lizzie.frame.getBoardRenderer().updateInfluences(null);
             }
 
             @Override
             public void mainStreamCut(BoardHistoryNode nodeBeforeCutPoint, BoardHistoryNode head) {
-
             }
 
             @Override
@@ -100,8 +71,25 @@ public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
             }
 
             @Override
-            public void boardCleared() {
+            public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
                 gtpClient.postCommand("clear_board");
+                Lizzie.frame.getBoardRenderer().updateInfluences(null);
+            }
+
+            private void replayMove(BoardData data) {
+                String move;
+                if (data.getLastMove() == null) {
+                    move = "pass";
+                } else {
+                    move = Board.convertCoordinatesToName(data.getLastMove());
+                }
+
+                if (data.getLastMoveColor() == Stone.BLACK) {
+                    gtpClient.postCommand(String.format("play %s %s", "B", move));
+                } else if (data.getLastMoveColor() == Stone.WHITE) {
+                    gtpClient.postCommand(String.format("play %s %s", "W", move));
+                }
+
                 Lizzie.frame.getBoardRenderer().updateInfluences(null);
             }
         };

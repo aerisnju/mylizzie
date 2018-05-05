@@ -7,5 +7,5 @@ public interface BoardStateChangeObserver {
 
     void headMoved(BoardHistoryNode oldHead, BoardHistoryNode newHead);
 
-    void boardCleared();
+    void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead);
 }

@@ -90,7 +90,7 @@ public class BoardRenderer {
             }
 
             @Override
-            public void boardCleared() {
+            public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
                 if (Lizzie.frame != null) {
                     Lizzie.frame.repaint();
                 }

@@ -31,25 +31,10 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
         Lizzie.board.registerBoardStateChangeObserver(new BoardStateChangeObserver() {
             @Override
             public void mainStreamAppended(BoardHistoryNode newNodeBegin, BoardHistoryNode head) {
-                newNodeBegin.forEach(WinrateHistogramTableModel.this::addHistogramData);
-                rebuildFilteredHistogramData();
-
-                fireTableDataChanged();
-                if (refreshObserver != null) {
-                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
-                }
             }
 
             @Override
             public void mainStreamCut(BoardHistoryNode nodeBeforeCutPoint, BoardHistoryNode head) {
-                histogramEntryList.removeIf(entry -> entry.getMoveNumber() > nodeBeforeCutPoint.getData().getMoveNumber());
-                histogramEntryFilteredList.removeIf(entry -> entry.getMoveNumber() > nodeBeforeCutPoint.getData().getMoveNumber());
-                rebuildFilteredHistogramData();
-
-                fireTableDataChanged();
-                if (refreshObserver != null) {
-                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
-                }
             }
 
             @Override
@@ -72,9 +57,17 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
             }
 
             @Override
-            public void boardCleared() {
+            public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
                 histogramEntryList.clear();
                 histogramEntryFilteredList.clear();
+
+                initialNode.forEach(WinrateHistogramTableModel.this::addHistogramData);
+                rebuildFilteredHistogramData();
+
+                fireTableDataChanged();
+                if (refreshObserver != null) {
+                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
+                }
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
@@ -109,7 +102,6 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
             @Override
             public void engineRestarted() {
-
             }
         });
     }

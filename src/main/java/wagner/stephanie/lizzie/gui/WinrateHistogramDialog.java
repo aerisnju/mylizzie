@@ -102,7 +102,7 @@ public class WinrateHistogramDialog extends JDialog {
             @Override
             public void accept(WinrateHistogramTableModel model) {
                 long currentTime = System.currentTimeMillis();
-                if (currentTime - lastRefreshTime < 500L) {
+                if (currentTime - lastRefreshTime < 250L) {
                     return;
                 }
 

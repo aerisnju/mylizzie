@@ -87,20 +87,10 @@ public class ByoYomiAutoPlayDialog extends JDialog {
         boardStateChangeObserver = new BoardStateChangeObserver() {
             @Override
             public void mainStreamAppended(BoardHistoryNode newNodeBegin, BoardHistoryNode head) {
-                boolean newState = head.getData().isBlackToPlay();
-                boolean originalState = nextBlack.getAndSet(newState);
-                if (newState != originalState) {
-                    boardPlayerChanged();
-                }
             }
 
             @Override
             public void mainStreamCut(BoardHistoryNode nodeBeforeCutPoint, BoardHistoryNode head) {
-                boolean newState = head.getData().isBlackToPlay();
-                boolean originalState = nextBlack.getAndSet(newState);
-                if (newState != originalState) {
-                    boardPlayerChanged();
-                }
             }
 
             @Override
@@ -113,7 +103,7 @@ public class ByoYomiAutoPlayDialog extends JDialog {
             }
 
             @Override
-            public void boardCleared() {
+            public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
                 nextBlack.set(true);
                 boardPlayerChanged();
             }

@@ -74,8 +74,7 @@ public class Board implements Closeable {
         synchronized (this) {
             // We don't use history.clear() because it will not update board size
             initBoardHistoryList();
-            observerCollection.boardCleared();
-            observerCollection.mainStreamAppended(history.getInitialNode(), history.getHead());
+            observerCollection.boardCleared(history.getInitialNode(), history.getHead());
         }
     }
 
@@ -90,7 +89,11 @@ public class Board implements Closeable {
     public void registerBoardStateChangeObserver(BoardStateChangeObserver observer) {
         observerCollection.add(observer);
 
-        observer.mainStreamAppended(history.getInitialNode(), history.getHead());
+        observer.boardCleared(history.getInitialNode(), history.getInitialNode());
+        if (history.getInitialNode().getNext() != null) {
+            observer.mainStreamAppended(history.getInitialNode().getNext(), history.getInitialNode());
+            observer.headMoved(history.getInitialNode(), history.getHead());
+        }
     }
 
     public void unregisterBoardStateChangeObserver(BoardStateChangeObserver observer) {
@@ -294,8 +297,11 @@ public class Board implements Closeable {
                 history.getHead().disconnectNextNode();
                 observerCollection.mainStreamCut(history.getHead(), history.getHead());
             }
+            BoardHistoryNode oldHead = history.getHead();
             history.add(newState);
-            observerCollection.mainStreamAppended(history.getHead(), history.getHead());
+            BoardHistoryNode newHead = history.getHead();
+            observerCollection.mainStreamAppended(newHead, oldHead);
+            observerCollection.headMoved(oldHead, newHead);
 
             // update leelaz with pass
             leelazExecutor.execute(() -> {
@@ -373,8 +379,11 @@ public class Board implements Closeable {
                 history.getHead().disconnectNextNode();
                 observerCollection.mainStreamCut(history.getHead(), history.getHead());
             }
+            BoardHistoryNode oldHead = history.getHead();
             history.add(newState);
-            observerCollection.mainStreamAppended(history.getHead(), history.getHead());
+            BoardHistoryNode newHead = history.getHead();
+            observerCollection.mainStreamAppended(newHead, oldHead);
+            observerCollection.headMoved(oldHead, newHead);
 
             // update leelaz with board position
             final Stone colorToPlay = color;

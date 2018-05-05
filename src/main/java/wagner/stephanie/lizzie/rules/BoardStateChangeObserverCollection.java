@@ -31,8 +31,8 @@ public class BoardStateChangeObserverCollection extends AbstractCollection<Board
     }
 
     @Override
-    public void boardCleared() {
-        observerList.forEach(BoardStateChangeObserver::boardCleared);
+    public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
+        observerList.forEach(boardStateChangeObserver -> boardStateChangeObserver.boardCleared(initialNode, initialHead));
     }
 
     @Override

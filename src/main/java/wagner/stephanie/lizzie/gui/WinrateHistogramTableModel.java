@@ -17,16 +17,17 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 public class WinrateHistogramTableModel extends AbstractTableModel {
-    public static final double SIGNIFICANT_OSCILLATION_THRESHOLD = 15.0;
     private ArrayList<WinrateHistogramEntry> histogramEntryList;
     private ArrayList<WinrateHistogramEntry> histogramEntryFilteredList;
     private boolean provideFilteredData;
     private Consumer<WinrateHistogramTableModel> refreshObserver;
+    private double significantOscillationThreshould;
 
     public WinrateHistogramTableModel() {
         histogramEntryList = new ArrayList<>();
         histogramEntryFilteredList = new ArrayList<>();
         provideFilteredData = true;
+        significantOscillationThreshould = 15.0;
 
         Lizzie.board.registerBoardStateChangeObserver(new BoardStateChangeObserver() {
             @Override
@@ -131,6 +132,13 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
         return histogramEntryFilteredList;
     }
 
+    public void setSignificantOscillationThreshould(double significantOscillationThreshould) {
+        this.significantOscillationThreshould = significantOscillationThreshould;
+
+        rebuildFilteredHistogramData();
+        fireTableDataChanged();
+    }
+
     @Override
     public int getColumnCount() {
         return WinrateHistogramEntry.COLUMN_NAMES.size();
@@ -187,7 +195,7 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
     public void rebuildFilteredHistogramData() {
         histogramEntryFilteredList.clear();
         histogramEntryList.forEach(entry -> {
-            if (Math.abs(entry.getBlackWindiff()) >= SIGNIFICANT_OSCILLATION_THRESHOLD) {
+            if (Math.abs(entry.getBlackWindiff()) >= significantOscillationThreshould) {
                 histogramEntryFilteredList.add(entry);
             }
         });

@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "6.0.2.0.116" Java: "1.8.0_152-release" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.0.0.82" Java: "1.8.0_152-release" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
@@ -20,6 +20,11 @@ new FormModel {
 					"text": new FormMessage( null, "WinrateHistogramDialog.checkBoxShowOnlyHighOscillation.text" )
 					"selected": true
 					addEvent( new FormEvent( "java.awt.event.ItemListener", "itemStateChanged", "checkBoxShowOnlyHighOscillationItemStateChanged", true ) )
+				} )
+				add( new FormComponent( "javax.swing.JSpinner" ) {
+					name: "spinnerWinrateChangeFilter"
+					"model": new javax.swing.SpinnerNumberModel( 15, 0, 99, 1 )
+					addEvent( new FormEvent( "javax.swing.event.ChangeListener", "stateChanged", "spinnerWinrateChangeFilterStateChanged", true ) )
 				} )
 				add( new FormComponent( "javax.swing.JCheckBox" ) {
 					name: "checkBoxHistogramShowBlack"
@@ -59,7 +64,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 514, 360 )
+			"size": new java.awt.Dimension( 605, 360 )
 		} )
 	}
 }

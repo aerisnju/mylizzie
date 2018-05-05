@@ -15,6 +15,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import wagner.stephanie.lizzie.Lizzie;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -30,6 +31,7 @@ public class WinrateHistogramDialog extends JDialog {
     // Generated using JFormDesigner non-commercial license
     private JPanel panelWinrateHistogramOption;
     private JCheckBox checkBoxShowOnlyHighOscillation;
+    private JSpinner spinnerWinrateChangeFilter;
     private JCheckBox checkBoxHistogramShowBlack;
     private JCheckBox checkBoxHistogramShowWhite;
     private JSplitPane splitPaneHistogram;
@@ -164,12 +166,18 @@ public class WinrateHistogramDialog extends JDialog {
         }
     }
 
+    private void spinnerWinrateChangeFilterStateChanged(ChangeEvent e) {
+        WinrateHistogramTableModel tableModel = (WinrateHistogramTableModel) getTableWinrateHistory().getModel();
+        tableModel.setSignificantOscillationThreshould((Integer) ((JSpinner) e.getSource()).getValue());
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner non-commercial license
         ResourceBundle bundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
         panelWinrateHistogramOption = new JPanel();
         checkBoxShowOnlyHighOscillation = new JCheckBox();
+        spinnerWinrateChangeFilter = new JSpinner();
         checkBoxHistogramShowBlack = new JCheckBox();
         checkBoxHistogramShowWhite = new JCheckBox();
         splitPaneHistogram = new JSplitPane();
@@ -197,6 +205,11 @@ public class WinrateHistogramDialog extends JDialog {
             checkBoxShowOnlyHighOscillation.setSelected(true);
             checkBoxShowOnlyHighOscillation.addItemListener(e -> checkBoxShowOnlyHighOscillationItemStateChanged(e));
             panelWinrateHistogramOption.add(checkBoxShowOnlyHighOscillation);
+
+            //---- spinnerWinrateChangeFilter ----
+            spinnerWinrateChangeFilter.setModel(new SpinnerNumberModel(15, 0, 99, 1));
+            spinnerWinrateChangeFilter.addChangeListener(e -> spinnerWinrateChangeFilterStateChanged(e));
+            panelWinrateHistogramOption.add(spinnerWinrateChangeFilter);
 
             //---- checkBoxHistogramShowBlack ----
             checkBoxHistogramShowBlack.setText(bundle.getString("WinrateHistogramDialog.checkBoxHistogramShowBlack.text"));

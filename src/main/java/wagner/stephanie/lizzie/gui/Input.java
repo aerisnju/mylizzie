@@ -68,24 +68,24 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && KeyEvent.VK_0 <= e.getKeyCode() && e.getKeyCode() <= KeyEvent.VK_9) {
+        if (((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0) && KeyEvent.VK_0 <= e.getKeyCode() && e.getKeyCode() <= KeyEvent.VK_9) {
             if (e.getKeyCode() == KeyEvent.VK_0) {
                 Lizzie.switchEngineBySetting();
             } else {
                 int profileIndex = e.getKeyCode() - KeyEvent.VK_1;
                 Lizzie.switchEngineByProfileIndex(profileIndex);
             }
-        } else if (e.getKeyCode() == KeyEvent.VK_O && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
+        } else if (e.getKeyCode() == KeyEvent.VK_O && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0)
                 || e.getKeyCode() == KeyEvent.VK_R) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.loadGameByPrompting();
-        } else if (e.getKeyCode() == KeyEvent.VK_S && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0
+        } else if (e.getKeyCode() == KeyEvent.VK_S && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0)
                 || e.getKeyCode() == KeyEvent.VK_W) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.storeGameByPrompting();
-        } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+        } else if (e.getKeyCode() == KeyEvent.VK_C && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0)) {
             Lizzie.copyGameToClipboardInSgf();
-        } else if (e.getKeyCode() == KeyEvent.VK_V && (e.getModifiers() & KeyEvent.CTRL_MASK) != 0) {
+        } else if (e.getKeyCode() == KeyEvent.VK_V && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0)) {
             Lizzie.pasteGameFromClipboardInSgf();
         } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.ALT_MASK) != 0) {
             Lizzie.board.leaveTryPlayState();

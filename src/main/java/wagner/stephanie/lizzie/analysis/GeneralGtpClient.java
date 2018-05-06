@@ -246,8 +246,7 @@ public class GeneralGtpClient implements GtpClient {
         return this.new GeneralGtpProcessHandler();
     }
 
-    @Override
-    public int shutdown() {
+    public int doShutdown() {
         int exitCode = Integer.MIN_VALUE;
         if (gtpProcess != null && gtpProcess.isRunning()) {
             try {
@@ -279,6 +278,14 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     @Override
+    public int shutdown() {
+        int exitCode = doShutdown();
+        objectFinalizer.markFinalized();
+
+        return exitCode;
+    }
+
+    @Override
     public boolean isRunning() {
         return gtpProcess != null && gtpProcess.isRunning();
     }
@@ -304,7 +311,7 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     private void doCleanup() {
-        shutdown();
+        doShutdown();
     }
 
     @Override

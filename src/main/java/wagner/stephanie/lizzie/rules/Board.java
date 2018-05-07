@@ -8,7 +8,6 @@ import org.jtrim2.utils.ObjectFinalizer;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
 import wagner.stephanie.lizzie.analysis.MoveData;
-import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
 import java.io.Closeable;
 import java.util.Arrays;
@@ -17,8 +16,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class Board implements Closeable {
@@ -33,12 +30,9 @@ public class Board implements Closeable {
     private BoardStateChangeObserverCollection observerCollection;
     private BestMoveObserver bestMoveObserver;
 
-    private ExecutorService leelazExecutor;
-
     public Board() {
         objectFinalizer = new ObjectFinalizer(this::doCleanup, "Board.cleanup");
 
-        leelazExecutor = Executors.newSingleThreadExecutor();
         initBoardHistoryList();
         tryPlayState = null;
         observerCollection = new BoardStateChangeObserverCollection();
@@ -304,9 +298,7 @@ public class Board implements Closeable {
             observerCollection.headMoved(oldHead, newHead);
 
             // update leelaz with pass
-            leelazExecutor.execute(() -> {
-                Lizzie.leelaz.play(color, "pass");
-            });
+            Lizzie.leelaz.play(color, "pass");
         }
     }
 
@@ -388,9 +380,7 @@ public class Board implements Closeable {
             // update leelaz with board position
             final Stone colorToPlay = color;
             final String locationToPlay = convertCoordinatesToName(x, y);
-            leelazExecutor.execute(() -> {
-                Lizzie.leelaz.play(colorToPlay, locationToPlay);
-            });
+            Lizzie.leelaz.play(colorToPlay, locationToPlay);
         }
     }
 
@@ -532,14 +522,10 @@ public class Board implements Closeable {
                 // update leelaz board position, before updating to next node
                 final Stone colorToPlay = history.getLastMoveColor();
                 if (history.getData().getLastMove() == null) {
-                    leelazExecutor.execute(() -> {
-                        Lizzie.leelaz.play(colorToPlay, "pass");
-                    });
+                    Lizzie.leelaz.play(colorToPlay, "pass");
                 } else {
                     final String locationToPlay = convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]);
-                    leelazExecutor.execute(() -> {
-                        Lizzie.leelaz.play(colorToPlay, locationToPlay);
-                    });
+                    Lizzie.leelaz.play(colorToPlay, locationToPlay);
                 }
                 return true;
             } else {
@@ -561,9 +547,7 @@ public class Board implements Closeable {
             if (history.previous() != null) {
                 observerCollection.headMoved(oldHead, history.getHead());
 
-                leelazExecutor.execute(() -> {
-                    Lizzie.leelaz.undo();
-                });
+                Lizzie.leelaz.undo();
 
                 return true;
             } else {
@@ -600,8 +584,6 @@ public class Board implements Closeable {
                     break;
                 }
             }
-
-            syncLeelazExecutor();
         });
     }
 
@@ -612,8 +594,6 @@ public class Board implements Closeable {
                     break;
                 }
             }
-
-            syncLeelazExecutor();
         });
     }
 
@@ -625,7 +605,6 @@ public class Board implements Closeable {
     }
 
     private void doCleanup() {
-        ThreadPoolUtil.shutdownAndAwaitTermination(leelazExecutor);
         if (bestMoveObserver != null) {
             Lizzie.leelaz.unregisterBestMoveObserver(bestMoveObserver);
             bestMoveObserver = null;
@@ -698,20 +677,6 @@ public class Board implements Closeable {
         }
 
         gotoMove(currentMoveNumber);
-    }
-
-    public void syncLeelazExecutor(){
-        try {
-            leelazExecutor.submit(() -> {
-                try {
-                    Lizzie.leelaz.postRawGtpCommand("name").get();
-                } catch (InterruptedException | ExecutionException e) {
-                    // Ignore
-                }
-            }).get();
-        } catch (InterruptedException | ExecutionException e) {
-            // Ignore
-        }
     }
 
     public static void registerBoardSizeChangeObserver(Consumer<Integer> observer) {

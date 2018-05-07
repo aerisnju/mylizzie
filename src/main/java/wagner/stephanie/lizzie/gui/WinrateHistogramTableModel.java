@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class WinrateHistogramTableModel extends AbstractTableModel {
     private ArrayList<WinrateHistogramEntry> histogramEntryList;
@@ -64,11 +65,6 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 initialNode.forEach(WinrateHistogramTableModel.this::addHistogramData);
                 rebuildFilteredHistogramData();
-
-                fireTableDataChanged();
-                if (refreshObserver != null) {
-                    Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
-                }
 
                 fireTableDataChanged();
                 if (refreshObserver != null) {
@@ -193,12 +189,22 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
     }
 
     public void rebuildFilteredHistogramData() {
-        histogramEntryFilteredList.clear();
-        histogramEntryList.forEach(entry -> {
-            if (Math.abs(entry.getBlackWindiff()) >= significantOscillationThreshould) {
-                histogramEntryFilteredList.add(entry);
-            }
-        });
+        // FIXME: This class has thread sync problems. This method updates the data list, while GUI thread reads it.
+        // Exception in thread "AWT-EventQueue-0" java.lang.IndexOutOfBoundsException: Index: 8, Size: 10
+        //	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+        //	at java.util.ArrayList.get(ArrayList.java:433)
+        //	at wagner.stephanie.lizzie.gui.WinrateHistogramTableModel.getValueAt(WinrateHistogramTableModel.java:179)
+        //	at javax.swing.JTable.getValueAt(JTable.java:2717)
+        //	at javax.swing.JTable.prepareRenderer(JTable.java:5706)
+        // 	at javax.swing.plaf.synth.SynthTableUI.paintCell(SynthTableUI.java:683)
+        //	at javax.swing.plaf.synth.SynthTableUI.paintCells(SynthTableUI.java:580)
+        // ...
+
+        // This s only a relief. Other methods should be changed too.
+        // FIXME: The update operation should be called in SwingUtilities.invokeLater() to prevent thread problems
+        histogramEntryFilteredList = histogramEntryList.stream()
+                .filter(entry -> Math.abs(entry.getBlackWindiff()) >= significantOscillationThreshould)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void addHistogramData(BoardData boardData) {

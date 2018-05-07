@@ -352,8 +352,6 @@ public class Lizzie {
                 while ((node = node.getNextNode()) != null);
             } catch (Exception e) {
                 // Ignore
-            } finally {
-                board.syncLeelazExecutor();
             }
         });
     }

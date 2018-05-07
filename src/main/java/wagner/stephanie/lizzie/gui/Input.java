@@ -84,8 +84,10 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.board.leaveTryPlayState();
             Lizzie.storeGameByPrompting();
         } else if (e.getKeyCode() == KeyEvent.VK_C && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0)) {
+            Lizzie.board.leaveTryPlayState();
             Lizzie.copyGameToClipboardInSgf();
         } else if (e.getKeyCode() == KeyEvent.VK_V && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 || (e.getModifiers() & KeyEvent.META_MASK) != 0)) {
+            Lizzie.board.leaveTryPlayState();
             Lizzie.pasteGameFromClipboardInSgf();
         } else if (e.getKeyCode() == KeyEvent.VK_C && (e.getModifiers() & KeyEvent.ALT_MASK) != 0) {
             Lizzie.board.leaveTryPlayState();
@@ -111,21 +113,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.optionDialog.setDialogSetting(Lizzie.optionSetting);
             Lizzie.optionDialog.setVisible(true);
         } else if (e.getKeyCode() == KeyEvent.VK_G) {
-            String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
-                    , resourceBundle.getString("LizzieFrame.prompt.gotoDialogMessage"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
-            if (inputMoveNumberString != null && !(inputMoveNumberString = inputMoveNumberString.trim()).isEmpty()) {
-                try {
-                    int moveNumber = Integer.parseInt(inputMoveNumberString);
-                    if (inputMoveNumberString.startsWith("+") || inputMoveNumberString.startsWith("-")) {
-                        Lizzie.board.gotoMoveByDiff(moveNumber);
-                    } else {
-                        // Cannot be minus number
-                        Lizzie.board.gotoMove(moveNumber);
-                    }
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(Lizzie.frame, "Number format error.", "Lizzie", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+            promptForGotoMove();
         } else if (e.getKeyCode() == KeyEvent.VK_V) {
             if (Lizzie.board.isInTryPlayState()) {
                 Lizzie.board.leaveTryPlayState();
@@ -170,20 +158,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 byoYomiAutoPlayDialog = null;
             }
         } else if (e.getKeyCode() == KeyEvent.VK_T) {
-            if (Lizzie.scoreEstimator == null || !Lizzie.scoreEstimator.isRunning()) {
-                JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noEstimatorEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
-            } else {
-                ImmutablePair<String, Double> estimatedScore = Lizzie.scoreEstimator.estimateScore();
-                String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(estimatedScore.getLeft(), "?");
-                double score = estimatedScore.getRight();
-
-                Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.scoreEstimator.estimateInfluences());
-
-                JOptionPane.showMessageDialog(Lizzie.frame
-                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, score)
-                        , "Lizzie"
-                        , JOptionPane.INFORMATION_MESSAGE);
-            }
+            scoreGame();
         }
 
         if (e.getKeyCode() != KeyEvent.VK_T
@@ -195,6 +170,41 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         }
 
         Lizzie.frame.repaint();
+    }
+
+    public void scoreGame() {
+        if (Lizzie.scoreEstimator == null || !Lizzie.scoreEstimator.isRunning()) {
+            JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noEstimatorEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+        } else {
+            ImmutablePair<String, Double> estimatedScore = Lizzie.scoreEstimator.estimateScore();
+            String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(estimatedScore.getLeft(), "?");
+            double score = estimatedScore.getRight();
+
+            Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.scoreEstimator.estimateInfluences());
+
+            JOptionPane.showMessageDialog(Lizzie.frame
+                    , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, score)
+                    , "Lizzie"
+                    , JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    void promptForGotoMove() {
+        String inputMoveNumberString = JOptionPane.showInputDialog(Lizzie.frame
+                , resourceBundle.getString("LizzieFrame.prompt.gotoDialogMessage"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
+        if (inputMoveNumberString != null && !(inputMoveNumberString = inputMoveNumberString.trim()).isEmpty()) {
+            try {
+                int moveNumber = Integer.parseInt(inputMoveNumberString);
+                if (inputMoveNumberString.startsWith("+") || inputMoveNumberString.startsWith("-")) {
+                    Lizzie.board.gotoMoveByDiff(moveNumber);
+                } else {
+                    // Cannot be minus number
+                    Lizzie.board.gotoMove(moveNumber);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(Lizzie.frame, "Number format error.", "Lizzie", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     @Override

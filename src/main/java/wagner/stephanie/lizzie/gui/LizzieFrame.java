@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -68,7 +67,9 @@ public class LizzieFrame extends JFrame {
 
     private BufferedImage cachedImage;
     private BoardRenderer boardRenderer;
-    private BufferStrategy bs;
+
+    private JMenuBar menuBar;
+    private JPanel mainPanel;
 
     // TODO: Clean this
     public boolean showControls = false;
@@ -82,20 +83,9 @@ public class LizzieFrame extends JFrame {
         super();
         setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
 
-        boardRenderer = new BoardRenderer();
-
-        setVisible(true);
-
-        createBufferStrategy(2);
-        bs = getBufferStrategy();
-
         Input input = new Input();
-        this.addMouseListener(input);
         this.addKeyListener(input);
         this.addMouseWheelListener(input);
-        this.addMouseMotionListener(input);
-
-        this.setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
 
         // shut down leelaz, then shut down the program when the window is closed
         this.addWindowListener(new WindowAdapter() {
@@ -112,6 +102,120 @@ public class LizzieFrame extends JFrame {
                 Lizzie.exitLizzie(0);
             }
         });
+
+        initMenu(input);
+
+        boardRenderer = new BoardRenderer();
+        mainPanel = new JPanel(true) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                paintBoardAndBackground(g);
+            }
+        };
+        mainPanel.addMouseMotionListener(input);
+        mainPanel.addMouseListener(input);
+
+        setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
+        getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+        setVisible(true);
+    }
+
+    private void initMenu(final Input input) {
+        JMenu menu;
+        JMenuItem item;
+
+        menuBar = new JMenuBar();
+
+        menu = new JMenu(resourceBundle.getString("LizzieFrame.menu.file"));
+        menuBar.add(menu);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.file.open"));
+        item.addActionListener(e -> {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.loadGameByPrompting();
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.file.save"));
+        item.addActionListener(e -> {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.storeGameByPrompting();
+        });
+        menu.add(item);
+
+        menu = new JMenu(resourceBundle.getString("LizzieFrame.menu.edit"));
+        menuBar.add(menu);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.edit.copy"));
+        item.addActionListener(e -> {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.copyGameToClipboardInSgf();
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.edit.paste"));
+        item.addActionListener(e -> {
+            Lizzie.board.leaveTryPlayState();
+            Lizzie.pasteGameFromClipboardInSgf();
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.edit.modifyMove"));
+        item.addActionListener(e -> {
+            Lizzie.promptForChangeExistingMove();
+        });
+        menu.add(item);
+
+        menu = new JMenu(resourceBundle.getString("LizzieFrame.menu.navigate"));
+        menuBar.add(menu);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.toBegin"));
+        item.addActionListener(e -> {
+            Lizzie.board.gotoMove(0);
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.toEnd"));
+        item.addActionListener(e -> {
+            Lizzie.board.gotoMove(Integer.MAX_VALUE);
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.gotoMove"));
+        item.addActionListener(e -> {
+            input.promptForGotoMove();
+        });
+        menu.add(item);
+
+        menu = new JMenu(resourceBundle.getString("LizzieFrame.menu.game"));
+        menuBar.add(menu);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.game.pass"));
+        item.addActionListener(e -> {
+            Lizzie.board.pass();
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.game.scoring"));
+        item.addActionListener(e -> {
+            input.scoreGame();
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.game.tryPlayingMode"));
+        item.addActionListener(e -> {
+            if (Lizzie.board.isInTryPlayState()) {
+                Lizzie.board.leaveTryPlayState();
+            } else {
+                Lizzie.board.enterTryPlayState();
+            }
+        });
+        menu.add(item);
+
+        setJMenuBar(menuBar);
     }
 
     public BoardRenderer getBoardRenderer() {
@@ -139,37 +243,33 @@ public class LizzieFrame extends JFrame {
      *
      * @param g0 not used
      */
-    public void paint(Graphics g0) {
-        if (bs == null)
-            return;
-
+    public void paintBoardAndBackground(Graphics g0) {
         // initialize
-        cachedImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        final int width = mainPanel.getWidth();
+        final int height = mainPanel.getHeight();
+        cachedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) cachedImage.getGraphics();
-
-        int topInset = this.getInsets().top;
 
         if (Lizzie.optionSetting.isShowFancyBoard()) {
             try {
                 BufferedImage background = AssetsManager.getAssetsManager().getImageAsset("assets/background.jpg");
-                int drawWidth = Math.max(background.getWidth(), getWidth());
-                int drawHeight = Math.max(background.getHeight(), getHeight());
+                int drawWidth = Math.max(background.getWidth(), width);
+                int drawHeight = Math.max(background.getHeight(), height);
                 g.drawImage(background, 0, 0, drawWidth, drawHeight, null);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             g.setColor(Color.GREEN.darker().darker());
-            g.fillRect(0, 0, getWidth(), getHeight());
+            g.fillRect(0, 0, width, height);
         }
 
-        int maxSize = (int) (Math.min(getWidth(), getHeight() - topInset) * 0.98);
-        maxSize = Math.max(maxSize, Board.BOARD_SIZE + 5); // don't let maxWidth become too small
+        int maxSize = Math.max(Math.min(width, height), Board.BOARD_SIZE + 5); // don't let maxWidth become too small
 
         drawCommandString(g);
 
-        int boardX = (getWidth() - maxSize) / 2;
-        int boardY = topInset + (getHeight() - topInset - maxSize) / 2 + 3;
+        int boardX = (width - maxSize) / 2;
+        int boardY = (height - maxSize) / 2;
         boardRenderer.setLocation(boardX, boardY);
         boardRenderer.setBoardLength(maxSize);
         boardRenderer.draw(g);
@@ -183,12 +283,7 @@ public class LizzieFrame extends JFrame {
         }
 
         // draw the image
-        Graphics2D bsGraphics = (Graphics2D) bs.getDrawGraphics();
-        bsGraphics.drawImage(cachedImage, 0, 0, null);
-
-        // cleanup
-        bsGraphics.dispose();
-        bs.show();
+        g0.drawImage(cachedImage, 0, 0, null);
     }
 
     private GaussianFilter filter = new GaussianFilter(15);

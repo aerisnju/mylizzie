@@ -83,10 +83,6 @@ public class LizzieFrame extends JFrame {
         super();
         setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
 
-        Input input = new Input();
-        this.addKeyListener(input);
-        this.addMouseWheelListener(input);
-
         // shut down leelaz, then shut down the program when the window is closed
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -103,6 +99,7 @@ public class LizzieFrame extends JFrame {
             }
         });
 
+        Input input = new Input();
         initMenu(input);
 
         boardRenderer = new BoardRenderer();
@@ -116,6 +113,9 @@ public class LizzieFrame extends JFrame {
         };
         mainPanel.addMouseMotionListener(input);
         mainPanel.addMouseListener(input);
+        mainPanel.addMouseWheelListener(input);
+
+        this.addKeyListener(input);
 
         setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         getContentPane().add(mainPanel, BorderLayout.CENTER);

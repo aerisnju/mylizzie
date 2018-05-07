@@ -277,13 +277,16 @@ public class Lizzie {
     }
 
     public static void switchEngineBySetting() {
+        final int moveNumber = board.getData().getMoveNumber();
+
+        // Workaround for leelaz cannot exit when restarting
         try {
-            int moveNumber = board.getData().getMoveNumber();
+            leelaz.stopThinking();
+
             board.gotoMove(0);
-
             leelaz.restartEngine(Lizzie.optionSetting.getLeelazCommandLine());
-
             board.gotoMove(moveNumber);
+
             SwingUtilities.invokeLater(() -> frame.setEngineProfile(Lizzie.optionSetting.getLeelazCommandLine()));
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

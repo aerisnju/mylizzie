@@ -47,6 +47,16 @@ public class GeneralGtpClient implements GtpClient {
 
         @Override
         public void onExit(final int statusCode) {
+            GeneralGtpFuture future;
+
+            while ((future = runningCommandQueue.poll()) != null) {
+                future.markComplete();
+            }
+
+            while ((future = stagineCommandQueue.poll()) != null) {
+                future.markComplete();
+            }
+
             miscProcessor.execute(() -> engineExitObserverList.forEach(observer -> observer.accept(statusCode)));
         }
 
@@ -237,24 +247,30 @@ public class GeneralGtpClient implements GtpClient {
     @Override
     public void start() {
         NuProcessBuilder processBuilder = new NuProcessBuilder(gtpCommandLine);
+
         gtpProcessHandler = provideProcessHandler();
         processBuilder.setProcessListener(gtpProcessHandler);
+        setUpOtherProcessParameters(processBuilder);
+
         gtpProcess = processBuilder.start();
+    }
+
+    protected void setUpOtherProcessParameters(NuProcessBuilder processBuilder) {
     }
 
     protected NuProcessHandler provideProcessHandler() {
         return this.new GeneralGtpProcessHandler();
     }
 
-    public int doShutdown() {
+    private int doShutdown(long timeout, TimeUnit timeUnit) {
         int exitCode = Integer.MIN_VALUE;
         if (gtpProcess != null && gtpProcess.isRunning()) {
             try {
                 postCommand("quit");
-                exitCode = gtpProcess.waitFor(60, TimeUnit.SECONDS);
+                exitCode = gtpProcess.waitFor(timeout, timeUnit);
                 if (exitCode == Integer.MIN_VALUE) {
                     gtpProcess.destroy(false);
-                    exitCode = gtpProcess.waitFor(60, TimeUnit.SECONDS);
+                    exitCode = gtpProcess.waitFor(timeout, timeUnit);
                     if (exitCode == Integer.MIN_VALUE) {
                         gtpProcess.destroy(true);
                     }
@@ -278,8 +294,8 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     @Override
-    public int shutdown() {
-        int exitCode = doShutdown();
+    public int shutdown(long timeout, TimeUnit timeUnit) {
+        int exitCode = doShutdown(timeout, timeUnit);
         objectFinalizer.markFinalized();
 
         return exitCode;
@@ -311,7 +327,7 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     private void doCleanup() {
-        doShutdown();
+        doShutdown(60, TimeUnit.SECONDS);
     }
 
     @Override
@@ -376,7 +392,7 @@ public class GeneralGtpClient implements GtpClient {
         final int[] count = new int[1];
         final long start = System.currentTimeMillis();
 
-        ((GeneralGtpClient) gtpClient).registerStderrLineConsumer(line -> {
+        gtpClient.registerStderrLineConsumer(line -> {
             if (++count[0] % 1000 == 0) {
                 System.out.println(System.currentTimeMillis() - start);
             }
@@ -387,6 +403,6 @@ public class GeneralGtpClient implements GtpClient {
 
         Thread.sleep(30000);
 
-        gtpClient.shutdown();
+        gtpClient.shutdown(60, TimeUnit.SECONDS);
     }
 }

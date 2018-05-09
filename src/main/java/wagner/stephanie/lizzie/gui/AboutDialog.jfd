@@ -1,0 +1,73 @@
+JFDML JFormDesigner: "7.0.0.0.82" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "wagner.stephanie.lizzie.i18n"
+	"i18n.bundleName": "GuiBundle"
+	"i18n.keyPrefix": "AboutDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": new FormMessage( null, "AboutDialog.this.title" )
+			"modalityType": enum java.awt.Dialog$ModalityType APPLICATION_MODAL
+			"defaultCloseOperation": 2
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill,insets dialog,hidemode 3,alignx center"
+					"$columnConstraints": "[fill]"
+					"$rowConstraints": "[][][]"
+				} ) {
+					name: "contentPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelMyLizzie"
+						"text": new FormMessage( null, "AboutDialog.labelMyLizzie.text" )
+						"horizontalAlignment": 0
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 10, false )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelVersion"
+						"text": new FormMessage( null, "AboutDialog.labelVersion.text" )
+						"horizontalAlignment": 0
+						"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 5, false )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 1"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelAuthor"
+						"text": new FormMessage( null, "AboutDialog.labelAuthor.text" )
+						"verticalAlignment": 1
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 2"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "insets dialog,alignx right"
+					"$columnConstraints": "[button,fill]"
+					"$rowSpecs": "[fill]"
+				} ) {
+					name: "buttonBar"
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": new FormMessage( null, "AboutDialog.okButton.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 370, 240 )
+		} )
+	}
+}

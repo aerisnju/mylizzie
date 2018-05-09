@@ -11,6 +11,7 @@ import java.io.Closeable;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public interface GtpClient extends AutoCloseable {
@@ -27,7 +28,7 @@ public interface GtpClient extends AutoCloseable {
 
     void start();
 
-    int shutdown();
+    int shutdown(long timeout, TimeUnit timeUnit);
 
     boolean isRunning();
 

@@ -18,12 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
 /**
  * an interface with leelaz.exe go engine. Can be adapted for GTP, but is specifically designed for GCP's Leela Zero.
@@ -113,6 +109,10 @@ public class Leelaz implements Closeable {
 
     public synchronized void setThinking(boolean thinking) {
         this.thinking = thinking;
+    }
+
+    public boolean isRunning() {
+        return leelazEngine != null && leelazEngine.isRunning();
     }
 
     /**
@@ -311,7 +311,7 @@ public class Leelaz implements Closeable {
     private void doCleanup() {
         if (leelazEngine != null) {
             setNormalExit(true);
-            leelazEngine.shutdown();
+            leelazEngine.shutdown(60, TimeUnit.SECONDS);
         }
 
         if (notificationExecutor != null) {
@@ -354,9 +354,18 @@ public class Leelaz implements Closeable {
         leelazEngine.start();
     }
 
-    public void restartEngine(String commandline) throws IOException, InterruptedException {
+    public void shutdownEngine(long timeout, TimeUnit timeUnit) {
         setNormalExit(true);
-        leelazEngine.shutdown();
+
+        leelazEngine.shutdown(timeout, timeUnit);
+    }
+
+    public void shutdownEngine() {
+        shutdownEngine(60, TimeUnit.SECONDS);
+    }
+
+    public void restartEngine(String commandline) throws InterruptedException {
+        shutdownEngine();
 
         startEngine(commandline);
 
@@ -366,17 +375,28 @@ public class Leelaz implements Closeable {
         notificationExecutor.execute(observerCollection::engineRestarted);
     }
 
-    private void waitForEngineStart() throws InterruptedException {
-        long startTime = System.currentTimeMillis();
-
-        startThinking();
-
-        while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 45000) {
-            Thread.sleep(500);
+    public void waitForEngineStart() throws InterruptedException {
+        // Check for engine ready
+        ListenableFuture<List<String>> future = leelazEngine.postCommand("name");
+        List<String> response = null;
+        try {
+            response = future.get(60, TimeUnit.SECONDS);
+        } catch (ExecutionException | TimeoutException e) {
+            // Do nothing
         }
 
-        if (CollectionUtils.isEmpty(bestMoves)) {
+        if (CollectionUtils.isEmpty(response) || !leelazEngine.isRunning()) {
             JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.engineNotStart"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+        } else {
+            startThinking();
+            long startTime = System.currentTimeMillis();
+            while (CollectionUtils.isEmpty(bestMoves) && System.currentTimeMillis() - startTime < 10000) {
+                Thread.sleep(500);
+            }
+
+            if (CollectionUtils.isEmpty(bestMoves)) {
+                JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.engineNotCompatible"), "Lizzie", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }

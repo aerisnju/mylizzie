@@ -3,6 +3,7 @@ package wagner.stephanie.lizzie;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.jcabi.manifests.Manifests;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
@@ -41,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -54,6 +56,9 @@ public class Lizzie {
 
     public static final String SETTING_FILE = "mylizzie.json";
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    public static final CountDownLatch exitLatch = new CountDownLatch(1);
+    private static int lizzieExitCode = 0;
 
     public static LizzieFrame frame;
     public static JDialog analysisDialog;
@@ -80,7 +85,7 @@ public class Lizzie {
     }
 
     private static void migrateSettings() {
-        if (isNeedMigration()) {
+        if (isMigrationNeeded()) {
             List<String> engineProfileList = optionSetting.getEngineProfileList();
             String currentEngineProfile = optionSetting.getLeelazCommandLine();
 
@@ -99,7 +104,7 @@ public class Lizzie {
         }
     }
 
-    private static boolean isNeedMigration() {
+    private static boolean isMigrationNeeded() {
         try (Reader reader = new FileReader(SETTING_FILE)) {
             Type mapType = new TypeToken<LinkedHashMap<String, Object>>() {
             }.getType();
@@ -112,6 +117,19 @@ public class Lizzie {
     }
 
     public static void exitLizzie(int exitCode) {
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            // Do nothing
+        }
+
+        if (Lizzie.board.getHistory().getInitialNode().getNext() != null) {
+            Lizzie.storeGameByFile(Paths.get("restore.sgf"));
+        }
+
+        Lizzie.leelaz.stopThinking();
+        Lizzie.leelaz.close();
+
         ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor);
         if (scoreEstimator != null) {
             try {
@@ -124,24 +142,35 @@ public class Lizzie {
         System.exit(exitCode);
     }
 
+    public static void notifyExitLizzie(int exitCode) {
+        lizzieExitCode = exitCode;
+
+        // Main thread will exit
+        exitLatch.countDown();
+    }
+
     /**
      * Launches the game window, and runs the game.
      */
     public static void main(String[] args) throws IOException {
-        // Use Nimbus look and feel which looks better
+        // Use system default look and feel
         try {
-            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e1) {
+            // Use Nimbus look and feel which looks better
+            try {
+                for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                    if ("Nimbus".equals(info.getName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
                 }
+            } catch (Exception e2) {
+                // If Nimbus is not available, leave it for default
             }
-        } catch (Exception e) {
-            // If Nimbus is not available, you can set the GUI to another look and feel.
         }
 
         leelaz = new Leelaz(optionSetting.getLeelazCommandLine());
-        leelaz.startThinking();
 
         board = new Board();
         frame = new LizzieFrame();
@@ -164,6 +193,15 @@ public class Lizzie {
         } else if (Files.exists(Paths.get("gnugo")) || Files.exists(Paths.get("gnugo.exe"))) {
             scoreEstimator = new GnuGoScoreEstimator("./gnugo --mode gtp");
         }
+
+        try {
+            leelaz.waitForEngineStart();
+            exitLatch.await();
+        } catch (InterruptedException e) {
+            // Do nothing
+        }
+
+        exitLizzie(lizzieExitCode);
     }
 
     public static void clearBoardAndState() {
@@ -288,7 +326,7 @@ public class Lizzie {
             board.gotoMove(moveNumber);
 
             SwingUtilities.invokeLater(() -> frame.setEngineProfile(Lizzie.optionSetting.getLeelazCommandLine()));
-        } catch (IOException | InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -826,6 +864,14 @@ public class Lizzie {
             writer.write(gson.toJson(optionSetting));
         } catch (Exception e) {
             logger.error("Error in writing setting file.", e);
+        }
+    }
+
+    public static String getLizzieVersion() {
+        if (Manifests.exists("Lizzie-Version")) {
+            return Manifests.read("Lizzie-Version");
+        } else {
+            return null;
         }
     }
 }

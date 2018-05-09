@@ -83,22 +83,6 @@ public class LizzieFrame extends JFrame {
         super();
         setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
 
-        // shut down leelaz, then shut down the program when the window is closed
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                if (Lizzie.board.getHistory().getInitialNode().getNext() != null) {
-                    Lizzie.storeGameByFile(Paths.get("restore.sgf"));
-                }
-
-                Lizzie.leelaz.setNormalExit(true);
-                Lizzie.readGuiPosition();
-                Lizzie.writeSettingFile();
-                Lizzie.leelaz.close();
-
-                Lizzie.exitLizzie(0);
-            }
-        });
-
         Input input = new Input();
         initMenu(input);
 
@@ -119,6 +103,16 @@ public class LizzieFrame extends JFrame {
 
         setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         getContentPane().add(mainPanel, BorderLayout.CENTER);
+
+        // shut down leelaz, then shut down the program when the window is closed
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                Lizzie.readGuiPosition();
+                Lizzie.writeSettingFile();
+
+                Lizzie.notifyExitLizzie(0);
+            }
+        });
 
         setVisible(true);
     }
@@ -215,6 +209,16 @@ public class LizzieFrame extends JFrame {
         });
         menu.add(item);
 
+        menu = new JMenu(resourceBundle.getString("LizzieFrame.menu.help"));
+        menuBar.add(menu);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.help.about"));
+        item.addActionListener(e -> {
+            AboutDialog aboutDialog = new AboutDialog(this);
+            aboutDialog.setVisible(true);
+        });
+        menu.add(item);
+
         setJMenuBar(menuBar);
     }
 
@@ -250,6 +254,8 @@ public class LizzieFrame extends JFrame {
         cachedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) cachedImage.getGraphics();
 
+        int topInset = mainPanel.getInsets().top;
+
         if (Lizzie.optionSetting.isShowFancyBoard()) {
             try {
                 BufferedImage background = AssetsManager.getAssetsManager().getImageAsset("assets/background.jpg");
@@ -264,12 +270,12 @@ public class LizzieFrame extends JFrame {
             g.fillRect(0, 0, width, height);
         }
 
-        int maxSize = Math.max(Math.min(width, height), Board.BOARD_SIZE + 5); // don't let maxWidth become too small
+        int maxSize = Math.max(Math.min(width, height - topInset), Board.BOARD_SIZE + 5); // don't let maxWidth become too small
 
         drawCommandString(g);
 
         int boardX = (width - maxSize) / 2;
-        int boardY = (height - maxSize) / 2;
+        int boardY = topInset + (height - topInset - maxSize) / 2;
         boardRenderer.setLocation(boardX, boardY);
         boardRenderer.setBoardLength(maxSize);
         boardRenderer.draw(g);
@@ -295,7 +301,9 @@ public class LizzieFrame extends JFrame {
         userAlreadyKnowsAboutCommandString = true;
 
         Graphics2D g = (Graphics2D) cachedImage.getGraphics();
-        int maxSize = Math.min(getWidth(), getHeight());
+        int width = mainPanel.getWidth();
+        int height = mainPanel.getHeight();
+        int maxSize = Math.min(width, height);
 
         Font font = new Font(new JLabel().getFont().getName(), Font.PLAIN, (int) (maxSize * 0.03));
         g.setFont(font);
@@ -304,8 +312,8 @@ public class LizzieFrame extends JFrame {
         int boxWidth = (int) (maxSize * 0.85);
         int boxHeight = (int) (commands.length * lineHeight);
 
-        int commandsX = (int) (getWidth() / 2 - boxWidth / 2);
-        int commandsY = (int) (getHeight() / 2 - boxHeight / 2);
+        int commandsX = (int) (width / 2 - boxWidth / 2);
+        int commandsY = (int) (height / 2 - boxHeight / 2);
 
         BufferedImage result = new BufferedImage(boxWidth, boxHeight, BufferedImage.TYPE_INT_ARGB);
         filter.filter(cachedImage.getSubimage(commandsX, commandsY, boxWidth, boxHeight), result);
@@ -342,7 +350,9 @@ public class LizzieFrame extends JFrame {
         if (userAlreadyKnowsAboutCommandString)
             return;
 
-        int maxSize = (int) (Math.min(getWidth(), getHeight()) * 0.98);
+        int width = mainPanel.getWidth();
+        int height = mainPanel.getHeight();
+        int maxSize = (int) (Math.min(width, height) * 0.98);
 
         Font font = new Font(new JLabel().getFont().getName(), Font.PLAIN, (int) (maxSize * 0.03));
         String commandString = resourceBundle.getString("LizzieFrame.controls.keyF1");
@@ -350,8 +360,8 @@ public class LizzieFrame extends JFrame {
 
         int showCommandsHeight = (int) (font.getSize() * 1.1);
         int showCommandsWidth = g.getFontMetrics(font).stringWidth(commandString) + 4 * strokeRadius;
-        int showCommandsX = this.getInsets().left;
-        int showCommandsY = getHeight() - showCommandsHeight - this.getInsets().bottom;
+        int showCommandsX = mainPanel.getInsets().left;
+        int showCommandsY = height - showCommandsHeight - mainPanel.getInsets().bottom;
         g.setColor(new Color(0, 0, 0, 130));
         g.fillRect(showCommandsX, showCommandsY, showCommandsWidth, showCommandsHeight);
         g.setStroke(new BasicStroke(2 * strokeRadius));

@@ -10,6 +10,7 @@ import wagner.stephanie.lizzie.rules.BoardData;
 import wagner.stephanie.lizzie.rules.BoardHistoryNode;
 import wagner.stephanie.lizzie.rules.BoardStateChangeObserver;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +24,14 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
     private boolean provideFilteredData;
     private Consumer<WinrateHistogramTableModel> refreshObserver;
     private double significantOscillationThreshould;
+    private JTable tableWinrateHistory;
 
-    public WinrateHistogramTableModel() {
+    public WinrateHistogramTableModel(JTable tableWinrateHistory) {
         histogramEntryList = new ArrayList<>();
         histogramEntryFilteredList = new ArrayList<>();
         provideFilteredData = true;
         significantOscillationThreshould = 15.0;
+        this.tableWinrateHistory = tableWinrateHistory;
 
         Lizzie.board.registerBoardStateChangeObserver(new BoardStateChangeObserver() {
             @Override
@@ -53,6 +56,10 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
                 }
 
                 rebuildFilteredHistogramData();
+                fireTableDataChanged();
+                SwingUtilities.invokeLater(() -> tableWinrateHistory.scrollRectToVisible(
+                        tableWinrateHistory.getCellRect(tableWinrateHistory.getRowCount() - 1, 0, true)
+                ));
                 if (refreshObserver != null) {
                     Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }
@@ -65,8 +72,10 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
                 initialNode.forEach(WinrateHistogramTableModel.this::addHistogramData);
                 rebuildFilteredHistogramData();
-
                 fireTableDataChanged();
+                SwingUtilities.invokeLater(() -> tableWinrateHistory.scrollRectToVisible(
+                        tableWinrateHistory.getCellRect(tableWinrateHistory.getRowCount() - 1, 0, true)
+                ));
                 if (refreshObserver != null) {
                     Lizzie.miscExecutor.execute(() -> refreshObserver.accept(WinrateHistogramTableModel.this));
                 }

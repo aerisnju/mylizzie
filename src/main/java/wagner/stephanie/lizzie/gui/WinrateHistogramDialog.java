@@ -58,7 +58,7 @@ public class WinrateHistogramDialog extends JDialog {
     }
 
     private void initCustomComponents() {
-        WinrateHistogramTableModel winrateHistogramTableModel = new WinrateHistogramTableModel();
+        WinrateHistogramTableModel winrateHistogramTableModel = new WinrateHistogramTableModel(tableWinrateHistory);
         tableWinrateHistory.setModel(winrateHistogramTableModel);
 
         XYSeries blackSeries = new XYSeries("Black");

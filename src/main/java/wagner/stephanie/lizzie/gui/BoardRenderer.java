@@ -189,7 +189,7 @@ public class BoardRenderer {
             drawStarPoints(g);
 
             // draw coordinates if enabled
-            if (Lizzie.frame.showCoordinates) {
+            if (Lizzie.optionSetting.isShowAxis()) {
                 g.setColor(Color.BLACK);
                 String alphabet = "ABCDEFGHJKLMNOPQRST";
                 for (int i = 0; i < Board.BOARD_SIZE; i++) {
@@ -661,7 +661,7 @@ public class BoardRenderer {
         int availableLength;
 
         // decrease boardLength until the availableLength will result in square board intersections
-        double margin = (Lizzie.frame.showCoordinates ? MARGIN_WITH_COORDS : MARGIN) / Board.BOARD_SIZE * 19.0;
+        double margin = (Lizzie.optionSetting.isShowAxis() ? MARGIN_WITH_COORDS : MARGIN) / Board.BOARD_SIZE * 19.0;
         boardLength++;
         do {
             boardLength--;

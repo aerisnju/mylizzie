@@ -71,9 +71,9 @@ public class LizzieFrame extends JFrame {
     private JMenuBar menuBar;
     private JPanel mainPanel;
 
-    // TODO: Clean this
     public boolean showControls = false;
-    public boolean showCoordinates = true;
+
+    // TODO: Clean this
     public boolean isPlayingAgainstLeelaz = false;
 
     /**

@@ -172,6 +172,7 @@ public class OptionSetting {
     private int version;
     private BoardSize boardSize;
     private int variationLimit;
+    private boolean showAxis;
     private boolean a1OnTop;
     private boolean showFancyBoard;
     private boolean showFancyStone;
@@ -216,6 +217,7 @@ public class OptionSetting {
         version = 1;
         boardSize = new BoardSize();
         variationLimit = Integer.MAX_VALUE;
+        showAxis = true;
         a1OnTop = false;
         showFancyBoard = true;
         showFancyStone = true;
@@ -280,6 +282,14 @@ public class OptionSetting {
 
     public void setVariationLimit(int variationLimit) {
         this.variationLimit = variationLimit;
+    }
+
+    public boolean isShowAxis() {
+        return showAxis;
+    }
+
+    public void setShowAxis(boolean showAxis) {
+        this.showAxis = showAxis;
     }
 
     public boolean isA1OnTop() {
@@ -578,6 +588,7 @@ public class OptionSetting {
         return new EqualsBuilder()
                 .append(version, that.version)
                 .append(variationLimit, that.variationLimit)
+                .append(showAxis, that.showAxis)
                 .append(a1OnTop, that.a1OnTop)
                 .append(showFancyBoard, that.showFancyBoard)
                 .append(showFancyStone, that.showFancyStone)
@@ -624,6 +635,7 @@ public class OptionSetting {
                 .append(version)
                 .append(boardSize)
                 .append(variationLimit)
+                .append(showAxis)
                 .append(a1OnTop)
                 .append(showFancyBoard)
                 .append(showFancyStone)

@@ -73,6 +73,7 @@ public class OptionDialog extends JDialog {
     private JButton buttonManage;
     private JCheckBox checkBoxTransparentVariation;
     private JCheckBox checkBoxAutoStartThinkingAfterPlacingMoves;
+    private JCheckBox checkBoxShowAxis;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -122,6 +123,7 @@ public class OptionDialog extends JDialog {
                 break;
         }
 
+        checkBoxShowAxis.setSelected(setting.isShowAxis());
         if (setting.isA1OnTop()) {
             radioButtonA1Top.setSelected(true);
         } else {
@@ -211,6 +213,7 @@ public class OptionDialog extends JDialog {
         setting.setVariationLimit(variationLimit);
         setting.setPlayoutsInShortForm(checkBoxPlayoutsInShortForm.isSelected());
         setting.setShowNextMove(checkBoxShowNextMove.isSelected());
+        setting.setShowAxis(checkBoxShowAxis.isSelected());
         setting.setA1OnTop(radioButtonA1Top.isSelected());
         setting.setAnalysisWindowShow(checkBoxAnalysisWindowShow.isSelected());
         setting.setMouseOverShowMove(checkBoxMouseMoveShow.isSelected());
@@ -358,6 +361,7 @@ public class OptionDialog extends JDialog {
         buttonManage = new JButton();
         checkBoxTransparentVariation = new JCheckBox();
         checkBoxAutoStartThinkingAfterPlacingMoves = new JCheckBox();
+        checkBoxShowAxis = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -541,6 +545,10 @@ public class OptionDialog extends JDialog {
                 checkBoxAutoStartThinkingAfterPlacingMoves.setText(bundle.getString("OptionDialog.checkBoxAutoStartThinkingAfterPlacingMoves.text"));
                 checkBoxAutoStartThinkingAfterPlacingMoves.setSelected(true);
 
+                //---- checkBoxShowAxis ----
+                checkBoxShowAxis.setText(bundle.getString("OptionDialog.checkBoxShowAxis.text"));
+                checkBoxShowAxis.setSelected(true);
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -553,10 +561,10 @@ public class OptionDialog extends JDialog {
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(buttonManage)
+                                    .addComponent(buttonManage, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(buttonResetCommandLine)
-                                    .addContainerGap(40, Short.MAX_VALUE))
+                                    .addContainerGap(64, Short.MAX_VALUE))
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
                                         .addGroup(contentPanelLayout.createSequentialGroup()
@@ -575,6 +583,8 @@ public class OptionDialog extends JDialog {
                                             .addComponent(checkBoxTransparentVariation))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelAxisSetting)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxShowAxis)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonA1Top)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -669,7 +679,8 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelAxisSetting, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
                                 .addComponent(radioButtonA1Top)
-                                .addComponent(radioButtonA1Bottom))
+                                .addComponent(radioButtonA1Bottom)
+                                .addComponent(checkBoxShowAxis))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelBoardDisplay)

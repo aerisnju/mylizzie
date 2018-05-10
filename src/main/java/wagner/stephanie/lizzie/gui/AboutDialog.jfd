@@ -15,9 +15,9 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
-					"$layoutConstraints": "fill,insets dialog,hidemode 3,alignx center"
+					"$layoutConstraints": "insets dialog,hidemode 3,alignx center"
 					"$columnConstraints": "[fill]"
-					"$rowConstraints": "[][][]"
+					"$rowConstraints": "[fill][fill][fill]"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -67,7 +67,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 370, 240 )
+			"size": new java.awt.Dimension( 410, 265 )
 		} )
 	}
 }

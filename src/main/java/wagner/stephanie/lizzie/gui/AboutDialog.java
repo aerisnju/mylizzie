@@ -66,13 +66,13 @@ public class AboutDialog extends JDialog {
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new MigLayout(
-                        "fill,insets dialog,hidemode 3,alignx center",
-                        // columns
-                        "[fill]",
-                        // rows
-                        "[]" +
-                                "[]" +
-                                "[]"));
+                    "insets dialog,hidemode 3,alignx center",
+                    // columns
+                    "[fill]",
+                    // rows
+                    "[fill]" +
+                    "[fill]" +
+                    "[fill]"));
 
                 //---- labelMyLizzie ----
                 labelMyLizzie.setText(bundle.getString("AboutDialog.labelMyLizzie.text"));
@@ -96,11 +96,11 @@ public class AboutDialog extends JDialog {
             //======== buttonBar ========
             {
                 buttonBar.setLayout(new MigLayout(
-                        "insets dialog,alignx right",
-                        // columns
-                        "[button,fill]",
-                        // rows
-                        null));
+                    "insets dialog,alignx right",
+                    // columns
+                    "[button,fill]",
+                    // rows
+                    null));
 
                 //---- okButton ----
                 okButton.setText(bundle.getString("AboutDialog.okButton.text"));

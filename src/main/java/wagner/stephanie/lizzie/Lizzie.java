@@ -153,6 +153,9 @@ public class Lizzie {
      * Launches the game window, and runs the game.
      */
     public static void main(String[] args) throws IOException {
+        // Make log4j work
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+
         // Use system default look and feel
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

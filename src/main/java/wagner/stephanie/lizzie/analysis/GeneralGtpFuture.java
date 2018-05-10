@@ -48,7 +48,7 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
     @Override
     public synchronized boolean cancel(boolean mayInterruptIfRunning) {
         if (!triedCancelling) {
-            cancelled = gtpClient.cancelCommand(this);
+            cancelled = gtpClient.removeCommandFromStagineQueue(this);
             triedCancelling = true;
 
             if (cancelled) {

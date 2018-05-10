@@ -111,8 +111,6 @@ public class GeneralGtpClient implements GtpClient {
                 buffer.flip();
 
                 runningCommandQueue.offer(future);
-
-                return !stagineCommandQueue.isEmpty();
             }
 
             return false;
@@ -130,6 +128,11 @@ public class GeneralGtpClient implements GtpClient {
                     future.markComplete();
 
                     inCommandResponse = false;
+
+                    // Notify for next command processing
+                    if (!stagineCommandQueue.isEmpty()) {
+                        gtpProcess.wantWrite();
+                    }
                 } else {
                     response.add(line.trim());
                 }
@@ -231,7 +234,7 @@ public class GeneralGtpClient implements GtpClient {
         engineStderrLineConsumerList.remove(consumer);
     }
 
-    public boolean cancelCommand(GeneralGtpFuture future) {
+    public boolean removeCommandFromStagineQueue(GeneralGtpFuture future) {
         return stagineCommandQueue.remove(future);
     }
 

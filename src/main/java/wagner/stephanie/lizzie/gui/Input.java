@@ -216,14 +216,16 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
     }
 
     @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        if (e.getWheelRotation() > 0) {
-            Lizzie.board.nextMove();
-        } else if (e.getWheelRotation() < 0) {
-            Lizzie.board.previousMove();
-        }
+    public void mouseWheelMoved(final MouseWheelEvent e) {
+        Lizzie.miscExecutor.execute(() -> {
+            if (e.getWheelRotation() > 0) {
+                Lizzie.board.nextMove();
+            } else if (e.getWheelRotation() < 0) {
+                Lizzie.board.previousMove();
+            }
 
-        Lizzie.frame.repaint();
+            Lizzie.frame.repaint();
+        });
     }
 
     @Override

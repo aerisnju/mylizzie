@@ -146,8 +146,8 @@ public class EngineProfileManagerDialog extends JDialog {
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new FormLayout(
-                        "default, $lcgap, [200dlu,pref]",
-                        "8*(default, $lgap), default"));
+                    "default, $lcgap, [200dlu,default]:grow",
+                    "8*(default, $lgap), default"));
 
                 //---- labelProfile1 ----
                 labelProfile1.setText(bundle.getString("EngineProfileManagerDialog.labelProfile1.text"));
@@ -200,8 +200,8 @@ public class EngineProfileManagerDialog extends JDialog {
             {
                 buttonBar.setBorder(Borders.createEmptyBorder("5dlu, 0dlu, 0dlu, 0dlu"));
                 buttonBar.setLayout(new FormLayout(
-                        "$glue, $button, $rgap, $button",
-                        "pref"));
+                    "$glue, $button, $rgap, $button",
+                    "pref"));
 
                 //---- okButton ----
                 okButton.setText(bundle.getString("EngineProfileManagerDialog.okButton.text"));
@@ -218,7 +218,7 @@ public class EngineProfileManagerDialog extends JDialog {
             //======== panelNotes ========
             {
                 panelNotes.setLayout(new FlowLayout(FlowLayout.LEFT));
-                ((FlowLayout) panelNotes.getLayout()).setAlignOnBaseline(true);
+                ((FlowLayout)panelNotes.getLayout()).setAlignOnBaseline(true);
 
                 //---- labelProfileManagerNote ----
                 labelProfileManagerNote.setText(bundle.getString("EngineProfileManagerDialog.labelProfileManagerNote.text"));

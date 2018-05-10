@@ -16,8 +16,8 @@ new FormModel {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelLeelazCommandLine:::p::p, space :::p, comp textFieldLeelazCommandLine:::p:283:p, space :::p, comp buttonManage:::p:69:p, space :::p, comp buttonResetCommandLine:::p::p, space ::64:x}, seq {par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p, space :::p, comp checkBoxTransparentVariation:::p::p}, seq l {comp labelAxisSetting:::p::p, space :::p, comp checkBoxShowAxis:::p::p, space :::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, comp labelNotes::l:p::p, seq l {comp labelMoveNumber:::p::p, space :::p, comp checkBoxShowMoveNumber:::p::p, space :::p, comp checkBoxMoveNumberLimit:::p::p, space :::p, comp textFieldMoveNumberLimitCount:::p::p, space :::p, comp labelMoveNumberLimitLabelTail:::p::p}, seq l {comp labelTryPlayingMode:::p::p, space :::p, comp checkBoxAutoEnterTryPlayingMode:::p::p}, seq l {comp labelMainWindow:::p::p, space :::p, comp checkBoxMainWindowAlwaysOnTop:::p::p}, seq l {comp labelSuggestion:::p::p, space :::p, comp checkBoxShowBlackSuggestion:::p::p, space :::p, comp checkBoxShowWhiteSuggestion:::p::p, space :::p, comp checkBoxPlayoutsInShortForm:::p::p, space :::p, comp checkBoxShowNextMove:::p::p}, seq l {comp labelBoardDisplay:::p::p, space :::p, comp radioButtonBoardFancy:::p::p, space :::p, comp radioButtonBoardClassic:::p::p, space :::p, comp labelColorRed:::p::p, space :::p, comp spinnerColorRed:::p::p, space :::p, comp labelColorGreen:::p::p, space :::p, comp spinnerColorGreen:::p::p, space :::p, comp labelColorBlue:::p::p, space :::p, comp spinnerColorBlue:::p::p, space :::p, comp checkBoxFancyStones:::p::p}, seq l {comp labelShadow:::p::p, space :::p, comp checkBoxShowShadow:::p::p, space :::p, comp spinnerShadowSize:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :::p, par l {comp checkBoxAutoStartThinkingAfterPlacingMoves:::p::p, seq {comp checkBoxAnalysisWindowShow:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p, space s:::p, comp labelMaxAnalysisTime:::p::p, space :::p, comp textFieldMaxAnalysisTime:::p::p, space :::p, comp labelMinute:::p::p}}}}, space :0:66:x}}}}"
-					"$verticalGroup": "par l {seq l {space :::p, par l {par b {comp radioButtonUnlimited::b:p::p, comp checkBoxTransparentVariation::b:p::p}, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p, comp checkBoxShowAxis::b:p::p}, space :::p, par b {comp labelBoardDisplay::b:p::p, comp radioButtonBoardFancy::b:p::p, comp radioButtonBoardClassic::b:p::p, comp labelColorRed::b:p::p, comp spinnerColorRed::b:p::p, comp labelColorGreen::b:p::p, comp spinnerColorGreen::b:p::p, comp labelColorBlue::b:p::p, comp spinnerColorBlue::b:p::p, comp checkBoxFancyStones::b:p::p}, space :::p, par b {comp labelShadow::b:p::p, comp checkBoxShowShadow::b:p::p, comp spinnerShadowSize::b:p::p}, space :::p, par b {comp labelSuggestion::b:p::p, comp checkBoxShowBlackSuggestion::b:p::p, comp checkBoxShowWhiteSuggestion::b:p::p, comp checkBoxPlayoutsInShortForm::b:p::p, comp checkBoxShowNextMove::b:p::p}, space :::p, par b {comp labelAnalysisModeOn::b:p::p, comp checkBoxAnalysisWindowShow::b:p::p, comp checkBoxMouseMoveShow::b:p::p, comp labelMaxAnalysisTime::b:p::p, comp textFieldMaxAnalysisTime::b:p::p, comp labelMinute::b:p::p}, space :::p, comp checkBoxAutoStartThinkingAfterPlacingMoves:::p::p, space :::p, par b {comp labelLeelazCommandLine::b:p::p, comp textFieldLeelazCommandLine::b:p::p, comp buttonManage::b:p::p, comp buttonResetCommandLine::b:p::p}, space :::p, par b {comp labelMoveNumber::b:p::p, comp checkBoxShowMoveNumber::b:p::p, comp checkBoxMoveNumberLimit::b:p::p, comp textFieldMoveNumberLimitCount::b:p::p, comp labelMoveNumberLimitLabelTail::b:p::p}, space :::p, par b {comp labelTryPlayingMode::b:p::p, comp checkBoxAutoEnterTryPlayingMode::b:p::p}, space :::p, par b {comp labelMainWindow::b:p::p, comp checkBoxMainWindowAlwaysOnTop::b:p::p}, space ::8:x, comp labelNotes:::p::p, space :::p}}"
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp labelLeelazCommandLine:::p::p, space :::p, comp textFieldLeelazCommandLine:::p:283:p, space :::p, comp buttonManage:::p:69:p, space :::p, comp buttonResetCommandLine:::p::p, space ::119:x}, seq {par l {seq l {comp labelVariationLimit:::p::p, space :::p, comp radioButtonV5:::p::p, space :::p, comp radioButtonV10:::p::p, space :::p, comp radioButtonV15:::p::p, space :::p, comp radioButtonV30:::p::p, space :::p, comp radioButtonUnlimited:::p::p, space :::p, comp checkBoxTransparentVariation:::p::p}, seq l {comp labelAxisSetting:::p::p, space :::p, comp checkBoxShowAxis:::p::p, space :::p, comp radioButtonA1Top:::p::p, space :::p, comp radioButtonA1Bottom:::p::p}, comp labelNotes::l:p::p, seq l {comp labelMoveNumber:::p::p, space :::p, comp checkBoxShowMoveNumber:::p::p, space :::p, comp checkBoxMoveNumberLimit:::p::p, space :::p, comp textFieldMoveNumberLimitCount:::p::p, space :::p, comp labelMoveNumberLimitLabelTail:::p::p}, seq l {comp labelTryPlayingMode:::p::p, space :::p, comp checkBoxAutoEnterTryPlayingMode:::p::p}, seq l {comp labelMainWindow:::p::p, space :::p, comp checkBoxMainWindowAlwaysOnTop:::p::p}, seq l {comp labelBoardDisplay:::p::p, space :::p, comp radioButtonBoardFancy:::p::p, space :::p, comp radioButtonBoardClassic:::p::p, space :::p, comp labelBoardColor:::p::p}, seq l {comp labelStoneDisplay:::p::p, space :::p, comp checkBoxFancyStones:::p::p, space :::p, comp checkBoxShowShadow:::p::p, space :::p, comp spinnerShadowSize:::p::p}, seq l {comp labelAnalysisModeOn:::p::p, space :::p, par l {comp checkBoxAutoStartThinkingAfterPlacingMoves:::p::p, seq {comp checkBoxAnalysisWindowShow:::p::p, space :::p, comp checkBoxMouseMoveShow:::p::p, space s:::p, comp labelMaxAnalysisTime:::p::p, space :::p, comp textFieldMaxAnalysisTime:::p::p, space :::p, comp labelMinute:::p::p}}}, seq l {comp labelSuggestion:::p::p, space :::p, par l {seq {comp labelBestSuggestionColorHint:::p::p, space :::p, comp labelBestSuggestionColor:::p::p}, seq {comp checkBoxShowBlackSuggestion:::p::p, space :::p, comp checkBoxShowWhiteSuggestion:::p::p, space :::p, comp checkBoxPlayoutsInShortForm:::p::p, space :::p, comp checkBoxShowNextMove:::p::p}}}}, space :0:121:x}}}}"
+					"$verticalGroup": "par l {seq l {space :::p, par l {par b {comp radioButtonUnlimited::b:p::p, comp checkBoxTransparentVariation::b:p::p}, comp radioButtonV30:::p::p, comp radioButtonV15:::p::p, par b:l {comp labelVariationLimit::b:p::p, comp radioButtonV5::b:p::p}, comp radioButtonV10::l:p::p}, space :::p, par b {comp labelAxisSetting::b:p:26:p, comp radioButtonA1Top::b:p::p, comp radioButtonA1Bottom::b:p::p, comp checkBoxShowAxis::b:p::p}, space :::p, par b {comp labelBoardDisplay::b:p::p, comp radioButtonBoardFancy::b:p::p, comp radioButtonBoardClassic::b:p::p, comp labelBoardColor::b:p::p}, space :::p, par b {comp labelStoneDisplay::b:p::p, comp checkBoxShowShadow::b:p::p, comp spinnerShadowSize::b:p::p, comp checkBoxFancyStones::b:p::p}, space :::p, par b {comp labelSuggestion::b:p::p, comp checkBoxShowBlackSuggestion::b:p::p, comp checkBoxShowWhiteSuggestion::b:p::p, comp checkBoxPlayoutsInShortForm::b:p::p, comp checkBoxShowNextMove::b:p::p}, space :::p, par l {comp labelBestSuggestionColorHint:::p::p, comp labelBestSuggestionColor:::p::p}, space :::p, par b {comp labelAnalysisModeOn::b:p::p, comp checkBoxAnalysisWindowShow::b:p::p, comp checkBoxMouseMoveShow::b:p::p, comp labelMaxAnalysisTime::b:p::p, comp textFieldMaxAnalysisTime::b:p::p, comp labelMinute::b:p::p}, space :::p, comp checkBoxAutoStartThinkingAfterPlacingMoves:::p::p, space :::p, par b {comp labelLeelazCommandLine::b:p::p, comp textFieldLeelazCommandLine::b:p::p, comp buttonManage::b:p::p, comp buttonResetCommandLine::b:p::p}, space :::p, par b {comp labelMoveNumber::b:p::p, comp checkBoxShowMoveNumber::b:p::p, comp checkBoxMoveNumberLimit::b:p::p, comp textFieldMoveNumberLimitCount::b:p::p, comp labelMoveNumberLimitLabelTail::b:p::p}, space :::p, par b {comp labelTryPlayingMode::b:p::p, comp checkBoxAutoEnterTryPlayingMode::b:p::p}, space :::p, par b {comp labelMainWindow::b:p::p, comp checkBoxMainWindowAlwaysOnTop::b:p::p}, space :::x, comp labelNotes:::p::p, space :::p}}"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -178,38 +178,14 @@ new FormModel {
 						"text": new FormMessage( null, "OptionDialog.checkBoxShowWhiteSuggestion.text" )
 						"selected": true
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelColorRed"
-						"text": new FormMessage( null, "OptionDialog.labelColorRed.text" )
-					} )
-					add( new FormComponent( "javax.swing.JSpinner" ) {
-						name: "spinnerColorRed"
-						"model": new javax.swing.SpinnerNumberModel( 178, 0, 255, 1 )
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelColorGreen"
-						"text": new FormMessage( null, "OptionDialog.labelColorGreen.text" )
-					} )
-					add( new FormComponent( "javax.swing.JSpinner" ) {
-						name: "spinnerColorGreen"
-						"model": new javax.swing.SpinnerNumberModel( 140, 0, 255, 1 )
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelColorBlue"
-						"text": new FormMessage( null, "OptionDialog.labelColorBlue.text" )
-					} )
-					add( new FormComponent( "javax.swing.JSpinner" ) {
-						name: "spinnerColorBlue"
-						"model": new javax.swing.SpinnerNumberModel( 0, 0, 255, 1 )
-					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxFancyStones"
 						"text": new FormMessage( null, "OptionDialog.checkBoxFancyStones.text" )
 						"selected": true
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "labelShadow"
-						"text": new FormMessage( null, "OptionDialog.labelShadow.text" )
+						name: "labelStoneDisplay"
+						"text": new FormMessage( null, "OptionDialog.labelStoneDisplay.text" )
 					} )
 					add( new FormComponent( "javax.swing.JCheckBox" ) {
 						name: "checkBoxShowShadow"
@@ -242,6 +218,24 @@ new FormModel {
 						name: "checkBoxShowAxis"
 						"text": new FormMessage( null, "OptionDialog.checkBoxShowAxis.text" )
 						"selected": true
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelBoardColor"
+						"preferredSize": new java.awt.Dimension( 21, 21 )
+						"background": new java.awt.Color( 178, 140, 0, 255 )
+						"opaque": true
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "labelBoardColorMouseClicked", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelBestSuggestionColorHint"
+						"text": new FormMessage( null, "OptionDialog.labelBestSuggestionColorHint.text" )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelBestSuggestionColor"
+						"background": sfield java.awt.Color red
+						"opaque": true
+						"preferredSize": new java.awt.Dimension( 21, 21 )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "labelBestSuggestionColorMouseClicked", true ) )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
@@ -305,27 +299,27 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 615, 470 )
+			"size": new java.awt.Dimension( 715, 505 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupVariationLimit"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 165, 495 )
+			"location": new java.awt.Point( 380, 555 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupAxisSetting"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 170, 555 )
+			"location": new java.awt.Point( 550, 555 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupBoardColor"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 555 )
+			"location": new java.awt.Point( 70, 555 )
 		} )
 		add( new FormNonVisual( "javax.swing.ButtonGroup" ) {
 			name: "buttonGroupBoardSize"
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 497 )
+			"location": new java.awt.Point( 230, 555 )
 		} )
 	}
 }

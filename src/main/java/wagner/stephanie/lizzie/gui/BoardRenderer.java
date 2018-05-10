@@ -553,7 +553,7 @@ public class BoardRenderer {
                     int strokeWidth = 1;
                     if (isBestMove) { // this is the best move
                         strokeWidth = 2;
-                        g.setColor(Color.RED);
+                        g.setColor(Lizzie.optionSetting.getBestSuggestionColor().toColor());
                         g.setStroke(new BasicStroke(strokeWidth));
                     } else {
                         g.setColor(color.darker());

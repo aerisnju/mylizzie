@@ -9,19 +9,32 @@ import java.awt.*;
 import java.util.List;
 
 public class OptionSetting {
-    public static class BoardColor {
+    public static class ColorSetting {
         private int red;
         private int green;
         private int blue;
+        private int alpha;
 
-        public BoardColor() {
-            this(178, 140, 0);
+        public ColorSetting() {
+            red = 255;
+            green = 255;
+            blue = 255;
+            alpha = 255;
         }
 
-        public BoardColor(int red, int green, int blue) {
+        public ColorSetting(Color color) {
+            this(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+
+        public ColorSetting(int red, int green, int blue) {
+            this(red, green, blue, 255);
+        }
+
+        public ColorSetting(int red, int green, int blue, int alpha) {
             this.red = red;
             this.green = green;
             this.blue = blue;
+            this.alpha = alpha;
         }
 
         public int getRed() {
@@ -48,19 +61,28 @@ public class OptionSetting {
             this.blue = Ints.constrainToRange(blue, 0, 255);
         }
 
+        public int getAlpha() {
+            return alpha;
+        }
+
+        public void setAlpha(int alpha) {
+            this.alpha = alpha;
+        }
+
         public Color toColor() {
-            return new Color(red, green, blue);
+            return new Color(red, green, blue, alpha);
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            BoardColor that = (BoardColor) o;
+            ColorSetting that = (ColorSetting) o;
             return new EqualsBuilder()
                     .append(red, that.red)
                     .append(green, that.green)
                     .append(blue, that.blue)
+                    .append(alpha, that.alpha)
                     .isEquals();
         }
 
@@ -70,6 +92,7 @@ public class OptionSetting {
                     .append(red)
                     .append(green)
                     .append(blue)
+                    .append(alpha)
                     .toHashCode();
         }
     }
@@ -178,7 +201,7 @@ public class OptionSetting {
     private boolean showFancyStone;
     private boolean showShadow;
     private int shadowSize;
-    private BoardColor boardColor;
+    private ColorSetting boardColor;
     private boolean playoutsInShortForm;
     private boolean showNextMove;
     private boolean analysisWindowShow;
@@ -194,6 +217,7 @@ public class OptionSetting {
     private List<String> engineProfileList;
     private boolean variationTransparent;
     private boolean autoStartAnalyzingAfterPlacingMoves;
+    private ColorSetting bestSuggestionColor;
 
     private int mainWindowPosX;
     private int mainWindowPosY;
@@ -223,7 +247,7 @@ public class OptionSetting {
         showFancyStone = true;
         showShadow = true;
         shadowSize = 100;
-        boardColor = new BoardColor();
+        boardColor = new ColorSetting(178, 140, 0);
         playoutsInShortForm = false;
         showNextMove = false;
         analysisWindowShow = true;
@@ -239,6 +263,7 @@ public class OptionSetting {
         engineProfileList = ImmutableList.of();
         variationTransparent = false;
         autoStartAnalyzingAfterPlacingMoves = true;
+        bestSuggestionColor = new ColorSetting(Color.RED);
 
         mainWindowPosX = -1;
         mainWindowPosY = -1;
@@ -332,11 +357,11 @@ public class OptionSetting {
         this.shadowSize = shadowSize;
     }
 
-    public BoardColor getBoardColor() {
+    public ColorSetting getBoardColor() {
         return boardColor;
     }
 
-    public void setBoardColor(BoardColor boardColor) {
+    public void setBoardColor(ColorSetting boardColor) {
         this.boardColor = boardColor;
     }
 
@@ -418,6 +443,14 @@ public class OptionSetting {
 
     public void setAutoEnterTryPlayingMode(boolean autoEnterTryPlayingMode) {
         this.autoEnterTryPlayingMode = autoEnterTryPlayingMode;
+    }
+
+    public ColorSetting getBestSuggestionColor() {
+        return bestSuggestionColor;
+    }
+
+    public void setBestSuggestionColor(ColorSetting bestSuggestionColor) {
+        this.bestSuggestionColor = bestSuggestionColor;
     }
 
     public boolean isMainWindowAlwaysOnTop() {
@@ -607,6 +640,7 @@ public class OptionSetting {
                 .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
                 .append(variationTransparent, that.variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves, that.autoStartAnalyzingAfterPlacingMoves)
+                .append(bestSuggestionColor, that.bestSuggestionColor)
                 .append(mainWindowPosX, that.mainWindowPosX)
                 .append(mainWindowPosY, that.mainWindowPosY)
                 .append(mainWindowWidth, that.mainWindowWidth)
@@ -657,6 +691,7 @@ public class OptionSetting {
                 .append(engineProfileList)
                 .append(variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves)
+                .append(bestSuggestionColor)
                 .append(mainWindowPosX)
                 .append(mainWindowPosY)
                 .append(mainWindowWidth)

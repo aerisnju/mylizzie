@@ -4,6 +4,7 @@
 
 package wagner.stephanie.lizzie.gui;
 
+import java.awt.event.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 import com.google.common.primitives.Ints;
@@ -16,9 +17,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-/**
- * @author Aeris
- */
 public class OptionDialog extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner non-commercial license
@@ -59,14 +57,8 @@ public class OptionDialog extends JDialog {
     private JTextField textFieldMaxAnalysisTime;
     private JLabel labelMinute;
     private JCheckBox checkBoxShowWhiteSuggestion;
-    private JLabel labelColorRed;
-    private JSpinner spinnerColorRed;
-    private JLabel labelColorGreen;
-    private JSpinner spinnerColorGreen;
-    private JLabel labelColorBlue;
-    private JSpinner spinnerColorBlue;
     private JCheckBox checkBoxFancyStones;
-    private JLabel labelShadow;
+    private JLabel labelStoneDisplay;
     private JCheckBox checkBoxShowShadow;
     private JSpinner spinnerShadowSize;
     private JCheckBox checkBoxShowNextMove;
@@ -74,6 +66,9 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxTransparentVariation;
     private JCheckBox checkBoxAutoStartThinkingAfterPlacingMoves;
     private JCheckBox checkBoxShowAxis;
+    private JLabel labelBoardColor;
+    private JLabel labelBestSuggestionColorHint;
+    private JLabel labelBestSuggestionColor;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -136,9 +131,7 @@ public class OptionDialog extends JDialog {
             radioButtonBoardClassic.setSelected(true);
         }
 
-        spinnerColorRed.setValue(setting.getBoardColor().getRed());
-        spinnerColorGreen.setValue(setting.getBoardColor().getGreen());
-        spinnerColorBlue.setValue(setting.getBoardColor().getBlue());
+        labelBoardColor.setBackground(setting.getBoardColor().toColor());
 
         checkBoxFancyStones.setSelected(setting.isShowFancyStone());
 
@@ -180,6 +173,8 @@ public class OptionDialog extends JDialog {
         checkBoxTransparentVariation.setSelected(setting.isVariationTransparent());
 
         checkBoxAutoStartThinkingAfterPlacingMoves.setSelected(setting.isAutoStartAnalyzingAfterPlacingMoves());
+
+        labelBestSuggestionColor.setBackground(setting.getBestSuggestionColor().toColor());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -205,7 +200,7 @@ public class OptionDialog extends JDialog {
         }
 
         setting.setShowFancyBoard(radioButtonBoardFancy.isSelected());
-        setting.setBoardColor(new OptionSetting.BoardColor((Integer) spinnerColorRed.getValue(), (Integer) spinnerColorGreen.getValue(), (Integer) spinnerColorBlue.getValue()));
+        setting.setBoardColor(new OptionSetting.ColorSetting(labelBoardColor.getBackground()));
         setting.setShowFancyStone(checkBoxFancyStones.isSelected());
         setting.setShowShadow(checkBoxShowShadow.isSelected());
         setting.setShadowSize((Integer) spinnerShadowSize.getValue());
@@ -257,6 +252,8 @@ public class OptionDialog extends JDialog {
         setting.setVariationTransparent(checkBoxTransparentVariation.isSelected());
 
         setting.setAutoStartAnalyzingAfterPlacingMoves(checkBoxAutoStartThinkingAfterPlacingMoves.isSelected());
+
+        setting.setBestSuggestionColor(new OptionSetting.ColorSetting(labelBestSuggestionColor.getBackground()));
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -306,6 +303,20 @@ public class OptionDialog extends JDialog {
         }
     }
 
+    private void labelBoardColorMouseClicked(MouseEvent e) {
+        Color newColor = JColorChooser.showDialog(this, "Lizzie", labelBoardColor.getBackground());
+        if (newColor != null) {
+            labelBoardColor.setBackground(newColor);
+        }
+    }
+
+    private void labelBestSuggestionColorMouseClicked(MouseEvent e) {
+        Color newColor = JColorChooser.showDialog(this, "Lizzie", labelBestSuggestionColor.getBackground());
+        if (newColor != null) {
+            labelBestSuggestionColor.setBackground(newColor);
+        }
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner non-commercial license
@@ -347,14 +358,8 @@ public class OptionDialog extends JDialog {
         textFieldMaxAnalysisTime = new JTextField();
         labelMinute = new JLabel();
         checkBoxShowWhiteSuggestion = new JCheckBox();
-        labelColorRed = new JLabel();
-        spinnerColorRed = new JSpinner();
-        labelColorGreen = new JLabel();
-        spinnerColorGreen = new JSpinner();
-        labelColorBlue = new JLabel();
-        spinnerColorBlue = new JSpinner();
         checkBoxFancyStones = new JCheckBox();
-        labelShadow = new JLabel();
+        labelStoneDisplay = new JLabel();
         checkBoxShowShadow = new JCheckBox();
         spinnerShadowSize = new JSpinner();
         checkBoxShowNextMove = new JCheckBox();
@@ -362,6 +367,9 @@ public class OptionDialog extends JDialog {
         checkBoxTransparentVariation = new JCheckBox();
         checkBoxAutoStartThinkingAfterPlacingMoves = new JCheckBox();
         checkBoxShowAxis = new JCheckBox();
+        labelBoardColor = new JLabel();
+        labelBestSuggestionColorHint = new JLabel();
+        labelBestSuggestionColor = new JLabel();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -499,30 +507,12 @@ public class OptionDialog extends JDialog {
                 checkBoxShowWhiteSuggestion.setText(bundle.getString("OptionDialog.checkBoxShowWhiteSuggestion.text"));
                 checkBoxShowWhiteSuggestion.setSelected(true);
 
-                //---- labelColorRed ----
-                labelColorRed.setText(bundle.getString("OptionDialog.labelColorRed.text"));
-
-                //---- spinnerColorRed ----
-                spinnerColorRed.setModel(new SpinnerNumberModel(178, 0, 255, 1));
-
-                //---- labelColorGreen ----
-                labelColorGreen.setText(bundle.getString("OptionDialog.labelColorGreen.text"));
-
-                //---- spinnerColorGreen ----
-                spinnerColorGreen.setModel(new SpinnerNumberModel(140, 0, 255, 1));
-
-                //---- labelColorBlue ----
-                labelColorBlue.setText(bundle.getString("OptionDialog.labelColorBlue.text"));
-
-                //---- spinnerColorBlue ----
-                spinnerColorBlue.setModel(new SpinnerNumberModel(0, 0, 255, 1));
-
                 //---- checkBoxFancyStones ----
                 checkBoxFancyStones.setText(bundle.getString("OptionDialog.checkBoxFancyStones.text"));
                 checkBoxFancyStones.setSelected(true);
 
-                //---- labelShadow ----
-                labelShadow.setText(bundle.getString("OptionDialog.labelShadow.text"));
+                //---- labelStoneDisplay ----
+                labelStoneDisplay.setText(bundle.getString("OptionDialog.labelStoneDisplay.text"));
 
                 //---- checkBoxShowShadow ----
                 checkBoxShowShadow.setText(bundle.getString("OptionDialog.checkBoxShowShadow.text"));
@@ -549,6 +539,31 @@ public class OptionDialog extends JDialog {
                 checkBoxShowAxis.setText(bundle.getString("OptionDialog.checkBoxShowAxis.text"));
                 checkBoxShowAxis.setSelected(true);
 
+                //---- labelBoardColor ----
+                labelBoardColor.setPreferredSize(new Dimension(21, 21));
+                labelBoardColor.setBackground(new Color(178, 140, 0));
+                labelBoardColor.setOpaque(true);
+                labelBoardColor.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        labelBoardColorMouseClicked(e);
+                    }
+                });
+
+                //---- labelBestSuggestionColorHint ----
+                labelBestSuggestionColorHint.setText(bundle.getString("OptionDialog.labelBestSuggestionColorHint.text"));
+
+                //---- labelBestSuggestionColor ----
+                labelBestSuggestionColor.setBackground(Color.red);
+                labelBestSuggestionColor.setOpaque(true);
+                labelBestSuggestionColor.setPreferredSize(new Dimension(21, 21));
+                labelBestSuggestionColor.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        labelBestSuggestionColorMouseClicked(e);
+                    }
+                });
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -564,7 +579,7 @@ public class OptionDialog extends JDialog {
                                     .addComponent(buttonManage, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(buttonResetCommandLine)
-                                    .addContainerGap(64, Short.MAX_VALUE))
+                                    .addContainerGap(119, Short.MAX_VALUE))
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
                                         .addGroup(contentPanelLayout.createSequentialGroup()
@@ -609,37 +624,17 @@ public class OptionDialog extends JDialog {
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxMainWindowAlwaysOnTop))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelSuggestion)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxShowBlackSuggestion)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxShowWhiteSuggestion)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxPlayoutsInShortForm)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxShowNextMove))
-                                        .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelBoardDisplay)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonBoardFancy)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(radioButtonBoardClassic)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelColorRed)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(spinnerColorRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelColorGreen)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(spinnerColorGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(labelColorBlue)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(spinnerColorBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(checkBoxFancyStones))
+                                            .addComponent(labelBoardColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
-                                            .addComponent(labelShadow)
+                                            .addComponent(labelStoneDisplay)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxFancyStones)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                             .addComponent(checkBoxShowShadow)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -658,8 +653,24 @@ public class OptionDialog extends JDialog {
                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(labelMinute)))))
-                                    .addGap(0, 66, Short.MAX_VALUE))))
+                                                    .addComponent(labelMinute))))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelSuggestion)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addGroup(contentPanelLayout.createParallelGroup()
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                    .addComponent(labelBestSuggestionColorHint)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(labelBestSuggestionColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(contentPanelLayout.createSequentialGroup()
+                                                    .addComponent(checkBoxShowBlackSuggestion)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(checkBoxShowWhiteSuggestion)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(checkBoxPlayoutsInShortForm)
+                                                    .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(checkBoxShowNextMove)))))
+                                    .addGap(0, 121, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -686,18 +697,13 @@ public class OptionDialog extends JDialog {
                                 .addComponent(labelBoardDisplay)
                                 .addComponent(radioButtonBoardFancy)
                                 .addComponent(radioButtonBoardClassic)
-                                .addComponent(labelColorRed)
-                                .addComponent(spinnerColorRed, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(labelColorGreen)
-                                .addComponent(spinnerColorGreen, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(labelColorBlue)
-                                .addComponent(spinnerColorBlue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(checkBoxFancyStones))
+                                .addComponent(labelBoardColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(labelShadow)
+                                .addComponent(labelStoneDisplay)
                                 .addComponent(checkBoxShowShadow)
-                                .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addComponent(spinnerShadowSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(checkBoxFancyStones))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelSuggestion)
@@ -705,6 +711,10 @@ public class OptionDialog extends JDialog {
                                 .addComponent(checkBoxShowWhiteSuggestion)
                                 .addComponent(checkBoxPlayoutsInShortForm)
                                 .addComponent(checkBoxShowNextMove))
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(contentPanelLayout.createParallelGroup()
+                                .addComponent(labelBestSuggestionColorHint)
+                                .addComponent(labelBestSuggestionColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelAnalysisModeOn)
@@ -736,7 +746,7 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelMainWindow)
                                 .addComponent(checkBoxMainWindowAlwaysOnTop))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

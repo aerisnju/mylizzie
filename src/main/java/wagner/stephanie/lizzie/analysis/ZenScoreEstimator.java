@@ -8,24 +8,15 @@ import wagner.stephanie.lizzie.rules.Board;
 
 import java.util.List;
 
-public class ZenScoreEstimator extends GtpBasedScoreEstimator {
+public class ZenScoreEstimator extends GtpBasedScoreEstimator implements DetailedScoreEstimator {
     public ZenScoreEstimator(String commandLine) {
         super(commandLine);
     }
 
     @Override
     public ImmutablePair<String, Double> estimateScore() {
-        MutableIntList scoreStatistics = getScoreStatistics();
-        int blackTerritoryCount = scoreStatistics.get(6);
-        int whiteTerritoryCount = scoreStatistics.get(7);
-        int blackDeadCount = scoreStatistics.get(4);
-        int whiteDeadCount = scoreStatistics.get(5);
-        int blackPrisonerCount = scoreStatistics.get(2);
-        int whitePrisonerCount = scoreStatistics.get(3);
-
-        double score = blackTerritoryCount + blackPrisonerCount - blackDeadCount
-                - (whiteTerritoryCount + whitePrisonerCount - whiteDeadCount)
-                - getKomi();
+        DetailedScore detailedScore = estimateDetailedScore();
+        double score = detailedScore.getScore();
         String color = "B";
         if (score < 0) {
             color = "W";
@@ -79,5 +70,22 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator {
     private MutableIntList getScoreStatistics() {
         List<String> response = gtpClient.sendCommand("score_statistics");
         return GtpClient.parseResponseIntTable(response);
+    }
+
+    @Override
+    public DetailedScore estimateDetailedScore() {
+        MutableIntList scoreStatistics = getScoreStatistics();
+        int blackTerritoryCount = scoreStatistics.get(6);
+        int whiteTerritoryCount = scoreStatistics.get(7);
+        int blackDeadCount = scoreStatistics.get(4);
+        int whiteDeadCount = scoreStatistics.get(5);
+        int blackPrisonerCount = scoreStatistics.get(2);
+        int whitePrisonerCount = scoreStatistics.get(3);
+
+        double score = blackTerritoryCount + blackPrisonerCount - blackDeadCount
+                - (whiteTerritoryCount + whitePrisonerCount - whiteDeadCount)
+                - getKomi();
+
+        return new DetailedScore(blackTerritoryCount, whiteTerritoryCount, blackDeadCount, whiteDeadCount, blackPrisonerCount, whitePrisonerCount, score);
     }
 }

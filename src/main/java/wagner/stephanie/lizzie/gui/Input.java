@@ -3,6 +3,7 @@ package wagner.stephanie.lizzie.gui;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import wagner.stephanie.lizzie.Lizzie;
+import wagner.stephanie.lizzie.analysis.DetailedScoreEstimator;
 import wagner.stephanie.lizzie.rules.Board;
 
 import javax.swing.*;
@@ -176,16 +177,38 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         if (Lizzie.scoreEstimator == null || !Lizzie.scoreEstimator.isRunning()) {
             JOptionPane.showMessageDialog(Lizzie.frame, resourceBundle.getString("LizzieFrame.prompt.noEstimatorEngine"), "Lizzie", JOptionPane.ERROR_MESSAGE);
         } else {
-            ImmutablePair<String, Double> estimatedScore = Lizzie.scoreEstimator.estimateScore();
-            String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(estimatedScore.getLeft(), "?");
-            double score = estimatedScore.getRight();
-
             Lizzie.frame.getBoardRenderer().updateInfluences(Lizzie.scoreEstimator.estimateInfluences());
 
-            JOptionPane.showMessageDialog(Lizzie.frame
-                    , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, score)
-                    , "Lizzie"
-                    , JOptionPane.INFORMATION_MESSAGE);
+            try {
+                DetailedScoreEstimator detailedScoreEstimator = (DetailedScoreEstimator) Lizzie.scoreEstimator;
+                DetailedScoreEstimator.DetailedScore detailedScore = detailedScoreEstimator.estimateDetailedScore();
+
+                String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(detailedScore.getScore() > 0 ? "B" : "W", "?");
+                double absoluteScore = Math.abs(detailedScore.getScore());
+
+                String detailedScoreDescription = String.format(
+                        resourceBundle.getString("LizzieFrame.prompt.detailedScoreEstimation")
+                        , Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, absoluteScore
+                        , detailedScore.getBlackTerritoryCount()
+                        , detailedScore.getWhiteTerritoryCount()
+                        , detailedScore.getBlackDeadCount()
+                        , detailedScore.getWhiteDeadCount()
+                        , detailedScore.getBlackPrisonerCount()
+                        , detailedScore.getWhitePrisonerCount()
+                );
+                JOptionPane.showMessageDialog(Lizzie.frame
+                        , detailedScoreDescription
+                        , "Lizzie"
+                        , JOptionPane.INFORMATION_MESSAGE);
+            } catch (ClassCastException e) {
+                ImmutablePair<String, Double> estimatedScore = Lizzie.scoreEstimator.estimateScore();
+                String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(estimatedScore.getLeft(), "?");
+                double score = estimatedScore.getRight();
+                JOptionPane.showMessageDialog(Lizzie.frame
+                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, score)
+                        , "Lizzie"
+                        , JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 

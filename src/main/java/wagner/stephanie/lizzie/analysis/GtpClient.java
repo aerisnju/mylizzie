@@ -24,7 +24,11 @@ public interface GtpClient extends AutoCloseable {
         }
     }
 
-    ListenableFuture<List<String>> postCommand(String command);
+    default ListenableFuture<List<String>> postCommand(String command) {
+        return postCommand(command, null);
+    }
+
+    ListenableFuture<List<String>> postCommand(String command, Consumer<String> continuousOutputConsumer);
 
     void start();
 

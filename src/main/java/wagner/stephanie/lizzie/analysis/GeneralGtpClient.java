@@ -5,6 +5,7 @@ import com.zaxxer.nuprocess.NuAbstractProcessHandler;
 import com.zaxxer.nuprocess.NuProcess;
 import com.zaxxer.nuprocess.NuProcessBuilder;
 import com.zaxxer.nuprocess.NuProcessHandler;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jtrim2.utils.ObjectFinalizer;
 import wagner.stephanie.lizzie.util.ArgumentTokenizer;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
@@ -53,8 +54,9 @@ public class GeneralGtpClient implements GtpClient {
                 future.markComplete();
             }
 
-            while ((future = stagineCommandQueue.poll()) != null) {
-                future.markComplete();
+            ImmutablePair<GeneralGtpFuture, Consumer<String>> futurePair;
+            while ((futurePair = stagineCommandQueue.poll()) != null) {
+                futurePair.getLeft().markComplete();
             }
 
             miscProcessor.execute(() -> engineExitObserverList.forEach(observer -> observer.accept(statusCode)));
@@ -102,15 +104,24 @@ public class GeneralGtpClient implements GtpClient {
 
         @Override
         public boolean onStdinReady(final ByteBuffer buffer) {
-            GeneralGtpFuture future = stagineCommandQueue.poll();
-            if (future != null) {
+            ImmutablePair<GeneralGtpFuture, Consumer<String>> futurePair = stagineCommandQueue.poll();
+            if (futurePair != null) {
+                GeneralGtpFuture future = futurePair.getLeft();
                 buffer.put(future.getCommand().getBytes());
                 if (!future.getCommand().endsWith("\n")) {
                     buffer.put((byte) '\n');
                 }
                 buffer.flip();
 
-                runningCommandQueue.offer(future);
+                if (futurePair.getRight() == null) {
+                    runningCommandQueue.offer(future);
+                } else {
+                    continuousCommandQueue.offer(futurePair);
+                    // In case of some particular situations
+                    if (runningCommandQueue.isEmpty() && !stagineCommandQueue.isEmpty()) {
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -119,12 +130,28 @@ public class GeneralGtpClient implements GtpClient {
         protected void onEngineStdoutLine(final String line) {
             engineStdoutLineConsumerList.forEach(consumer -> consumer.accept(line));
             if (inCommandResponse) {
-                GeneralGtpFuture future = Objects.requireNonNull(runningCommandQueue.peek());
+                GeneralGtpFuture future;
+                Consumer<String> continuousConsumer;
+
+                ImmutablePair<GeneralGtpFuture, Consumer<String>> futurePair = continuousCommandQueue.peek();
+                if (futurePair == null) {
+                    future = Objects.requireNonNull(runningCommandQueue.peek());
+                    continuousConsumer = null;
+                } else {
+                    future = Objects.requireNonNull(futurePair.getLeft());
+                    continuousConsumer = Objects.requireNonNull(futurePair.getRight());
+                }
+
                 List<String> response = future.getResponse();
                 if (line.equals("\n") || line.equals("\r\n") || line.equals("\r")) {
-                    runningCommandQueue.poll();
+                    if (continuousConsumer == null) {
+                        runningCommandQueue.poll();
+                        response.add(line.trim());
+                    } else {
+                        continuousCommandQueue.poll();
+                        continuousConsumer.accept(line.trim());
+                    }
 
-                    response.add(line.trim());
                     future.markComplete();
 
                     inCommandResponse = false;
@@ -134,13 +161,23 @@ public class GeneralGtpClient implements GtpClient {
                         gtpProcess.wantWrite();
                     }
                 } else {
-                    response.add(line.trim());
+                    if (continuousConsumer == null) {
+                        response.add(line.trim());
+                    } else {
+                        continuousConsumer.accept(line.trim());
+                    }
                 }
             } else if (line.startsWith("=") || line.startsWith("?")) {
                 inCommandResponse = true;
-                GeneralGtpFuture future = Objects.requireNonNull(runningCommandQueue.peek());
-                List<String> response = future.getResponse();
-                response.add(line.trim());
+                ImmutablePair<GeneralGtpFuture, Consumer<String>> futurePair = continuousCommandQueue.peek();
+                if (futurePair == null) {
+                    GeneralGtpFuture future = Objects.requireNonNull(runningCommandQueue.peek());
+                    List<String> response = future.getResponse();
+                    response.add(line.trim());
+                } else {
+                    Consumer<String> continuousConsumer = Objects.requireNonNull(futurePair.getRight());
+                    continuousConsumer.accept(line.trim());
+                }
             } else {
                 onEngineDiagnosticLine(line);
             }
@@ -181,8 +218,9 @@ public class GeneralGtpClient implements GtpClient {
     private List<String> gtpCommandLine;
     private NuProcessHandler gtpProcessHandler;
     private NuProcess gtpProcess;
-    private ConcurrentLinkedQueue<GeneralGtpFuture> stagineCommandQueue;
+    private ConcurrentLinkedQueue<ImmutablePair<GeneralGtpFuture, Consumer<String>>> stagineCommandQueue;
     private ConcurrentLinkedQueue<GeneralGtpFuture> runningCommandQueue;
+    private ConcurrentLinkedQueue<ImmutablePair<GeneralGtpFuture, Consumer<String>>> continuousCommandQueue;
     private List<Consumer<String>> engineDiagnosticLineConsumerList;
     private List<Consumer<String>> engineStdoutLineConsumerList;
     private List<Consumer<String>> engineStderrLineConsumerList;
@@ -199,6 +237,7 @@ public class GeneralGtpClient implements GtpClient {
         gtpCommandLine = commandLine;
         stagineCommandQueue = new ConcurrentLinkedQueue<>();
         runningCommandQueue = new ConcurrentLinkedQueue<>();
+        continuousCommandQueue = new ConcurrentLinkedQueue<>();
         engineDiagnosticLineConsumerList = new CopyOnWriteArrayList<>();
         engineStdoutLineConsumerList = new CopyOnWriteArrayList<>();
         engineStderrLineConsumerList = new CopyOnWriteArrayList<>();
@@ -239,9 +278,9 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     @Override
-    public ListenableFuture<List<String>> postCommand(String command) {
+    public ListenableFuture<List<String>> postCommand(String command, Consumer<String> continuousOutputConsumer) {
         GeneralGtpFuture future = new GeneralGtpFuture(command, this);
-        stagineCommandQueue.offer(future);
+        stagineCommandQueue.offer(ImmutablePair.of(future, continuousOutputConsumer));
         gtpProcess.wantWrite();
 
         return future;
@@ -339,7 +378,7 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     public static void main(String[] args) throws Exception {
-        final GtpClient gtpClient = new GeneralGtpClient("leelaz.exe -g -t2 -wnetwork");
+        final GtpClient gtpClient = new GeneralGtpClient("leelaznextana.exe -g -t2 -wnetwork");
         gtpClient.start();
 
         Future<List<String>> timeResult = gtpClient.postCommand("888 time_settings 0 10 1");
@@ -382,6 +421,7 @@ public class GeneralGtpClient implements GtpClient {
         Future<List<String>> genMoveResult = gtpClient.postCommand("100 genmove b");
         Future<List<String>> listResult = gtpClient.postCommand("7 list_commands");
         gtpClient.postCommand("8 list_commands");
+        gtpClient.postCommand("99999 list_commands", System.out::println);
         gtpClient.postCommand("8 list_commands");
         gtpClient.postCommand("111111 list_commands");
 
@@ -390,21 +430,12 @@ public class GeneralGtpClient implements GtpClient {
         System.out.println(nameResult.get());
         System.out.println(timeResult.get());
 
-        Thread.sleep(5000);
+        gtpClient.postCommand("87654 lz-analyze 50", System.out::println);
 
-        final int[] count = new int[1];
-        final long start = System.currentTimeMillis();
+        Thread.sleep(10000);
 
-        gtpClient.registerStderrLineConsumer(line -> {
-            if (++count[0] % 1000 == 0) {
-                System.out.println(System.currentTimeMillis() - start);
-            }
-        });
-
-        Future<List<String>> ponderResult = gtpClient.postCommand("time_left b 0 0");
-        System.out.println(ponderResult.get());
-
-        Thread.sleep(30000);
+        nameResult = gtpClient.postCommand("89012 name");
+        System.out.println(nameResult.get());
 
         gtpClient.shutdown(60, TimeUnit.SECONDS);
     }

@@ -12,11 +12,14 @@ import java.util.ArrayList;
  *
  * @version $Id$
  */
-public abstract class ArgumentTokenizer {
+public final class ArgumentTokenizer {
     private static final int NO_TOKEN_STATE = 0;
     private static final int NORMAL_TOKEN_STATE = 1;
     private static final int SINGLE_QUOTE_STATE = 2;
     private static final int DOUBLE_QUOTE_STATE = 3;
+
+    private ArgumentTokenizer() {
+    }
 
     /**
      * Tokenizes the given String into String tokens

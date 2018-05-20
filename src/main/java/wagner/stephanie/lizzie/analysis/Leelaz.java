@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * leelaz is modified to output information as it ponders
  * see www.github.com/gcp/leela-zero
  */
-public class Leelaz implements Closeable {
+public class Leelaz implements AutoCloseable {
     private static final Logger logger = LogManager.getLogger(Leelaz.class);
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
 
@@ -57,9 +57,8 @@ public class Leelaz implements Closeable {
     /**
      * Initializes the leelaz process and starts reading output
      *
-     * @throws IOException if any exception
      */
-    public Leelaz(String commandline) throws IOException {
+    public Leelaz(String commandline) {
         objectFinalizer = new ObjectFinalizer(this::doCleanup, "Shutdown engine");
 
         observerCollection = new BestMoveObserverCollection();

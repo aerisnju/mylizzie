@@ -27,70 +27,24 @@ public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
             komi = 6.5;
         }
 
-        boardStateChangeObserver = new BoardStateChangeObserver() {
-            @Override
-            public void mainStreamAppended(BoardHistoryNode newNodeBegin, BoardHistoryNode head) {
-            }
-
-            @Override
-            public void mainStreamCut(BoardHistoryNode nodeBeforeCutPoint, BoardHistoryNode head) {
-            }
-
+        boardStateChangeObserver = new BoardStateSynchronizer() {
             @Override
             public void headMoved(BoardHistoryNode oldHead, BoardHistoryNode newHead) {
-                if (oldHead.getNext() == newHead) {
-                    // Move forward
-                    replayMove(newHead.getData());
-                } else if (oldHead.getPrevious() == newHead) {
-                    // Moved back
-                    gtpClient.postCommand("undo");
-                } else {
-                    OptionalInt distanceOpt = oldHead.distanceTo(newHead);
-                    if (distanceOpt.isPresent()) {
-                        int distance = distanceOpt.getAsInt();
-                        if (distance > 0) {
-                            // Forward
-                            BoardHistoryNode p = oldHead.getNext();
-                            while (true) {
-                                replayMove(p.getData());
-
-                                if (p == newHead) {
-                                    break;
-                                }
-                                p = p.getNext();
-                            }
-                        } else if (distance < 0) {
-                            for (int i = 0; i < -distance; ++i) {
-                                gtpClient.postCommand("undo");
-                            }
-                        }
-                    }
-                }
+                super.headMoved(oldHead, newHead);
 
                 Lizzie.frame.getBoardRenderer().updateInfluences(null);
             }
 
             @Override
             public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
-                gtpClient.postCommand("clear_board");
+                super.boardCleared(initialNode, initialHead);
+
                 Lizzie.frame.getBoardRenderer().updateInfluences(null);
             }
 
-            private void replayMove(BoardData data) {
-                String move;
-                if (data.getLastMove() == null) {
-                    move = "pass";
-                } else {
-                    move = Board.convertCoordinatesToName(data.getLastMove());
-                }
-
-                if (data.getLastMoveColor() == Stone.BLACK) {
-                    gtpClient.postCommand(String.format("play %s %s", "B", move));
-                } else if (data.getLastMoveColor() == Stone.WHITE) {
-                    gtpClient.postCommand(String.format("play %s %s", "W", move));
-                }
-
-                Lizzie.frame.getBoardRenderer().updateInfluences(null);
+            @Override
+            protected void handleGtpCommand(String command) {
+                gtpClient.postCommand(command);
             }
         };
 
@@ -126,7 +80,7 @@ public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (gtpClient != null) {
             Lizzie.board.unregisterBoardStateChangeObserver(boardStateChangeObserver);
             Board.unregisterBoardSizeChangeObserver(boardSizeChangeObserver);

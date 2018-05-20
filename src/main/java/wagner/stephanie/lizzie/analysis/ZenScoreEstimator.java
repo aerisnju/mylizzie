@@ -35,7 +35,7 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator implements Detaile
     @Override
     public double[] estimateInfluences() {
         List<String> response = estimateInfluencesRaw();
-        MutableIntList territories = GtpClient.parseResponseIntTable(response);
+        MutableIntList territories = GtpCommand.parseResponseIntTable(response);
         MutableDoubleList influences = territories.collectDouble(influence -> {
             if (-300 < influence && influence < 300) {
                 influence = 0;
@@ -69,7 +69,7 @@ public class ZenScoreEstimator extends GtpBasedScoreEstimator implements Detaile
 
     private MutableIntList getScoreStatistics() {
         List<String> response = gtpClient.sendCommand("score_statistics");
-        return GtpClient.parseResponseIntTable(response);
+        return GtpCommand.parseResponseIntTable(response);
     }
 
     @Override

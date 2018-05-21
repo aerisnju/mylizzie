@@ -133,11 +133,11 @@ public class ByoYomiAutoPlayDialog extends JDialog {
                 startOrResumeCountdown();
 
                 if (checkBoxStopThinkingWhenCountDown.isSelected()) {
-                    Lizzie.leelaz.startThinking();
+                    Lizzie.leelaz.setThinking(true);
                 }
             } else {
                 if (checkBoxStopThinkingWhenCountDown.isSelected()) {
-                    Lizzie.leelaz.stopThinking();
+                    Lizzie.leelaz.setThinking(false);
                 }
 
                 resetCountdown();

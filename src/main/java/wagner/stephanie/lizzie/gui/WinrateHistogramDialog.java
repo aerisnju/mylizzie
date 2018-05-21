@@ -110,29 +110,30 @@ public class WinrateHistogramDialog extends JDialog {
 
                 lastRefreshTime = currentTime;
 
-                blackSeries.clear();
-                whiteSeries.clear();
-                standardSeries.clear();
+                SwingUtilities.invokeLater(() -> {
+                    blackSeries.clear();
+                    whiteSeries.clear();
+                    standardSeries.clear();
 
-                for (int i = 0; i < model.getHistogramEntryList().size(); ++i) {
-                    WinrateHistogramEntry entry = model.getHistogramEntryList().get(i);
+                    for (int i = 0; i < model.getHistogramEntryList().size(); ++i) {
+                        WinrateHistogramEntry entry = model.getHistogramEntryList().get(i);
 
-                    standardSeries.add(entry.getMoveNumber(), 50);
-                    if (checkBoxHistogramShowBlack.isSelected()) {
-                        blackSeries.add(entry.getMoveNumber(), entry.getBlackWinrate());
+                        standardSeries.add(entry.getMoveNumber(), 50);
+                        if (checkBoxHistogramShowBlack.isSelected()) {
+                            blackSeries.add(entry.getMoveNumber(), entry.getBlackWinrate());
+                        }
+                        if (checkBoxHistogramShowWhite.isSelected()) {
+                            whiteSeries.add(entry.getMoveNumber(), entry.getWhiteWinrate());
+                        }
                     }
-                    if (checkBoxHistogramShowWhite.isSelected()) {
-                        whiteSeries.add(entry.getMoveNumber(), entry.getWhiteWinrate());
+                    if (model.getHistogramEntryList().size() < 50) {
+                        for (int i = model.getHistogramEntryList().size() - 1; i <= 50; ++i) {
+                            standardSeries.add(i, 50);
+                        }
                     }
-                }
-                if (model.getHistogramEntryList().size() < 50) {
-                    for (int i = model.getHistogramEntryList().size() - 1; i <= 50; ++i) {
-                        standardSeries.add(i, 50);
-                    }
-                }
 
-                histogramChartPanel.repaint();
-
+                    histogramChartPanel.repaint();
+                });
             }
         });
 

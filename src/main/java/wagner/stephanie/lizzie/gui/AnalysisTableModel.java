@@ -35,7 +35,7 @@ public class AnalysisTableModel extends AbstractTableModel {
 
         bestMoveObserver = new BestMoveObserver() {
             @Override
-            public void bestMovesUpdated(int boardStateCount, final List<MoveData> newBestMoves) {
+            public void bestMovesUpdated(final List<MoveData> newBestMoves) {
                 SwingUtilities.invokeLater(() -> {
                     bestMoves = newBestMoves;
 

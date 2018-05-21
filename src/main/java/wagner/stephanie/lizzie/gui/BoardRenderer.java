@@ -1,5 +1,6 @@
 package wagner.stephanie.lizzie.gui;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.analysis.BestMoveObserver;
@@ -51,7 +52,7 @@ public class BoardRenderer {
         // register repaint events
         bestMoveObserver = new BestMoveObserver() {
             @Override
-            public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
+            public void bestMovesUpdated(List<MoveData> newBestMoves) {
                 bestMovesUpdated.set(newBestMoves);
 
                 if (Lizzie.frame != null) {
@@ -516,7 +517,7 @@ public class BoardRenderer {
     private void drawLeelazSuggestions(Graphics2D g) {
         List<MoveData> bestMoves = bestMovesUpdated.get();
         if ((Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowBlackSuggestion()
-                || !Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowWhiteSuggestion()) && !bestMoves.isEmpty()) {
+                || !Lizzie.board.getData().isBlackToPlay() && Lizzie.optionSetting.isShowWhiteSuggestion()) && CollectionUtils.isNotEmpty(bestMoves)) {
             int maxPlayouts = bestMoves.stream().max(Comparator.comparingInt(MoveData::getPlayouts)).get().getPlayouts();
             for (MoveData move : bestMoves) {
                 boolean isBestMove = bestMoves.get(0) == move;

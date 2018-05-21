@@ -117,6 +117,8 @@ public class Lizzie {
     }
 
     public static void exitLizzie(int exitCode) {
+        leelaz.setThinking(false);
+
         try {
             Thread.sleep(250);
         } catch (InterruptedException e) {
@@ -127,7 +129,6 @@ public class Lizzie {
             Lizzie.storeGameByFile(Paths.get("restore.sgf"));
         }
 
-        Lizzie.leelaz.stopThinking();
         Lizzie.leelaz.close();
 
         ThreadPoolUtil.shutdownAndAwaitTermination(Lizzie.miscExecutor);
@@ -174,8 +175,10 @@ public class Lizzie {
         }
 
         leelaz = new Leelaz(optionSetting.getLeelazCommandLine());
-
         board = new Board();
+        leelaz.startEngine();
+        board.linkBoardWithAnalyzeEngine();
+
         frame = new LizzieFrame();
 
         analysisDialog = AnalysisFrame.createAnalysisDialog(frame);
@@ -198,7 +201,7 @@ public class Lizzie {
         }
 
         try {
-            leelaz.waitForEngineStart();
+            leelaz.setThinking(true);
             exitLatch.await();
         } catch (InterruptedException e) {
             // Do nothing
@@ -209,7 +212,6 @@ public class Lizzie {
 
     public static void clearBoardAndState() {
         board.clear();
-        leelaz.clearBoard();
     }
 
     public static void loadGameByPrompting() {
@@ -298,9 +300,11 @@ public class Lizzie {
         changeMoveDialog.setVisible(true);
         if (changeMoveDialog.isUserApproved()) {
             int moveNumber = changeMoveDialog.getMoveNumber();
-            String correctedMove = changeMoveDialog.getCorrectedMove();
+            String correctedMove = changeMoveDialog.getCorrectedMove().trim().toUpperCase();
             int[] convertedCoords = Board.convertDisplayNameToCoordinates(correctedMove);
-            if (Board.isValid(convertedCoords)) {
+            if (StringUtils.equalsIgnoreCase(correctedMove, "pass")) {
+                Lizzie.miscExecutor.execute(() -> board.changeMove(moveNumber, null));
+            } else if (Board.isValid(convertedCoords)) {
                 Lizzie.miscExecutor.execute(() -> board.changeMove(moveNumber, convertedCoords));
             } else {
                 JOptionPane.showMessageDialog(frame, resourceBundle.getString("Lizzie.prompt.invalidCoordinates"), "Lizzie", JOptionPane.ERROR_MESSAGE);
@@ -321,17 +325,13 @@ public class Lizzie {
         final int moveNumber = board.getData().getMoveNumber();
 
         // Workaround for leelaz cannot exit when restarting
-        try {
-            leelaz.stopThinking();
+        leelaz.setThinking(false);
 
-            board.gotoMove(0);
-            leelaz.restartEngine(Lizzie.optionSetting.getLeelazCommandLine());
-            board.gotoMove(moveNumber);
+        board.gotoMove(0);
+        leelaz.restartEngine(Lizzie.optionSetting.getLeelazCommandLine());
+        board.gotoMove(moveNumber);
 
-            SwingUtilities.invokeLater(() -> frame.setEngineProfile(Lizzie.optionSetting.getLeelazCommandLine()));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        SwingUtilities.invokeLater(() -> frame.setEngineProfile(Lizzie.optionSetting.getLeelazCommandLine()));
     }
 
     private static class MoveReplayer {
@@ -362,7 +362,7 @@ public class Lizzie {
     }
 
     private static void loadGameToBoard(final Game game) {
-        Lizzie.leelaz.batchOperation(() -> {
+        Lizzie.leelaz.batchGtpCommands(() -> {
             try {
                 clearBoardAndState();
 

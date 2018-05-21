@@ -24,8 +24,8 @@ public class BestMoveObserverCollection extends AbstractCollection<BestMoveObser
     }
 
     @Override
-    public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
-        observerList.forEach(observer -> observer.bestMovesUpdated(boardStateCount, newBestMoves));
+    public void bestMovesUpdated(List<MoveData> newBestMoves) {
+        observerList.forEach(observer -> observer.bestMovesUpdated(newBestMoves));
     }
 
     @Override

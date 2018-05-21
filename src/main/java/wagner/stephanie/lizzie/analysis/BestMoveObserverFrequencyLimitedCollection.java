@@ -13,7 +13,7 @@ public class BestMoveObserverFrequencyLimitedCollection extends BestMoveObserver
     }
 
     @Override
-    public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
+    public void bestMovesUpdated(List<MoveData> newBestMoves) {
         boolean callObserver = false;
         long currentTime = System.currentTimeMillis();
 
@@ -25,7 +25,7 @@ public class BestMoveObserverFrequencyLimitedCollection extends BestMoveObserver
         }
 
         if (callObserver) {
-            super.bestMovesUpdated(boardStateCount, newBestMoves);
+            super.bestMovesUpdated(newBestMoves);
         }
     }
 }

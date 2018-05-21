@@ -45,7 +45,7 @@ public interface GtpCommand {
 
         if (CollectionUtils.isNotEmpty(response)) {
             String beginElement = response.get(0);
-            if (beginElement.startsWith("= ")) {
+            if (beginElement.startsWith("=")) {
                 result = true;
             }
         }
@@ -53,11 +53,23 @@ public interface GtpCommand {
         return result;
     }
 
+    static String getLineWithoutResponseHeader(List<String> response, int lineIndex) {
+        if (lineIndex < 0 || lineIndex >= (response == null ? -1 : response.size())) {
+            return "";
+        }
+        String line = StringUtils.defaultString(response.get(lineIndex));
+        if (lineIndex == 0) {
+            return StringUtils.removeFirst(line, "^[=?]\\d*\\s*");
+        } else {
+            return line;
+        }
+    }
+
     static void removeResponseHeader(List<String> response) {
         if (CollectionUtils.isNotEmpty(response)) {
             String beginElement = response.get(0);
             if (beginElement.startsWith("=") || beginElement.startsWith("?")) {
-                beginElement = beginElement.substring(2);
+                beginElement = StringUtils.removeFirst(beginElement, "^[=?]\\d*\\s*");
                 response.set(0, beginElement);
             }
         }

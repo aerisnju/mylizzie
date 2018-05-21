@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public class Board implements Closeable {
@@ -39,9 +38,9 @@ public class Board implements Closeable {
 
         bestMoveObserver = new BestMoveObserver() {
             @Override
-            public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
+            public void bestMovesUpdated(List<MoveData> newBestMoves) {
                 synchronized (Board.this) {
-                    if (CollectionUtils.isNotEmpty(newBestMoves) && boardStateCount == getData().getMoveNumber()) {
+                    if (CollectionUtils.isNotEmpty(newBestMoves)) {
                         BoardData boardData = getData();
                         boardData.tryUpdateVariationInfo(newBestMoves);
                     }
@@ -53,7 +52,9 @@ public class Board implements Closeable {
 
             }
         };
+    }
 
+    public void linkBoardWithAnalyzeEngine() {
         Lizzie.leelaz.registerBestMoveObserver(bestMoveObserver);
     }
 
@@ -296,9 +297,6 @@ public class Board implements Closeable {
             BoardHistoryNode newHead = history.getHead();
             observerCollection.mainStreamAppended(newHead, oldHead);
             observerCollection.headMoved(oldHead, newHead);
-
-            // update leelaz with pass
-            Lizzie.leelaz.play(color, "pass");
         }
     }
 
@@ -376,11 +374,6 @@ public class Board implements Closeable {
             BoardHistoryNode newHead = history.getHead();
             observerCollection.mainStreamAppended(newHead, oldHead);
             observerCollection.headMoved(oldHead, newHead);
-
-            // update leelaz with board position
-            final Stone colorToPlay = color;
-            final String locationToPlay = convertCoordinatesToName(x, y);
-            Lizzie.leelaz.play(colorToPlay, locationToPlay);
         }
     }
 
@@ -518,15 +511,6 @@ public class Board implements Closeable {
             BoardHistoryNode oldHead = history.getHead();
             if (history.next() != null) {
                 observerCollection.headMoved(oldHead, history.getHead());
-
-                // update leelaz board position, before updating to next node
-                final Stone colorToPlay = history.getLastMoveColor();
-                if (history.getData().getLastMove() == null) {
-                    Lizzie.leelaz.play(colorToPlay, "pass");
-                } else {
-                    final String locationToPlay = convertCoordinatesToName(history.getLastMove()[0], history.getLastMove()[1]);
-                    Lizzie.leelaz.play(colorToPlay, locationToPlay);
-                }
                 return true;
             } else {
                 return false;
@@ -546,9 +530,6 @@ public class Board implements Closeable {
             BoardHistoryNode oldHead = history.getHead();
             if (history.previous() != null) {
                 observerCollection.headMoved(oldHead, history.getHead());
-
-                Lizzie.leelaz.undo();
-
                 return true;
             } else {
                 return false;
@@ -578,7 +559,7 @@ public class Board implements Closeable {
     }
 
     private void goForward(final int count) {
-        Lizzie.leelaz.batchOperation(() -> {
+        Lizzie.leelaz.batchGtpCommands(() -> {
             for (int i = 0; i < count; ++i) {
                 if (!nextMove()) {
                     break;
@@ -588,7 +569,7 @@ public class Board implements Closeable {
     }
 
     private void goBackward(final int count) {
-        Lizzie.leelaz.batchOperation(() -> {
+        Lizzie.leelaz.batchGtpCommands(() -> {
             for (int i = 0; i < count; ++i) {
                 if (!previousMove()) {
                     break;

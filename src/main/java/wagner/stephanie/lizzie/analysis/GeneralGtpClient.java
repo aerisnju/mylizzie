@@ -60,6 +60,8 @@ public class GeneralGtpClient implements GtpClient {
             }
 
             miscProcessor.execute(() -> engineExitObserverList.forEach(observer -> observer.accept(statusCode)));
+
+            engineExit = true;
         }
 
         @Override
@@ -226,6 +228,7 @@ public class GeneralGtpClient implements GtpClient {
     private List<Consumer<String>> engineStderrLineConsumerList;
     private List<Consumer<Integer>> engineStartedObserverList;
     private List<Consumer<Integer>> engineExitObserverList;
+    private boolean engineExit;
 
     public GeneralGtpClient(String commandLine) {
         this(ArgumentTokenizer.tokenize(commandLine));
@@ -243,6 +246,7 @@ public class GeneralGtpClient implements GtpClient {
         engineStderrLineConsumerList = new CopyOnWriteArrayList<>();
         engineStartedObserverList = new CopyOnWriteArrayList<>();
         engineExitObserverList = new CopyOnWriteArrayList<>();
+        engineExit = false;
     }
 
     public void registerDiagnosticLineConsumer(Consumer<String> consumer) {
@@ -346,6 +350,11 @@ public class GeneralGtpClient implements GtpClient {
     @Override
     public boolean isRunning() {
         return gtpProcess != null && gtpProcess.isRunning();
+    }
+
+    @Override
+    public boolean isShutdown() {
+        return engineExit;
     }
 
     @Override

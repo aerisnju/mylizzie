@@ -84,18 +84,19 @@ public class WinrateHistogramTableModel extends AbstractTableModel {
 
         Lizzie.leelaz.registerBestMoveObserver(new BestMoveObserver() {
             @Override
-            public void bestMovesUpdated(int boardStateCount, List<MoveData> newBestMoves) {
-                if (boardStateCount < histogramEntryList.size() && CollectionUtils.isNotEmpty(newBestMoves)) {
+            public void bestMovesUpdated(List<MoveData> newBestMoves) {
+                int currentMoveNumber = Lizzie.board.getData().getMoveNumber();
+                if (currentMoveNumber < histogramEntryList.size() && CollectionUtils.isNotEmpty(newBestMoves)) {
                     MoveData moveData = newBestMoves.get(0);
-                    WinrateHistogramEntry histogramEntry = histogramEntryList.get(boardStateCount);
+                    WinrateHistogramEntry histogramEntry = histogramEntryList.get(currentMoveNumber);
                     if (Objects.equals(histogramEntry.getColor(), WinrateHistogramEntry.COLOR_BLACK)) {
                         histogramEntry.setWhiteWinrate(moveData.getWinrate());
                     } else {
                         histogramEntry.setBlackWinrate(moveData.getWinrate());
                     }
 
-                    if (boardStateCount > 0) {
-                        histogramEntry.setBlackWindiff(histogramEntry.getBlackWinrate() - histogramEntryList.get(boardStateCount - 1).getBlackWinrate());
+                    if (currentMoveNumber > 0) {
+                        histogramEntry.setBlackWindiff(histogramEntry.getBlackWinrate() - histogramEntryList.get(currentMoveNumber - 1).getBlackWinrate());
                     }
 
                     rebuildFilteredHistogramData();

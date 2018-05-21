@@ -101,7 +101,6 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             Lizzie.board.previousMove();
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             if (Lizzie.optionSetting.isAutoStartAnalyzingAfterPlacingMoves()) {
-                Lizzie.leelaz.setThinking(true);
                 Lizzie.leelaz.togglePonder();
             } else {
                 Lizzie.leelaz.toggleThinking();
@@ -149,7 +148,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
         } else if (e.getKeyCode() == KeyEvent.VK_E) {
             String engineCommand = JOptionPane.showInputDialog(Lizzie.frame
                     , resourceBundle.getString("LizzieFrame.prompt.enterEngineCommand"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
-            Lizzie.leelaz.postRawGtpCommand(engineCommand);
+            Lizzie.leelaz.postGtpCommand(engineCommand);
         } else if (e.getKeyCode() == KeyEvent.VK_B) {
             if (byoYomiAutoPlayDialog == null || !byoYomiAutoPlayDialog.isDisplayable()) {
                 byoYomiAutoPlayDialog = new ByoYomiAutoPlayDialog(Lizzie.frame);

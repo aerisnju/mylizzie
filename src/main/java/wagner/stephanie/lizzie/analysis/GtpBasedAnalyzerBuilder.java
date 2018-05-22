@@ -2,6 +2,7 @@ package wagner.stephanie.lizzie.analysis;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
+import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.util.GenericLizzieException;
 
 import java.util.List;
@@ -43,11 +44,33 @@ public class GtpBasedAnalyzerBuilder {
         }
         String name = GtpCommand.getLineWithoutResponseHeader(nameResponse, 0).trim();
         if (name.equals("Leela Zero")) {
-            detectCorrectModifiedLeelazEngine();
-            return new ClassicModifiedLeelazAnalyzer(gtpClient);
+            if (isNewOfficialEngine()) {
+                return new OfficialLeelazAnalyzer(gtpClient);
+            } else {
+                detectCorrectModifiedLeelazEngine();
+                return new ClassicModifiedLeelazAnalyzer(gtpClient);
+            }
         } else {
             throw new GenericLizzieException(ImmutableMap.of(REASON, ENGINE_NOT_SUPPORTED));
         }
+    }
+
+    private boolean isNewOfficialEngine() {
+        List<String> listCommandsResponse = null;
+        ListenableFuture<List<String>> future = gtpClient.postCommand("list_commands");
+        try {
+            listCommandsResponse = future.get(5, TimeUnit.SECONDS);
+        } catch (ExecutionException | TimeoutException | InterruptedException e) {
+            // Do nothing
+        }
+
+        if (!GtpCommand.isSuccessfulResponse(listCommandsResponse)) {
+            throw new GenericLizzieException(ImmutableMap.of(REASON, ENGINE_NOT_FUNCTION));
+        }
+
+        GtpCommand.removeResponseHeaderInPlace(listCommandsResponse);
+        assert listCommandsResponse != null;
+        return listCommandsResponse.stream().anyMatch(s -> StringUtils.equalsIgnoreCase(s.trim(), "lz-analyze"));
     }
 
     private void detectCorrectModifiedLeelazEngine() {

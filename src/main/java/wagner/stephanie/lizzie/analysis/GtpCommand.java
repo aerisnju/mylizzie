@@ -3,8 +3,10 @@ package wagner.stephanie.lizzie.analysis;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.list.primitive.MutableDoubleList;
 import org.eclipse.collections.api.list.primitive.MutableIntList;
+import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.list.mutable.primitive.DoubleArrayList;
 import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 
@@ -65,7 +67,7 @@ public interface GtpCommand {
         }
     }
 
-    static void removeResponseHeader(List<String> response) {
+    static List<String> removeResponseHeaderInPlace(List<String> response) {
         if (CollectionUtils.isNotEmpty(response)) {
             String beginElement = response.get(0);
             if (beginElement.startsWith("=") || beginElement.startsWith("?")) {
@@ -73,6 +75,12 @@ public interface GtpCommand {
                 response.set(0, beginElement);
             }
         }
+
+        return response;
+    }
+
+    static List<String> removeResponseHeaderCopy(List<String> response) {
+        return removeResponseHeaderInPlace(Lists.mutable.ofAll(response));
     }
 
     static MutableIntList parseResponseIntTable(List<String> response) {

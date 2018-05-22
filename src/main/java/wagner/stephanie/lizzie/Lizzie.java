@@ -51,6 +51,10 @@ import java.util.stream.Collectors;
  * Main class.
  */
 public class Lizzie {
+    static {
+        // Make java.util.logging work with log4j
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+    }
     private static final Logger logger = LogManager.getLogger(Lizzie.class);
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
 
@@ -153,10 +157,7 @@ public class Lizzie {
     /**
      * Launches the game window, and runs the game.
      */
-    public static void main(String[] args) throws IOException {
-        // Make log4j work
-        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
-
+    public static void main(String[] args) {
         // Use system default look and feel
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

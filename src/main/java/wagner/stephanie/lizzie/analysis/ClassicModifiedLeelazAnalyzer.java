@@ -2,11 +2,13 @@ package wagner.stephanie.lizzie.analysis;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Lists;
+import org.jetbrains.annotations.NotNull;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.BoardHistoryNode;
 import wagner.stephanie.lizzie.rules.BoardStateChangeObserver;
 import wagner.stephanie.lizzie.util.ThreadPoolUtil;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -110,12 +112,24 @@ public class ClassicModifiedLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
         } else {
             if (readingPonderOutput) {
                 if (Character.isLetter(line.charAt(0))) {
-                    bestMoves.add(new MoveData(line));
+                    bestMoves.add(parseMoveDataLine(line));
                 }
             } else {
                 final String lineToPrint = line;
                 notificationExecutor.execute(() -> System.out.println(lineToPrint));
             }
         }
+    }
+
+    @NotNull
+    public static MoveData parseMoveDataLine(String line) {
+        String[] data = line.trim().split(" +");
+        String coordinate = data[0];
+        int playouts = Integer.parseInt(data[2]);
+        double winrate = Double.parseDouble(data[4].substring(0, data[4].length() - 2));
+        double probability = Double.parseDouble(data[6].substring(0, data[6].length() - 2));
+        List<String> variation = Arrays.asList(data).subList(8, data.length);
+
+        return new MoveData(coordinate, playouts, winrate, probability, variation);
     }
 }

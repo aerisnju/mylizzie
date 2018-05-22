@@ -19,20 +19,12 @@ public class MoveData {
     private double probability;
     private List<String> variation;
 
-    /**
-     * Parses a leelaz ponder output line
-     *
-     * @param line line of ponder output
-     */
-    public MoveData(String line) {
-        String[] data = line.trim().split(" +");
-
-        coordinate = data[0];
-        playouts = Integer.parseInt(data[2]);
-        winrate = Double.parseDouble(data[4].substring(0, data[4].length() - 2));
-        probability = Double.parseDouble(data[6].substring(0, data[6].length() - 2));
-        variation = new ArrayList<>();
-        variation.addAll(Arrays.asList(data).subList(8, data.length));
+    public MoveData(String coordinate, int playouts, double winrate, double probability, List<String> variation) {
+        this.coordinate = coordinate;
+        this.playouts = playouts;
+        this.winrate = winrate;
+        this.probability = probability;
+        this.variation = variation;
     }
 
     public String getCoordinate() {

@@ -1,6 +1,7 @@
 package wagner.stephanie.lizzie.gui;
 
 import com.jhlabs.image.GaussianFilter;
+import org.apache.commons.lang3.StringUtils;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
@@ -49,7 +50,7 @@ public class LizzieFrame extends JFrame {
             , resourceBundle.getString("LizzieFrame.controls.keyEnter")
             , resourceBundle.getString("LizzieFrame.controls.keyT")
     };
-    public static final String LIZZIE_TITLE = "MyLizzie - Leela Zero Interface";
+    public static final String LIZZIE_TITLE = String.format("MyLizzie %s", StringUtils.defaultString(Lizzie.getLizzieVersion(), "dev-edition"));
     public static final String LIZZIE_TRY_PLAY_TITLE = resourceBundle.getString("LizzieFrame.title.tryPlayingMode");
 
     static {

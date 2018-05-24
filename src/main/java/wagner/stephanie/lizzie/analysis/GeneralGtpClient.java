@@ -1,6 +1,5 @@
 package wagner.stephanie.lizzie.analysis;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import com.zaxxer.nuprocess.NuAbstractProcessHandler;
 import com.zaxxer.nuprocess.NuProcess;
 import com.zaxxer.nuprocess.NuProcessBuilder;
@@ -52,11 +51,11 @@ public class GeneralGtpClient implements GtpClient {
             ImmutablePair<GeneralGtpFuture, Consumer<String>> futurePair;
 
             while ((futurePair = runningCommandQueue.poll()) != null) {
-                futurePair.getLeft().markComplete();
+                futurePair.getLeft().markCompleted();
             }
 
             while ((futurePair = stagineCommandQueue.poll()) != null) {
-                futurePair.getLeft().markComplete();
+                futurePair.getLeft().markCompleted();
             }
 
             miscProcessor.execute(() -> engineExitObserverList.forEach(observer -> observer.accept(statusCode)));
@@ -142,7 +141,7 @@ public class GeneralGtpClient implements GtpClient {
                 }
 
                 if (line.equals("\n") || line.equals("\r\n") || line.equals("\r")) {
-                    future.markComplete();
+                    future.markCompleted();
 
                     runningCommandQueue.poll();
                     inCommandResponse = false;
@@ -164,6 +163,8 @@ public class GeneralGtpClient implements GtpClient {
                 GeneralGtpFuture future = Objects.requireNonNull(futurePair.getLeft());
                 Consumer<String> continuousConsumer = futurePair.getRight();
                 List<String> response = future.getResponse();
+
+                future.markStarted();
 
                 if (continuousConsumer == null) {
                     response.add(line);
@@ -276,7 +277,7 @@ public class GeneralGtpClient implements GtpClient {
     }
 
     @Override
-    public ListenableFuture<List<String>> postCommand(String command, Consumer<String> continuousOutputConsumer) {
+    public GtpFuture postCommand(String command, Consumer<String> continuousOutputConsumer) {
         GeneralGtpFuture future = new GeneralGtpFuture(command, this);
         stagineCommandQueue.offer(ImmutablePair.of(future, continuousOutputConsumer));
         gtpProcess.wantWrite();

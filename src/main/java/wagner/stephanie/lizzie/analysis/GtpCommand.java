@@ -1,9 +1,7 @@
 package wagner.stephanie.lizzie.analysis;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.list.primitive.MutableDoubleList;
 import org.eclipse.collections.api.list.primitive.MutableIntList;
 import org.eclipse.collections.impl.factory.Lists;
@@ -15,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface GtpCommand {
-    default ListenableFuture<List<String>> play(String color, String move) {
+    default GtpFuture play(String color, String move) {
         if (StringUtils.equalsIgnoreCase(color, "B") || StringUtils.equalsIgnoreCase(color, "W")) {
             return postCommand(String.format("play %s %s", color, move));
         } else {
@@ -23,16 +21,16 @@ public interface GtpCommand {
         }
     }
 
-    default ListenableFuture<List<String>> undo() {
+    default GtpFuture undo() {
         return postCommand("undo");
     }
 
-    default ListenableFuture<List<String>> clearBoard() {
+    default GtpFuture clearBoard() {
         return postCommand("clear_board");
     }
 
     default List<String> sendCommand(String command) {
-        ListenableFuture<List<String>> commandFuture = postCommand(command);
+        GtpFuture commandFuture = postCommand(command);
         try {
             return commandFuture.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -40,7 +38,7 @@ public interface GtpCommand {
         }
     }
 
-    ListenableFuture<List<String>> postCommand(String command);
+    GtpFuture postCommand(String command);
 
     static boolean isSuccessfulResponse(List<String> response) {
         boolean result = false;

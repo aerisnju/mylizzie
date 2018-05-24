@@ -1,15 +1,15 @@
 package wagner.stephanie.lizzie.analysis;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.impl.factory.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class GeneralGtpFuture implements ListenableFuture<List<String>> {
+public class GeneralGtpFuture implements GtpFuture {
     private CountDownLatch countDownLatch;
     private String command;
     private List<String> response;
@@ -17,7 +17,9 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
     private boolean triedCancelling;
     private boolean cancelled;
     private boolean normalCompleted;
-    private List<ImmutablePair<Runnable, Executor>> listenerList;
+    private boolean started;
+    private MutableList<ImmutablePair<Runnable, Executor>> completedListenerList;
+    private MutableList<ImmutablePair<Runnable, Executor>> startedListenerList;
 
     public GeneralGtpFuture(String command, GeneralGtpClient gtpClient) {
         countDownLatch = new CountDownLatch(1);
@@ -27,7 +29,9 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
         triedCancelling = false;
         cancelled = false;
         normalCompleted = false;
-        listenerList = new LinkedList<>();
+        started = false;
+        completedListenerList = Lists.mutable.empty();
+        startedListenerList = Lists.mutable.empty();
     }
 
     public String getCommand() {
@@ -38,11 +42,17 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
         return response;
     }
 
-    public synchronized void markComplete() {
+    synchronized void markCompleted() {
         normalCompleted = true;
         countDownLatch.countDown();
 
         notifyCompleted();
+    }
+
+    synchronized void markStarted() {
+        started = true;
+
+        notifyStarted();
     }
 
     @Override
@@ -60,8 +70,13 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
     }
 
     private void notifyCompleted() {
-        listenerList.forEach(pair -> pair.getRight().execute(pair.getLeft()));
-        listenerList.clear();
+        completedListenerList.forEach(pair -> pair.getRight().execute(pair.getLeft()));
+        completedListenerList.clear();
+    }
+
+    private void notifyStarted() {
+        startedListenerList.forEach(pair -> pair.getRight().execute(pair.getLeft()));
+        startedListenerList.clear();
     }
 
     @Override
@@ -72,6 +87,10 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
     @Override
     public synchronized boolean isDone() {
         return normalCompleted || cancelled;
+    }
+
+    public synchronized boolean isStarted() {
+        return started;
     }
 
     @Override
@@ -94,7 +113,16 @@ public class GeneralGtpFuture implements ListenableFuture<List<String>> {
         if (isDone()) {
             executor.execute(listener);
         } else {
-            listenerList.add(ImmutablePair.of(listener, executor));
+            completedListenerList.add(ImmutablePair.of(listener, executor));
+        }
+    }
+
+    @Override
+    public synchronized void addStartedListener(@NotNull Runnable listener, @NotNull Executor executor) {
+        if (isStarted()) {
+            executor.execute(listener);
+        } else {
+            startedListenerList.add(ImmutablePair.of(listener, executor));
         }
     }
 }

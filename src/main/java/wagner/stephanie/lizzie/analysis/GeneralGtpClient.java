@@ -116,6 +116,8 @@ public class GeneralGtpClient implements GtpClient {
                 buffer.flip();
 
                 runningCommandQueue.offer(futurePair);
+                miscProcessor.execute(() -> engineGtpCommandObserverList.forEach(observer -> observer.accept(future.getCommand())));
+
                 // In case of some particular situations
                 if (futurePair.getRight() != null && !stagineCommandQueue.isEmpty()) {
                     return true;
@@ -219,6 +221,7 @@ public class GeneralGtpClient implements GtpClient {
     private List<Consumer<String>> engineStderrLineConsumerList;
     private List<Consumer<Integer>> engineStartedObserverList;
     private List<Consumer<Integer>> engineExitObserverList;
+    private List<Consumer<String>> engineGtpCommandObserverList;
     private boolean engineExit;
 
     public GeneralGtpClient(String commandLine) {
@@ -236,6 +239,7 @@ public class GeneralGtpClient implements GtpClient {
         engineStderrLineConsumerList = new CopyOnWriteArrayList<>();
         engineStartedObserverList = new CopyOnWriteArrayList<>();
         engineExitObserverList = new CopyOnWriteArrayList<>();
+        engineGtpCommandObserverList = new CopyOnWriteArrayList<>();
         engineExit = false;
     }
 
@@ -366,6 +370,16 @@ public class GeneralGtpClient implements GtpClient {
     @Override
     public void unregisterEngineExitObserver(Consumer<Integer> observer) {
         engineExitObserverList.remove(observer);
+    }
+
+    @Override
+    public void registerGtpCommandObserver(Consumer<String> observer) {
+        engineGtpCommandObserverList.add(observer);
+    }
+
+    @Override
+    public void unregisterGtpCommandObserver(Consumer<String> observer) {
+        engineGtpCommandObserverList.remove(observer);
     }
 
     private void doCleanup() {

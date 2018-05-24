@@ -27,4 +27,8 @@ public interface GtpClient extends ExtendedGtpCommand, AutoCloseable {
     void registerEngineExitObserver(Consumer<Integer> observer);
 
     void unregisterEngineExitObserver(Consumer<Integer> observer);
+
+    void registerGtpCommandObserver(Consumer<String> observer);
+
+    void unregisterGtpCommandObserver(Consumer<String> observer);
 }

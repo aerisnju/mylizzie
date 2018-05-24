@@ -1,7 +1,5 @@
 package wagner.stephanie.lizzie.analysis;
 
-import com.google.common.collect.Streams;
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.map.MutableMap;
@@ -24,8 +22,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class OfficialLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
     private static final long MILLISECONDS_IN_MINUTE = 60 * 1000; // number of milliseconds in a minute
@@ -131,47 +127,55 @@ public class OfficialLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
             return null;
         }
 
-        MutableList<String> data = Streams.stream(result.valueStack)
-                .map(String::valueOf)
-                .collect(Collectors.toCollection(Lists.mutable::empty))
-                .reverseThis();
+        MutableMap<String, Object> data = (MutableMap<String, Object>) result.valueStack.peek();
 
-        MutableList<String> basicMoveData = data.subList(0, 3);
-        MutableList<String> variation;
-        if (data.size() >= 4) {
-            variation = data.subList(3, data.size());
-        } else {
-            variation = Lists.mutable.empty();
-        }
-
-        String coordinate = basicMoveData.get(0);
-        int playouts = Integer.parseInt(basicMoveData.get(1));
-        double winrate = Double.parseDouble(basicMoveData.get(2)) / 100.0;
-        double probability = 0.0;
+        MutableList<String> variation = (MutableList<String>) data.get("PV");
+        String coordinate = (String) data.get("MOVE");
+        int playouts = Integer.parseInt((String) data.get("CALCULATION"));
+        double winrate = Double.parseDouble((String) data.get("VALUE")) / 100.0;
+        double probability = getRate((String) data.get("POLICY"));
 
         return new MoveData(coordinate, playouts, winrate, probability, variation);
     }
 
+    private static double getRate(String rateString) {
+        if (StringUtils.isEmpty(rateString)) {
+            return 0.0;
+        }
+
+        if (rateString.indexOf('.') >= 0) {
+            return Double.parseDouble(rateString);
+        } else {
+            return Double.parseDouble(rateString) / 100.0;
+        }
+    }
+
     static class EngineOutputLineParser extends BaseParser<Object> {
         // info move D16 visits 7 winrate 4704 pv D16 Q16 D4
-        public Rule EngineLine() {
+        Rule EngineLine() {
             return Sequence(
-                    String("info")
-                    , SpaceSep()
+                    String("info"), pushInitialValueMap()
+                    , Spaces()
                     , String("move")
-                    , SpaceSep()
-                    , Move(), push(match())
-                    , SpaceSep()
+                    , Spaces()
+                    , Move(), saveMatchToValueMap("MOVE")
+                    , Spaces()
                     , String("visits")
-                    , SpaceSep()
-                    , Digits(), push(match())
-                    , SpaceSep()
+                    , Spaces()
+                    , IntNumber(), saveMatchToValueMap("CALCULATION")
+                    , Spaces()
                     , String("winrate")
-                    , SpaceSep()
-                    , Digits(), push(match())
-                    , SpaceSep()
-                    , String("pv")
-                    , ZeroOrMore(Sequence(SpaceSep(), Move(), push(match())))
+                    , Spaces()
+                    , DoubleNumber(), saveMatchToValueMap("VALUE")
+                    , Optional(
+                            Spaces()
+                            , FirstOf(String("network"), String("N"))
+                            , Spaces()
+                            , DoubleNumber(), saveMatchToValueMap("POLICY")
+                    )
+                    , Spaces()
+                    , String("pv"), saveAttrToValueMap("PV", Lists.mutable.empty())
+                    , ZeroOrMore(Sequence(Spaces(), Move(), pushMatchToList("PV")))
             );
         }
 
@@ -188,45 +192,89 @@ public class OfficialLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
         }
 
         Rule YCoord() {
-            return Digits();
+            return IntNumber();
         }
 
-        Rule Digits() {
-            return OneOrMore(Digit());
+        Rule DoubleNumber() {
+            return Sequence(
+                    Optional(AnyOf("+-")),
+                    OneOrMore(Digit()),
+                    Optional(Ch('.'), ZeroOrMore(Digit()))
+            );
+        }
+
+        Rule IntNumber() {
+            return Sequence(Optional(AnyOf("+-")), OneOrMore(Digit()));
         }
 
         Rule Digit() {
             return CharRange('0', '9');
         }
 
-        Rule SpaceSep() {
-            return OneOrMore(Space());
+        Rule Spaces() {
+            return OneOrMore(SpaceChar());
         }
 
-        Rule Space() {
+        Rule SpaceChar() {
             return AnyOf(" \t\r\n");
+        }
+
+        boolean pushInitialValueMap() {
+            MutableMap<String, Object> valueMap = Maps.mutable.empty();
+            push(valueMap);
+
+            return true;
+        }
+
+        boolean saveMatchToValueMap(String key) {
+            return saveAttrToValueMap(key, match());
+        }
+
+        boolean saveAttrToValueMap(String key, Object value) {
+            MutableMap<String, Object> valueMap = (MutableMap<String, Object>) peek();
+            valueMap.put(key, value);
+
+            return true;
+        }
+
+        boolean pushMatchToList(String listKey) {
+            return pushToList(listKey, match());
+        }
+
+        boolean pushToList(String listKey, String value) {
+            MutableMap<String, Object> valueMap = (MutableMap<String, Object>) peek();
+            MutableList<String> list = (MutableList<String>) valueMap.get(listKey);
+            list.add(value);
+
+            return true;
         }
     }
 
     public static void main(String[] args) {
         ParsingResult<?> result = runner.run("info move D16 visits 7 winrate 4704 pv D16 Q16 D4");
         System.out.println(result.matched);
-        MutableList<String> data = Streams.stream(result.valueStack)
-                .map(String::valueOf)
-                .collect(Collectors.toCollection(Lists.mutable::empty))
-                .reverseThis();
-        System.out.println(IterableUtils.toString(data));
+        System.out.println(result.valueStack.peek());
 
         result = runner.run("info move d1");
         System.out.println(result.matched);
 
         result = runner.run("info move pass visits 1537 winrate 4704 pv pass Q16 pass D1");
         System.out.println(result.matched);
-        data = Streams.stream(result.valueStack)
-                .map(String::valueOf)
-                .collect(Collectors.toCollection(Lists.mutable::empty))
-                .reverseThis()
-        ;
-        System.out.println(IterableUtils.toString(data));
+        System.out.println(result.valueStack.peek());
+
+        result = runner.run("info move pass visits 1537 winrate 4704 N 2305 pv pass Q16 pass D1");
+        System.out.println(result.matched);
+        System.out.println(result.valueStack.peek());
+        MutableMap<String, Object> data = (MutableMap<String, Object>) result.valueStack.peek();
+
+        result = runner.run("info move pass visits 1537 winrate 4704 network 2305 pv pass Q16 pass D1");
+        System.out.println(result.matched);
+        System.out.println(result.valueStack.peek());
+        System.out.println(data.equals(result.valueStack.peek()));
+
+        result = runner.run("info move pass visits 1537 winrate 4704 network 23.05 pv pass Q16 pass D1");
+        System.out.println(result.matched);
+        data = (MutableMap<String, Object>) result.valueStack.peek();
+        System.out.println(Double.parseDouble((String) data.getOrDefault("POLICY", "0.0")));
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>org.github.aerisnju</groupId>
     <artifactId>mylizzie</artifactId>
-    <version>2.0.180522</version>
+    <version>2.0.180524</version>
 
     <properties>
         <app.mainClass>wagner.stephanie.lizzie.Lizzie</app.mainClass>
@@ -182,7 +182,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>25.0-jre</version>
+            <version>25.1-jre</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->

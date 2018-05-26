@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class OfficialLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
+public class OfficialLeelazAnalyzerV1 extends AbstractGtpBasedAnalyzer {
     private static final long MILLISECONDS_IN_MINUTE = 60 * 1000; // number of milliseconds in a minute
 
     private ExecutorService notificationExecutor;
@@ -31,7 +31,7 @@ public class OfficialLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
     private long startPonderTime;
     private final BoardStateChangeObserver boardSyncObserver;
 
-    public OfficialLeelazAnalyzer(GtpClient gtpClient) {
+    public OfficialLeelazAnalyzerV1(GtpClient gtpClient) {
         super(gtpClient, true);
 
         notificationExecutor = Executors.newSingleThreadExecutor();
@@ -51,7 +51,7 @@ public class OfficialLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
 
             @Override
             protected void handleGtpCommand(String command) {
-                OfficialLeelazAnalyzer.this.postGtpCommand(command);
+                OfficialLeelazAnalyzerV1.this.postGtpCommand(command);
             }
         };
 

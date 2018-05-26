@@ -108,9 +108,10 @@ public class Leelaz implements AutoCloseable {
 
         Consumer<Integer> exitListener = this::exitNotification;
         analyzeGtpClient.registerEngineExitObserver(exitListener);
-        analyzeGtpClient.start();
 
         try {
+            analyzeGtpClient.start();
+
             analyzer = new GtpBasedAnalyzerBuilder()
                     .setGtpClient(analyzeGtpClient)
                     .build();
@@ -129,6 +130,10 @@ public class Leelaz implements AutoCloseable {
                     break;
             }
 
+            analyzeGtpClient.unregisterEngineExitObserver(exitListener);
+            analyzeGtpClient.shutdown(60, TimeUnit.SECONDS);
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.engineNotStart"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             analyzeGtpClient.unregisterEngineExitObserver(exitListener);
             analyzeGtpClient.shutdown(60, TimeUnit.SECONDS);
         }

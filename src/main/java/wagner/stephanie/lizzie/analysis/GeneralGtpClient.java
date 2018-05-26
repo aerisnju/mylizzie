@@ -293,7 +293,7 @@ public class GeneralGtpClient implements GtpClient {
         processBuilder.setProcessListener(gtpProcessHandler);
         setUpOtherProcessParameters(processBuilder);
 
-        gtpProcess = processBuilder.start();
+        gtpProcess = Objects.requireNonNull(processBuilder.start());
     }
 
     protected void setUpOtherProcessParameters(NuProcessBuilder processBuilder) {

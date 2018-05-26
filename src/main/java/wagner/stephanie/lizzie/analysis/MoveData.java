@@ -1,12 +1,11 @@
 package wagner.stephanie.lizzie.analysis;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.rules.Board;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -97,28 +96,29 @@ public class MoveData {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MoveData{");
-        sb.append("coordinate='").append(coordinate).append('\'');
-        sb.append(", playouts=").append(playouts);
-        sb.append(", winrate=").append(winrate);
-        sb.append(", variation=").append(variation);
-        sb.append('}');
-        return sb.toString();
+        return MoreObjects.toStringHelper(this)
+                .add("coordinate", coordinate)
+                .add("playouts", playouts)
+                .add("winrate", winrate)
+                .add("probability", probability)
+                .add("variation", variation)
+                .toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MoveData)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         MoveData moveData = (MoveData) o;
         return playouts == moveData.playouts &&
                 Double.compare(moveData.winrate, winrate) == 0 &&
-                Objects.equals(coordinate, moveData.coordinate) &&
-                Objects.equals(variation, moveData.variation);
+                Double.compare(moveData.probability, probability) == 0 &&
+                Objects.equal(coordinate, moveData.coordinate) &&
+                Objects.equal(variation, moveData.variation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coordinate, playouts, winrate, variation);
+        return Objects.hashCode(coordinate, playouts, winrate, probability, variation);
     }
 }

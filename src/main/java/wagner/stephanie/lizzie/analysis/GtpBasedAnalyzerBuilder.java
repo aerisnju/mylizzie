@@ -44,8 +44,11 @@ public class GtpBasedAnalyzerBuilder {
         }
         String name = GtpCommand.getLineWithoutResponseHeader(nameResponse, 0).trim();
         if (name.equals("Leela Zero")) {
-            if (isNewOfficialEngine()) {
-                return new OfficialLeelazAnalyzer(gtpClient);
+            int leelazEngineVersion = getLeelazEngineVersion();
+            if (leelazEngineVersion == 2) {
+                return new OfficialLeelazAnalyzerV2(gtpClient);
+            } else if (leelazEngineVersion == 1) {
+                return new OfficialLeelazAnalyzerV1(gtpClient);
             } else {
                 detectCorrectModifiedLeelazEngine();
                 return new ClassicModifiedLeelazAnalyzer(gtpClient);
@@ -55,7 +58,7 @@ public class GtpBasedAnalyzerBuilder {
         }
     }
 
-    private boolean isNewOfficialEngine() {
+    private int getLeelazEngineVersion() {
         List<String> listCommandsResponse = null;
         ListenableFuture<List<String>> future = gtpClient.postCommand("list_commands");
         try {
@@ -70,7 +73,53 @@ public class GtpBasedAnalyzerBuilder {
 
         GtpCommand.removeResponseHeaderInPlace(listCommandsResponse);
         assert listCommandsResponse != null;
-        return listCommandsResponse.stream().anyMatch(s -> StringUtils.equalsIgnoreCase(s.trim(), "lz-analyze"));
+        boolean isOldVersion = listCommandsResponse.stream().noneMatch(s -> StringUtils.equalsIgnoreCase(s.trim(), "lz-analyze"));
+        if (isOldVersion) {
+            return 0;
+        }
+
+        return detectOfficialLeelazAnalyzingProtocolVersion();
+    }
+
+    private int detectOfficialLeelazAnalyzingProtocolVersion() {
+        OfficialV2LeelazEngineDetector detector = new OfficialV2LeelazEngineDetector();
+        gtpClient.registerStdoutLineConsumer(detector);
+
+        try {
+            gtpClient.postCommand("lz-analyze 20");
+            if (!detector.latch.await(8, TimeUnit.SECONDS)) {
+                throw new GenericLizzieException(ImmutableMap.of(REASON, ENGINE_NOT_SUPPORTED));
+            }
+            gtpClient.sendCommand("name"); // Stop
+        } catch (InterruptedException e) {
+            // Do nothing
+        } finally {
+            gtpClient.unregisterStdoutLineConsumer(detector);
+        }
+
+        return detector.version;
+    }
+
+    private static class OfficialV2LeelazEngineDetector implements Consumer<String> {
+        private CountDownLatch latch = new CountDownLatch(1);
+        private int version = 1;
+
+        @Override
+        public void accept(String line) {
+            if (StringUtils.isEmpty(line)) {
+                return;
+            }
+
+            if (StringUtils.startsWithIgnoreCase(line, "info")) {
+                if (StringUtils.contains(line, "order")) {
+                    version = 2;
+                } else {
+                    version = 1;
+                }
+
+                latch.countDown();
+            }
+        }
     }
 
     private void detectCorrectModifiedLeelazEngine() {

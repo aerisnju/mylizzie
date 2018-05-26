@@ -61,7 +61,7 @@ public class OfficialLeelazAnalyzerV2 extends AbstractGtpBasedAnalyzer {
 
     @Override
     protected void doStartAnalyzing() {
-        gtpClient.postCommand("lz-analyze 20", this::processEngineOutputLine);
+        gtpClient.postCommand("lz-analyze 20", true, this::processEngineOutputLine);
 
         startPonderTime = System.currentTimeMillis();
     }

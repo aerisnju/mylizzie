@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class GeneralGtpFuture implements GtpFuture {
-    private CountDownLatch countDownLatch;
-    private String command;
+    private final CountDownLatch completionLatch;
+    private final String command;
+    private final boolean continuous;
     private List<String> response;
     private GeneralGtpClient gtpClient;
     private boolean triedCancelling;
@@ -21,9 +22,10 @@ public class GeneralGtpFuture implements GtpFuture {
     private MutableList<ImmutablePair<Runnable, Executor>> completedListenerList;
     private MutableList<ImmutablePair<Runnable, Executor>> startedListenerList;
 
-    public GeneralGtpFuture(String command, GeneralGtpClient gtpClient) {
-        countDownLatch = new CountDownLatch(1);
+    public GeneralGtpFuture(String command, GeneralGtpClient gtpClient, boolean continuous) {
+        completionLatch = new CountDownLatch(1);
         this.command = command;
+        this.continuous = continuous;
         this.gtpClient = gtpClient;
         response = new ArrayList<>();
         triedCancelling = false;
@@ -34,6 +36,10 @@ public class GeneralGtpFuture implements GtpFuture {
         startedListenerList = Lists.mutable.empty();
     }
 
+    public GeneralGtpFuture(String command, GeneralGtpClient gtpClient) {
+        this(command, gtpClient, false);
+    }
+
     public String getCommand() {
         return command;
     }
@@ -42,9 +48,13 @@ public class GeneralGtpFuture implements GtpFuture {
         return response;
     }
 
+    public boolean isContinuous() {
+        return continuous;
+    }
+
     synchronized void markCompleted() {
         normalCompleted = true;
-        countDownLatch.countDown();
+        completionLatch.countDown();
 
         notifyCompleted();
     }
@@ -95,13 +105,13 @@ public class GeneralGtpFuture implements GtpFuture {
 
     @Override
     public List<String> get() throws InterruptedException, ExecutionException {
-        countDownLatch.await();
+        completionLatch.await();
         return response;
     }
 
     @Override
     public List<String> get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        if (countDownLatch.await(timeout, unit)) {
+        if (completionLatch.await(timeout, unit)) {
             return response;
         } else {
             throw new TimeoutException("Timeout when waiting for command " + getCommand());

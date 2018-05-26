@@ -86,7 +86,7 @@ public class GtpBasedAnalyzerBuilder {
         gtpClient.registerStdoutLineConsumer(detector);
 
         try {
-            gtpClient.postCommand("lz-analyze 20");
+            gtpClient.postCommand("lz-analyze 20", true, null);
             if (!detector.latch.await(8, TimeUnit.SECONDS)) {
                 throw new GenericLizzieException(ImmutableMap.of(REASON, ENGINE_NOT_SUPPORTED));
             }

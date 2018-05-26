@@ -62,7 +62,7 @@ public class OfficialLeelazAnalyzerV1 extends AbstractGtpBasedAnalyzer {
 
     @Override
     protected void doStartAnalyzing() {
-        gtpClient.postCommand("lz-analyze 20", this::processEngineOutputLine).addListener(() -> {
+        gtpClient.postCommand("lz-analyze 20", true, this::processEngineOutputLine).addListener(() -> {
             bestMoves = Maps.mutable.empty();
         }, notificationExecutor);
 

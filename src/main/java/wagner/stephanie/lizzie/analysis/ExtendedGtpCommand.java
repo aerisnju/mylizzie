@@ -7,5 +7,9 @@ public interface ExtendedGtpCommand extends GtpCommand {
         return postCommand(command, null);
     }
 
-    GtpFuture postCommand(String command, Consumer<String> continuousOutputConsumer);
+    default GtpFuture postCommand(String command, Consumer<String> commandOutputConsumer) {
+        return postCommand(command, false, commandOutputConsumer);
+    }
+
+    GtpFuture postCommand(String command, boolean continuous, Consumer<String> commandOutputConsumer);
 }

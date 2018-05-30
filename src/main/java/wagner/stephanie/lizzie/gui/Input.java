@@ -146,9 +146,8 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 Lizzie.optionSetting.setShowWhiteSuggestion(!Lizzie.optionSetting.isShowWhiteSuggestion());
             }
         } else if (e.getKeyCode() == KeyEvent.VK_E) {
-            String engineCommand = JOptionPane.showInputDialog(Lizzie.frame
-                    , resourceBundle.getString("LizzieFrame.prompt.enterEngineCommand"), "Lizzie", JOptionPane.QUESTION_MESSAGE);
-            Lizzie.leelaz.postGtpCommand(engineCommand);
+            Lizzie.optionSetting.setGtpConsoleWindowShow(!Lizzie.optionSetting.isGtpConsoleWindowShow());
+            Lizzie.gtpConsole.setVisible(Lizzie.optionSetting.isGtpConsoleWindowShow());
         } else if (e.getKeyCode() == KeyEvent.VK_B) {
             if (byoYomiAutoPlayDialog == null || !byoYomiAutoPlayDialog.isDisplayable()) {
                 byoYomiAutoPlayDialog = new ByoYomiAutoPlayDialog(Lizzie.frame);

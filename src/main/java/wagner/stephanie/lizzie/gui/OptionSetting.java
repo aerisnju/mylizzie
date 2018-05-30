@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import wagner.stephanie.lizzie.Lizzie;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
@@ -192,6 +195,175 @@ public class OptionSetting {
         }
     }
 
+    public static class WindowState {
+        private boolean maximizedHorizontal;
+        private boolean maximizedVertical;
+        private boolean iconified;
+        private int x;
+        private int y;
+        private int width;
+        private int height;
+
+        public WindowState() {
+            this(false, false, false, 100, 100, 600, 400);
+        }
+
+        public WindowState(boolean maximizedHorizontal, boolean maximizedVertical, boolean iconified, int x, int y, int width, int height) {
+            this.maximizedHorizontal = maximizedHorizontal;
+            this.maximizedVertical = maximizedVertical;
+            this.iconified = iconified;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+
+        public WindowState(Window window) {
+            recordStateFrom(window);
+        }
+
+        public boolean isMaximizedHorizontal() {
+            return maximizedHorizontal;
+        }
+
+        public void setMaximizedHorizontal(boolean maximizedHorizontal) {
+            this.maximizedHorizontal = maximizedHorizontal;
+        }
+
+        public boolean isMaximizedVertical() {
+            return maximizedVertical;
+        }
+
+        public void setMaximizedVertical(boolean maximizedVertical) {
+            this.maximizedVertical = maximizedVertical;
+        }
+
+        public boolean isIconified() {
+            return iconified;
+        }
+
+        public void setIconified(boolean iconified) {
+            this.iconified = iconified;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public void applyStateTo(Window window) {
+            int x = Math.max(this.x, 10);
+            int y = Math.max(this.y, 10);
+            int width = Math.max(this.width, 100);
+            int height = Math.max(this.height, 100);
+            window.setBounds(x, y, width, height);
+
+            if (window instanceof Frame) {
+                Frame frame = (Frame) window;
+                if (iconified) {
+                    frame.setExtendedState(frame.getExtendedState() | JFrame.ICONIFIED);
+                } else if (maximizedHorizontal && maximizedVertical) {
+                    frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+                } else {
+                    if (maximizedHorizontal) {
+                        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_HORIZ);
+                    }
+                    if (maximizedVertical) {
+                        frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_VERT);
+                    }
+                }
+            }
+        }
+
+        public void recordStateFrom(Window window) {
+            if (window instanceof Frame) {
+                Frame frame = (Frame) window;
+                int frameState = frame.getExtendedState();
+                iconified = (frameState & JFrame.ICONIFIED) != 0;
+                maximizedHorizontal = (frameState & JFrame.MAXIMIZED_HORIZ) != 0;
+                maximizedVertical = (frameState & JFrame.MAXIMIZED_VERT) != 0;
+            } else {
+                iconified = false;
+                maximizedHorizontal = false;
+                maximizedVertical = false;
+            }
+
+            x = window.getX();
+            y = window.getY();
+            width = window.getWidth();
+            height = window.getHeight();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            WindowState that = (WindowState) o;
+            return new EqualsBuilder()
+                    .append(maximizedHorizontal, that.maximizedHorizontal)
+                    .append(maximizedVertical, that.maximizedVertical)
+                    .append(iconified, that.iconified)
+                    .append(x, that.x)
+                    .append(y, that.y)
+                    .append(width, that.width)
+                    .append(height, that.height)
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(maximizedHorizontal)
+                    .append(maximizedVertical)
+                    .append(iconified)
+                    .append(x)
+                    .append(y)
+                    .append(width)
+                    .append(height)
+                    .toHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("maximizedHorizontal", maximizedHorizontal)
+                    .append("maximizedVertical", maximizedVertical)
+                    .append("iconified", iconified)
+                    .append("x", x)
+                    .append("y", y)
+                    .append("width", width)
+                    .append("height", height)
+                    .toString();
+        }
+    }
+
     private int version;
     private BoardSize boardSize;
     private int variationLimit;
@@ -205,6 +377,7 @@ public class OptionSetting {
     private boolean playoutsInShortForm;
     private boolean showNextMove;
     private boolean analysisWindowShow;
+    private boolean gtpConsoleWindowShow;
     private boolean mouseOverShowMove;
     private boolean showBlackSuggestion;
     private boolean showWhiteSuggestion;
@@ -219,18 +392,10 @@ public class OptionSetting {
     private boolean autoStartAnalyzingAfterPlacingMoves;
     private ColorSetting bestSuggestionColor;
 
-    private int mainWindowPosX;
-    private int mainWindowPosY;
-    private int mainWindowWidth;
-    private int mainWindowHeight;
-    private int analysisWindowPosX;
-    private int analysisWindowPosY;
-    private int analysisWindowWidth;
-    private int analysisWindowHeight;
-    private int winrateHistogramWindowPosX;
-    private int winrateHistogramWindowPosY;
-    private int winrateHistogramWindowWidth;
-    private int winrateHistogramWindowHeight;
+    private WindowState mainWindowState;
+    private WindowState analysisWindowState;
+    private WindowState winrateHistogramWindowState;
+    private WindowState gtpConsoleWindowState;
 
     private String lastChooserLocation;
     private boolean winrateHistogramWindowShow;
@@ -251,6 +416,7 @@ public class OptionSetting {
         playoutsInShortForm = false;
         showNextMove = false;
         analysisWindowShow = true;
+        gtpConsoleWindowShow = false;
         mouseOverShowMove = false;
         showBlackSuggestion = true;
         showWhiteSuggestion = true;
@@ -265,20 +431,11 @@ public class OptionSetting {
         autoStartAnalyzingAfterPlacingMoves = true;
         bestSuggestionColor = new ColorSetting(Color.RED);
 
-        mainWindowPosX = -1;
-        mainWindowPosY = -1;
         // on 1080p windows screens, this is a good width/height
-        mainWindowWidth = 657;
-        mainWindowHeight = 687;
-        analysisWindowPosX = -1;
-        analysisWindowPosY = -1;
-        analysisWindowWidth = -1;
-        analysisWindowHeight = -1;
-
-        winrateHistogramWindowPosX = -1;
-        winrateHistogramWindowPosY = -1;
-        winrateHistogramWindowWidth = -1;
-        winrateHistogramWindowHeight = -1;
+        mainWindowState = new WindowState(false, false, false, 100, 100, 657, 687);
+        analysisWindowState = new WindowState();
+        winrateHistogramWindowState = new WindowState();
+        gtpConsoleWindowState = new WindowState();
 
         lastChooserLocation = ".";
         winrateHistogramWindowShow = true;
@@ -389,6 +546,14 @@ public class OptionSetting {
         this.analysisWindowShow = analysisWindowShow;
     }
 
+    public boolean isGtpConsoleWindowShow() {
+        return gtpConsoleWindowShow;
+    }
+
+    public void setGtpConsoleWindowShow(boolean gtpConsoleWindowShow) {
+        this.gtpConsoleWindowShow = gtpConsoleWindowShow;
+    }
+
     public boolean isMouseOverShowMove() {
         return mouseOverShowMove;
     }
@@ -493,100 +658,52 @@ public class OptionSetting {
         this.autoStartAnalyzingAfterPlacingMoves = autoStartAnalyzingAfterPlacingMoves;
     }
 
-    public int getMainWindowPosX() {
-        return mainWindowPosX;
+    public WindowState getMainWindowState() {
+        return mainWindowState;
     }
 
-    public void setMainWindowPosX(int mainWindowPosX) {
-        this.mainWindowPosX = mainWindowPosX;
+    public void setMainWindowState(WindowState mainWindowState) {
+        this.mainWindowState = mainWindowState;
     }
 
-    public int getMainWindowPosY() {
-        return mainWindowPosY;
+    public void setMainWindowState(Window frame) {
+        mainWindowState = new WindowState(frame);
     }
 
-    public void setMainWindowPosY(int mainWindowPosY) {
-        this.mainWindowPosY = mainWindowPosY;
+    public WindowState getAnalysisWindowState() {
+        return analysisWindowState;
     }
 
-    public int getMainWindowWidth() {
-        return mainWindowWidth;
+    public void setAnalysisWindowState(WindowState analysisWindowState) {
+        this.analysisWindowState = analysisWindowState;
     }
 
-    public void setMainWindowWidth(int mainWindowWidth) {
-        this.mainWindowWidth = mainWindowWidth;
+    public void setAnalysisWindowState(Window window) {
+        analysisWindowState = new WindowState(window);
     }
 
-    public int getMainWindowHeight() {
-        return mainWindowHeight;
+    public WindowState getWinrateHistogramWindowState() {
+        return winrateHistogramWindowState;
     }
 
-    public void setMainWindowHeight(int mainWindowHeight) {
-        this.mainWindowHeight = mainWindowHeight;
+    public void setWinrateHistogramWindowState(WindowState winrateHistogramWindowState) {
+        this.winrateHistogramWindowState = winrateHistogramWindowState;
     }
 
-    public int getAnalysisWindowPosX() {
-        return analysisWindowPosX;
+    public void setWinrateHistogramWindowState(Window window) {
+        winrateHistogramWindowState = new WindowState(window);
     }
 
-    public void setAnalysisWindowPosX(int analysisWindowPosX) {
-        this.analysisWindowPosX = analysisWindowPosX;
+    public WindowState getGtpConsoleWindowState() {
+        return gtpConsoleWindowState;
     }
 
-    public int getAnalysisWindowPosY() {
-        return analysisWindowPosY;
+    public void setGtpConsoleWindowState(WindowState gtpConsoleWindowState) {
+        this.gtpConsoleWindowState = gtpConsoleWindowState;
     }
 
-    public void setAnalysisWindowPosY(int analysisWindowPosY) {
-        this.analysisWindowPosY = analysisWindowPosY;
-    }
-
-    public int getAnalysisWindowWidth() {
-        return analysisWindowWidth;
-    }
-
-    public void setAnalysisWindowWidth(int analysisWindowWidth) {
-        this.analysisWindowWidth = analysisWindowWidth;
-    }
-
-    public int getAnalysisWindowHeight() {
-        return analysisWindowHeight;
-    }
-
-    public void setAnalysisWindowHeight(int analysisWindowHeight) {
-        this.analysisWindowHeight = analysisWindowHeight;
-    }
-
-    public int getWinrateHistogramWindowPosX() {
-        return winrateHistogramWindowPosX;
-    }
-
-    public void setWinrateHistogramWindowPosX(int winrateHistogramWindowPosX) {
-        this.winrateHistogramWindowPosX = winrateHistogramWindowPosX;
-    }
-
-    public int getWinrateHistogramWindowPosY() {
-        return winrateHistogramWindowPosY;
-    }
-
-    public void setWinrateHistogramWindowPosY(int winrateHistogramWindowPosY) {
-        this.winrateHistogramWindowPosY = winrateHistogramWindowPosY;
-    }
-
-    public int getWinrateHistogramWindowWidth() {
-        return winrateHistogramWindowWidth;
-    }
-
-    public void setWinrateHistogramWindowWidth(int winrateHistogramWindowWidth) {
-        this.winrateHistogramWindowWidth = winrateHistogramWindowWidth;
-    }
-
-    public int getWinrateHistogramWindowHeight() {
-        return winrateHistogramWindowHeight;
-    }
-
-    public void setWinrateHistogramWindowHeight(int winrateHistogramWindowHeight) {
-        this.winrateHistogramWindowHeight = winrateHistogramWindowHeight;
+    public void setGtpConsoleWindowState(Window window) {
+        gtpConsoleWindowState = new WindowState(window);
     }
 
     public String getLastChooserLocation() {
@@ -630,6 +747,7 @@ public class OptionSetting {
                 .append(playoutsInShortForm, that.playoutsInShortForm)
                 .append(showNextMove, that.showNextMove)
                 .append(analysisWindowShow, that.analysisWindowShow)
+                .append(gtpConsoleWindowShow, that.gtpConsoleWindowShow)
                 .append(mouseOverShowMove, that.mouseOverShowMove)
                 .append(showBlackSuggestion, that.showBlackSuggestion)
                 .append(showWhiteSuggestion, that.showWhiteSuggestion)
@@ -640,24 +758,16 @@ public class OptionSetting {
                 .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
                 .append(variationTransparent, that.variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves, that.autoStartAnalyzingAfterPlacingMoves)
-                .append(bestSuggestionColor, that.bestSuggestionColor)
-                .append(mainWindowPosX, that.mainWindowPosX)
-                .append(mainWindowPosY, that.mainWindowPosY)
-                .append(mainWindowWidth, that.mainWindowWidth)
-                .append(mainWindowHeight, that.mainWindowHeight)
-                .append(analysisWindowPosX, that.analysisWindowPosX)
-                .append(analysisWindowPosY, that.analysisWindowPosY)
-                .append(analysisWindowWidth, that.analysisWindowWidth)
-                .append(analysisWindowHeight, that.analysisWindowHeight)
-                .append(winrateHistogramWindowPosX, that.winrateHistogramWindowPosX)
-                .append(winrateHistogramWindowPosY, that.winrateHistogramWindowPosY)
-                .append(winrateHistogramWindowWidth, that.winrateHistogramWindowWidth)
-                .append(winrateHistogramWindowHeight, that.winrateHistogramWindowHeight)
                 .append(winrateHistogramWindowShow, that.winrateHistogramWindowShow)
                 .append(boardSize, that.boardSize)
                 .append(boardColor, that.boardColor)
                 .append(leelazCommandLine, that.leelazCommandLine)
                 .append(engineProfileList, that.engineProfileList)
+                .append(bestSuggestionColor, that.bestSuggestionColor)
+                .append(mainWindowState, that.mainWindowState)
+                .append(analysisWindowState, that.analysisWindowState)
+                .append(winrateHistogramWindowState, that.winrateHistogramWindowState)
+                .append(gtpConsoleWindowState, that.gtpConsoleWindowState)
                 .append(lastChooserLocation, that.lastChooserLocation)
                 .append(byoYomiSetting, that.byoYomiSetting)
                 .isEquals();
@@ -679,6 +789,7 @@ public class OptionSetting {
                 .append(playoutsInShortForm)
                 .append(showNextMove)
                 .append(analysisWindowShow)
+                .append(gtpConsoleWindowShow)
                 .append(mouseOverShowMove)
                 .append(showBlackSuggestion)
                 .append(showWhiteSuggestion)
@@ -692,21 +803,18 @@ public class OptionSetting {
                 .append(variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves)
                 .append(bestSuggestionColor)
-                .append(mainWindowPosX)
-                .append(mainWindowPosY)
-                .append(mainWindowWidth)
-                .append(mainWindowHeight)
-                .append(analysisWindowPosX)
-                .append(analysisWindowPosY)
-                .append(analysisWindowWidth)
-                .append(analysisWindowHeight)
-                .append(winrateHistogramWindowPosX)
-                .append(winrateHistogramWindowPosY)
-                .append(winrateHistogramWindowWidth)
-                .append(winrateHistogramWindowHeight)
+                .append(mainWindowState)
+                .append(analysisWindowState)
+                .append(winrateHistogramWindowState)
+                .append(gtpConsoleWindowState)
                 .append(lastChooserLocation)
                 .append(winrateHistogramWindowShow)
                 .append(byoYomiSetting)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return Lizzie.gson.toJson(this);
     }
 }

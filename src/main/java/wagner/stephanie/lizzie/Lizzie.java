@@ -55,6 +55,7 @@ public class Lizzie {
         // Make java.util.logging work with log4j
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
     }
+
     private static final Logger logger = LogManager.getLogger(Lizzie.class);
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
 
@@ -64,6 +65,7 @@ public class Lizzie {
     public static final CountDownLatch exitLatch = new CountDownLatch(1);
     private static int lizzieExitCode = 0;
 
+    public static GtpConsoleDialog gtpConsole;
     public static LizzieFrame frame;
     public static JDialog analysisDialog;
     public static AnalysisFrame analysisFrame;
@@ -175,6 +177,10 @@ public class Lizzie {
             }
         }
 
+        gtpConsole = new GtpConsoleDialog(null);
+        optionSetting.getGtpConsoleWindowState().applyStateTo(gtpConsole);
+        gtpConsole.setVisible(true);
+
         leelaz = new Leelaz(optionSetting.getLeelazCommandLine());
         board = new Board();
         leelaz.startEngine();
@@ -203,6 +209,7 @@ public class Lizzie {
 
         try {
             leelaz.setThinking(true);
+            gtpConsole.setVisible(optionSetting.isGtpConsoleWindowShow());
             exitLatch.await();
         } catch (InterruptedException e) {
             // Do nothing
@@ -794,63 +801,19 @@ public class Lizzie {
     }
 
     public static void readGuiPosition() {
-        readMainFramePosition();
-        readAnalysisWindowPosition();
-        readWinrateHistogramWindowPosition();
-    }
-
-    public static void readAnalysisWindowPosition() {
-        optionSetting.setAnalysisWindowPosX(analysisDialog.getX());
-        optionSetting.setAnalysisWindowPosY(analysisDialog.getY());
-        optionSetting.setAnalysisWindowWidth(analysisDialog.getWidth());
-        optionSetting.setAnalysisWindowHeight(analysisDialog.getHeight());
-    }
-
-    public static void readMainFramePosition() {
-        optionSetting.setMainWindowPosX(frame.getX());
-        optionSetting.setMainWindowPosY(frame.getY());
-        optionSetting.setMainWindowWidth(frame.getWidth());
-        optionSetting.setMainWindowHeight(frame.getHeight());
-    }
-
-    public static void readWinrateHistogramWindowPosition() {
-        optionSetting.setWinrateHistogramWindowPosX(winrateHistogramDialog.getX());
-        optionSetting.setWinrateHistogramWindowPosY(winrateHistogramDialog.getY());
-        optionSetting.setWinrateHistogramWindowWidth(winrateHistogramDialog.getWidth());
-        optionSetting.setWinrateHistogramWindowHeight(winrateHistogramDialog.getHeight());
+        optionSetting.setMainWindowState(frame);
+        optionSetting.setAnalysisWindowState(analysisDialog);
+        optionSetting.setWinrateHistogramWindowState(winrateHistogramDialog);
+        optionSetting.setGtpConsoleWindowState(gtpConsole);
     }
 
     public static void setGuiPosition() {
-        setMainWindowPosition();
-        setAnalysisWindowPosition();
-        setWinrateHistogramWindowPosition();
-    }
-
-    public static void setAnalysisWindowPosition() {
-        if (optionSetting.getAnalysisWindowPosX() >= 0 && optionSetting.getAnalysisWindowPosY() >= 0) {
-            analysisDialog.setLocation(optionSetting.getAnalysisWindowPosX(), optionSetting.getAnalysisWindowPosY());
-        }
-        if (optionSetting.getAnalysisWindowWidth() >= 10 && optionSetting.getAnalysisWindowHeight() >= 10) {
-            analysisDialog.setSize(optionSetting.getAnalysisWindowWidth(), optionSetting.getAnalysisWindowHeight());
-        }
-    }
-
-    public static void setMainWindowPosition() {
-        if (optionSetting.getMainWindowPosX() >= 0 && optionSetting.getMainWindowPosY() >= 0) {
-            frame.setLocation(optionSetting.getMainWindowPosX(), optionSetting.getMainWindowPosY());
-        }
-        if (optionSetting.getMainWindowWidth() >= 10 && optionSetting.getMainWindowHeight() >= 10) {
-            frame.setSize(optionSetting.getMainWindowWidth(), optionSetting.getMainWindowHeight());
-        }
-    }
-
-    public static void setWinrateHistogramWindowPosition() {
-        if (optionSetting.getWinrateHistogramWindowPosX() >= 0 && optionSetting.getWinrateHistogramWindowPosY() >= 0) {
-            winrateHistogramDialog.setLocation(optionSetting.getWinrateHistogramWindowPosX(), optionSetting.getWinrateHistogramWindowPosY());
-        }
-        if (optionSetting.getWinrateHistogramWindowWidth() >= 10 && optionSetting.getWinrateHistogramWindowHeight() >= 10) {
-            winrateHistogramDialog.setSize(optionSetting.getWinrateHistogramWindowWidth(), optionSetting.getWinrateHistogramWindowHeight());
-        }
+        SwingUtilities.invokeLater(() -> {
+            optionSetting.getMainWindowState().applyStateTo(frame);
+            optionSetting.getAnalysisWindowState().applyStateTo(analysisDialog);
+            optionSetting.getWinrateHistogramWindowState().applyStateTo(winrateHistogramDialog);
+            optionSetting.getGtpConsoleWindowState().applyStateTo(gtpConsole);
+        });
     }
 
     public static void readSettingFile() {

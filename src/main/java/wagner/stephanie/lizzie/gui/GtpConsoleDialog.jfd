@@ -1,0 +1,67 @@
+JFDML JFormDesigner: "7.0.0.0.92" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "wagner.stephanie.lizzie.i18n"
+	"i18n.bundleName": "GuiBundle"
+	"i18n.keyPrefix": "GtpConsoleDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": new FormMessage( null, "GtpConsoleDialog.this.title" )
+			addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentHidden", "thisComponentHidden", true ) )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textFieldGtpCommandInput"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 2, false )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "textFieldGtpCommandInputActionPerformed", true ) )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "South"
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPaneGtpConsole"
+				add( new FormComponent( "javax.swing.JTextPane" ) {
+					name: "textPaneGtpConsole"
+					"editable": false
+					"background": sfield java.awt.Color white
+					"font": new com.jformdesigner.model.SwingDerivedFont( null, 0, 2, false )
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class info.clearthought.layout.TableLayout ) {
+				"$columnSpecs": "fill"
+				"$rowSpecs": "pref, pref"
+				"hGap": 2
+				"vGap": 2
+			} ) {
+				name: "panelInfoUtil"
+				add( new FormContainer( "javax.swing.JToolBar", new FormLayoutManager( class javax.swing.JToolBar ) ) {
+					name: "toolBarConsole"
+					"floatable": false
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonClear"
+						"icon": new com.jformdesigner.model.SwingIcon( 0, "/icon/eraser-tool-icon.png" )
+						"toolTipText": new FormMessage( null, "GtpConsoleDialog.buttonClear.toolTipText" )
+					} )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.TableConstraints ) {
+					"hAlign": 2
+					"vAlign": 2
+				} )
+				add( new FormComponent( "javax.swing.JLabel" ) {
+					name: "labelInfo"
+					"text": new FormMessage( null, "GtpConsoleDialog.labelInfo.text" )
+				}, new FormLayoutConstraints( class com.jformdesigner.runtime.TableConstraints ) {
+					"gridY": 1
+					"hAlign": 2
+					"vAlign": 2
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "North"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 510, 390 )
+		} )
+	}
+}

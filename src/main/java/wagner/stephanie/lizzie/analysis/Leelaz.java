@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
+import wagner.stephanie.lizzie.Lizzie;
 import wagner.stephanie.lizzie.util.GenericLizzieException;
 
 import javax.swing.*;
@@ -42,6 +43,10 @@ public class Leelaz implements AutoCloseable {
 
     public void setNormalExit(boolean normalExit) {
         this.normalExit = normalExit;
+    }
+
+    public AbstractGtpBasedAnalyzer getAnalyzer() {
+        return analyzer;
     }
 
     private void exitNotification(int exitCode) {
@@ -110,6 +115,7 @@ public class Leelaz implements AutoCloseable {
         analyzeGtpClient.registerEngineExitObserver(exitListener);
 
         try {
+            Lizzie.gtpConsole.linkToGtpClient(analyzeGtpClient);
             analyzeGtpClient.start();
 
             analyzer = new GtpBasedAnalyzerBuilder()

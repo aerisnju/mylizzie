@@ -137,9 +137,10 @@ public class WinrateHistogramDialog extends JDialog {
             }
         });
 
-        if (Lizzie.optionSetting.getWinrateHistogramWindowWidth() >= 10 && Lizzie.optionSetting.getWinrateHistogramWindowHeight() >= 10) {
-            setPreferredSize(new Dimension(Lizzie.optionSetting.getWinrateHistogramWindowWidth(), Lizzie.optionSetting.getWinrateHistogramWindowHeight()));
-        }
+        setPreferredSize(new Dimension(
+                Lizzie.optionSetting.getWinrateHistogramWindowState().getWidth()
+                , Lizzie.optionSetting.getWinrateHistogramWindowState().getHeight()
+        ));
         splitPaneHistogram.setDividerLocation(0.3);
         pack();
 

@@ -79,13 +79,7 @@ public class OptionDialog extends JDialog {
     private JRadioButton radioButtonBoard9x9;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
-    public OptionDialog(Frame owner) {
-        super(owner);
-        initComponents();
-        initOther();
-    }
-
-    public OptionDialog(Dialog owner) {
+    public OptionDialog(Window owner) {
         super(owner);
         initComponents();
         initOther();

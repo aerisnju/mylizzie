@@ -114,9 +114,6 @@ public class ClassicModifiedLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
                 if (Character.isLetter(line.charAt(0))) {
                     bestMoves.add(parseMoveDataLine(line));
                 }
-            } else {
-                final String lineToPrint = line;
-                notificationExecutor.execute(() -> System.out.println(lineToPrint));
             }
         }
     }

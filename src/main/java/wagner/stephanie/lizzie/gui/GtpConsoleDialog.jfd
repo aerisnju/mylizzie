@@ -10,6 +10,7 @@ new FormModel {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 			name: "this"
 			"title": new FormMessage( null, "GtpConsoleDialog.this.title" )
+			"alwaysOnTop": true
 			addEvent( new FormEvent( "java.awt.event.ComponentListener", "componentHidden", "thisComponentHidden", true ) )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "textFieldGtpCommandInput"
@@ -43,18 +44,26 @@ new FormModel {
 						name: "buttonClear"
 						"icon": new com.jformdesigner.model.SwingIcon( 0, "/icon/eraser-tool-icon.png" )
 						"toolTipText": new FormMessage( null, "GtpConsoleDialog.buttonClear.toolTipText" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonClearActionPerformed", true ) )
 					} )
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.TableConstraints ) {
 					"hAlign": 2
 					"vAlign": 2
 				} )
-				add( new FormComponent( "javax.swing.JLabel" ) {
-					name: "labelInfo"
-					"text": new FormMessage( null, "GtpConsoleDialog.labelInfo.text" )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class net.miginfocom.swing.MigLayout ) {
+					"$layoutConstraints": "fill,hidemode 3"
+					"$columnConstraints": "[fill]"
+					"$rowConstraints": "[]"
+				} ) {
+					name: "panelHint"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelHint"
+						"text": new FormMessage( null, "GtpConsoleDialog.labelHint.text" )
+					}, new FormLayoutConstraints( class net.miginfocom.layout.CC ) {
+						"value": "cell 0 0,grow"
+					} )
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.TableConstraints ) {
 					"gridY": 1
-					"hAlign": 2
-					"vAlign": 2
 				} )
 			}, new FormLayoutConstraints( class java.lang.String ) {
 				"value": "North"

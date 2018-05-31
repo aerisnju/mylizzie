@@ -29,27 +29,27 @@ public class TextLineManager {
 
     private Document document;
     private LinkedList<String> documentLines;
-    private int documenLineCountLimit;
+    private int documentLineCountLimit;
 
-    public TextLineManager(Document document, int documenLineCountLimit) {
+    public TextLineManager(Document document, int documentLineCountLimit) {
         this.document = document;
         documentLines = new LinkedList<>();
-        if (documenLineCountLimit > 0) {
-            this.documenLineCountLimit = documenLineCountLimit;
+        if (documentLineCountLimit > 0) {
+            this.documentLineCountLimit = documentLineCountLimit;
         } else {
-            this.documenLineCountLimit = Integer.MAX_VALUE;
+            this.documentLineCountLimit = Integer.MAX_VALUE;
         }
     }
 
-    public int getDocumenLineCountLimit() {
-        return documenLineCountLimit;
+    public int getDocumentLineCountLimit() {
+        return documentLineCountLimit;
     }
 
-    public void setDocumenLineCountLimit(int documenLineCountLimit) {
-        if (documenLineCountLimit > 0) {
-            this.documenLineCountLimit = documenLineCountLimit;
+    public void setDocumentLineCountLimit(int documentLineCountLimit) {
+        if (documentLineCountLimit > 0) {
+            this.documentLineCountLimit = documentLineCountLimit;
         } else {
-            this.documenLineCountLimit = Integer.MAX_VALUE;
+            this.documentLineCountLimit = Integer.MAX_VALUE;
         }
 
         try {
@@ -88,7 +88,7 @@ public class TextLineManager {
     }
 
     private void shrinkToLineLimit() throws BadLocationException {
-        while (documentLines.size() > 0 && documentLines.size() > documenLineCountLimit) {
+        while (documentLines.size() > 0 && documentLines.size() > documentLineCountLimit) {
             String lineToRemove = Objects.requireNonNull(documentLines.poll());
             removeTextAtTheBeginning(lineToRemove.length());
         }
@@ -100,5 +100,13 @@ public class TextLineManager {
 
     private void appendTextAtTheEnd(String text, SimpleAttributeSet simpleAttributeSet) throws BadLocationException {
         document.insertString(document.getLength(), text, simpleAttributeSet);
+    }
+
+    public void clear() {
+        try {
+            document.remove(0, document.getLength());
+        } catch (BadLocationException e) {
+            throw new GenericLizzieException("Unexpected exception: cannot clear text.", e);
+        }
     }
 }

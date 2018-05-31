@@ -6,6 +6,7 @@ package wagner.stephanie.lizzie.gui;
 
 import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstraints;
+import net.miginfocom.swing.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.impl.factory.Sets;
@@ -33,7 +34,8 @@ public class GtpConsoleDialog extends JDialog {
     private JPanel panelInfoUtil;
     private JToolBar toolBarConsole;
     private JButton buttonClear;
-    private JLabel labelInfo;
+    private JPanel panelHint;
+    private JLabel labelHint;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private static final ImmutableSet<String> ANALYZE_COMMAND = Sets.immutable.of("lz-analyze", "lz-analyze_genmove");
@@ -114,13 +116,21 @@ public class GtpConsoleDialog extends JDialog {
         String command = textFieldGtpCommandInput.getText();
         textFieldGtpCommandInput.setText("");
 
-        if (gtpClient != null) {
+        if (Lizzie.leelaz != null && Lizzie.leelaz.getAnalyzer().getGtpClient() == gtpClient) {
+            Lizzie.leelaz.postGtpCommand(command);
+        } else if (gtpClient != null) {
             gtpClient.postCommand(command);
+        } else {
+            textLineManager.appendBoldLine("GTP> GTP engine is not available");
         }
     }
 
     private void thisComponentHidden(ComponentEvent e) {
         Lizzie.optionSetting.setGtpConsoleWindowShow(false);
+    }
+
+    private void buttonClearActionPerformed(ActionEvent e) {
+        textLineManager.clear();
     }
 
     private void initComponents() {
@@ -133,10 +143,12 @@ public class GtpConsoleDialog extends JDialog {
         panelInfoUtil = new JPanel();
         toolBarConsole = new JToolBar();
         buttonClear = new JButton();
-        labelInfo = new JLabel();
+        panelHint = new JPanel();
+        labelHint = new JLabel();
 
         //======== this ========
         setTitle(bundle.getString("GtpConsoleDialog.this.title"));
+        setAlwaysOnTop(true);
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentHidden(ComponentEvent e) {
@@ -177,13 +189,25 @@ public class GtpConsoleDialog extends JDialog {
                 //---- buttonClear ----
                 buttonClear.setIcon(new ImageIcon(getClass().getResource("/icon/eraser-tool-icon.png")));
                 buttonClear.setToolTipText(bundle.getString("GtpConsoleDialog.buttonClear.toolTipText"));
+                buttonClear.addActionListener(e -> buttonClearActionPerformed(e));
                 toolBarConsole.add(buttonClear);
             }
             panelInfoUtil.add(toolBarConsole, new TableLayoutConstraints(0, 0, 0, 0, TableLayoutConstraints.FULL, TableLayoutConstraints.FULL));
 
-            //---- labelInfo ----
-            labelInfo.setText(bundle.getString("GtpConsoleDialog.labelInfo.text"));
-            panelInfoUtil.add(labelInfo, new TableLayoutConstraints(0, 1, 0, 1, TableLayoutConstraints.FULL, TableLayoutConstraints.FULL));
+            //======== panelHint ========
+            {
+                panelHint.setLayout(new MigLayout(
+                    "fill,hidemode 3",
+                    // columns
+                    "[fill]",
+                    // rows
+                    "[]"));
+
+                //---- labelHint ----
+                labelHint.setText(bundle.getString("GtpConsoleDialog.labelHint.text"));
+                panelHint.add(labelHint, "cell 0 0,grow");
+            }
+            panelInfoUtil.add(panelHint, new TableLayoutConstraints(0, 1, 0, 1, TableLayoutConstraints.FULL, TableLayoutConstraints.FULL));
         }
         contentPane.add(panelInfoUtil, BorderLayout.NORTH);
         pack();

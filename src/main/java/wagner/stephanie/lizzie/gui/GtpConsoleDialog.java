@@ -37,13 +37,15 @@ public class GtpConsoleDialog extends JDialog {
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private static final ImmutableSet<String> ANALYZE_COMMAND = Sets.immutable.of("lz-analyze", "lz-analyze_genmove");
+    private static final ImmutableSet<String> CLASSIC_ANALYZE_COMMAND = Sets.immutable.of("time_left");
 
     private final TextLineManager textLineManager;
     private final SimpleAttributeSet grayText;
     private final Consumer<String> commandConsumer, stdoutConsumer, stderrConsumer;
     private final Consumer<Integer> exitObserver;
     private GtpClient gtpClient;
-    private volatile boolean inAnalysisCommand;
+    private volatile boolean enableStdoutDisplay;
+    private volatile boolean enableStderrDisplay;
 
     public GtpConsoleDialog(Window owner) {
         super(owner);
@@ -55,25 +57,35 @@ public class GtpConsoleDialog extends JDialog {
         commandConsumer = command -> {
             SwingUtilities.invokeLater(() -> textLineManager.appendBoldLine("GTP> " + command));
 
-            inAnalysisCommand = isAnalysisCommand(command);
+            enableStdoutDisplay = !isAnalysisCommand(command);
+            enableStderrDisplay = !isClassicAnalysisCommand(command);
         };
-        stdoutConsumer = line -> SwingUtilities.invokeLater(() -> {
-            if (!inAnalysisCommand) {
-                textLineManager.appendNormalLine(line);
+        stdoutConsumer = line -> {
+            if (enableStdoutDisplay) {
+                SwingUtilities.invokeLater(() -> textLineManager.appendNormalLine(line));
             }
-        });
-        stderrConsumer = line -> SwingUtilities.invokeLater(() -> textLineManager.appendLine(line, grayText));
+        };
+        stderrConsumer = line -> {
+            if (enableStderrDisplay) {
+                SwingUtilities.invokeLater(() -> textLineManager.appendLine(line, grayText));
+            }
+        };
         exitObserver = exitCode -> unlinkGtpClient();
         gtpClient = null;
-        inAnalysisCommand = false;
+        enableStdoutDisplay = true;
+        enableStderrDisplay = true;
 
         getRootPane().registerKeyboardAction(e -> setVisible(!isVisible()),
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
-    private static boolean isAnalysisCommand(String command) {
-        return ANALYZE_COMMAND.anySatisfy(each -> StringUtils.contains(command, each));
+    private static boolean isAnalysisCommand(final String command) {
+        return ANALYZE_COMMAND.anySatisfy(each -> StringUtils.containsIgnoreCase(command, each));
+    }
+
+    private static boolean isClassicAnalysisCommand(final String command) {
+        return CLASSIC_ANALYZE_COMMAND.anySatisfy(each -> StringUtils.containsIgnoreCase(command, each));
     }
 
     public void unlinkGtpClient() {

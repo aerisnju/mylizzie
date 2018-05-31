@@ -69,6 +69,9 @@ public class OptionDialog extends JDialog {
     private JLabel labelBoardColor;
     private JLabel labelBestSuggestionColorHint;
     private JLabel labelBestSuggestionColor;
+    private JLabel labelWinrate;
+    private JCheckBox checkBoxAlwaysShowBlackWinrate;
+    private JCheckBox checkBoxShowWhiteWinrateWithWhiteFonts;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -169,6 +172,10 @@ public class OptionDialog extends JDialog {
         checkBoxAutoStartThinkingAfterPlacingMoves.setSelected(setting.isAutoStartAnalyzingAfterPlacingMoves());
 
         labelBestSuggestionColor.setBackground(setting.getBestSuggestionColor().toColor());
+
+        checkBoxAlwaysShowBlackWinrate.setSelected(setting.isAlwaysShowBlackWinrate());
+
+        checkBoxShowWhiteWinrateWithWhiteFonts.setSelected(setting.isShowWhiteWinrateWithWhiteFonts());
     }
 
     public void readDialogSetting(OptionSetting setting) {
@@ -248,6 +255,10 @@ public class OptionDialog extends JDialog {
         setting.setAutoStartAnalyzingAfterPlacingMoves(checkBoxAutoStartThinkingAfterPlacingMoves.isSelected());
 
         setting.setBestSuggestionColor(new OptionSetting.ColorSetting(labelBestSuggestionColor.getBackground()));
+
+        setting.setAlwaysShowBlackWinrate(checkBoxAlwaysShowBlackWinrate.isSelected());
+
+        setting.setShowWhiteWinrateWithWhiteFonts(checkBoxShowWhiteWinrateWithWhiteFonts.isSelected());
     }
 
     private void cancelButtonActionPerformed(ActionEvent e) {
@@ -364,6 +375,9 @@ public class OptionDialog extends JDialog {
         labelBoardColor = new JLabel();
         labelBestSuggestionColorHint = new JLabel();
         labelBestSuggestionColor = new JLabel();
+        labelWinrate = new JLabel();
+        checkBoxAlwaysShowBlackWinrate = new JCheckBox();
+        checkBoxShowWhiteWinrateWithWhiteFonts = new JCheckBox();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -558,6 +572,15 @@ public class OptionDialog extends JDialog {
                     }
                 });
 
+                //---- labelWinrate ----
+                labelWinrate.setText(bundle.getString("OptionDialog.labelWinrate.text"));
+
+                //---- checkBoxAlwaysShowBlackWinrate ----
+                checkBoxAlwaysShowBlackWinrate.setText(bundle.getString("OptionDialog.checkBoxAlwaysShowBlackWinrate.text"));
+
+                //---- checkBoxShowWhiteWinrateWithWhiteFonts ----
+                checkBoxShowWhiteWinrateWithWhiteFonts.setText(bundle.getString("OptionDialog.checkBoxShowWhiteWinrateWithWhiteFonts.text"));
+
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
                 contentPanelLayout.setHorizontalGroup(
@@ -570,10 +593,10 @@ public class OptionDialog extends JDialog {
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(textFieldLeelazCommandLine, GroupLayout.PREFERRED_SIZE, 283, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(buttonManage, GroupLayout.PREFERRED_SIZE, 69, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(buttonManage, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(buttonResetCommandLine)
-                                    .addContainerGap(119, Short.MAX_VALUE))
+                                    .addComponent(buttonResetCommandLine, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+                                    .addContainerGap(30, Short.MAX_VALUE))
                                 .addGroup(contentPanelLayout.createSequentialGroup()
                                     .addGroup(contentPanelLayout.createParallelGroup()
                                         .addGroup(contentPanelLayout.createSequentialGroup()
@@ -663,8 +686,14 @@ public class OptionDialog extends JDialog {
                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                     .addComponent(checkBoxPlayoutsInShortForm)
                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(checkBoxShowNextMove)))))
-                                    .addGap(0, 121, Short.MAX_VALUE))))
+                                                    .addComponent(checkBoxShowNextMove))))
+                                        .addGroup(contentPanelLayout.createSequentialGroup()
+                                            .addComponent(labelWinrate)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxAlwaysShowBlackWinrate)
+                                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(checkBoxShowWhiteWinrateWithWhiteFonts)))
+                                    .addGap(0, 91, Short.MAX_VALUE))))
                 );
                 contentPanelLayout.setVerticalGroup(
                     contentPanelLayout.createParallelGroup()
@@ -719,6 +748,11 @@ public class OptionDialog extends JDialog {
                                 .addComponent(labelMinute))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(checkBoxAutoStartThinkingAfterPlacingMoves)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(labelWinrate)
+                                .addComponent(checkBoxAlwaysShowBlackWinrate)
+                                .addComponent(checkBoxShowWhiteWinrateWithWhiteFonts))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelLeelazCommandLine)

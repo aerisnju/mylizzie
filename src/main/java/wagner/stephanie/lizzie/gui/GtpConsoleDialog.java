@@ -6,7 +6,7 @@ package wagner.stephanie.lizzie.gui;
 
 import info.clearthought.layout.TableLayout;
 import info.clearthought.layout.TableLayoutConstraints;
-import net.miginfocom.swing.*;
+import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.eclipse.collections.impl.factory.Sets;
@@ -77,9 +77,14 @@ public class GtpConsoleDialog extends JDialog {
         enableStdoutDisplay = true;
         enableStderrDisplay = true;
 
-        getRootPane().registerKeyboardAction(e -> setVisible(!isVisible()),
+        getRootPane().registerKeyboardAction(e -> {
+                    if (!textFieldGtpCommandInput.isFocusOwner()) {
+                        setVisible(!isVisible());
+                    }
+                },
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, 0),
-                JComponent.WHEN_IN_FOCUSED_WINDOW);
+                JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
     }
 
     private static boolean isAnalysisCommand(final String command) {

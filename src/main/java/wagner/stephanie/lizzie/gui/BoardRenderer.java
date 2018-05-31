@@ -567,9 +567,29 @@ public class BoardRenderer {
                 if (branch == null && alpha >= MIN_ALPHA_TO_DISPLAY_TEXT || branch != null && !branch.getCoordinate().equalsIgnoreCase("Pass")
                         && Arrays.equals(Board.convertNameToCoordinates(branch.getCoordinate()), coordinates)) {
                     double roundedWinrate = Math.round(move.getWinrate() * 10) / 10.0;
-                    g.setColor(Color.BLACK);
-                    if (branch != null && Lizzie.board.getData().isBlackToPlay())
-                        g.setColor(Color.WHITE);
+
+                    if (Lizzie.optionSetting.isAlwaysShowBlackWinrate()) {
+                        if (!Lizzie.board.getData().isBlackToPlay()) {
+                            roundedWinrate = 100.0 - roundedWinrate;
+                        }
+                        g.setColor(Color.BLACK);
+                    } else if (Lizzie.optionSetting.isShowWhiteWinrateWithWhiteFonts()) {
+                        if (Lizzie.board.getData().isBlackToPlay()) {
+                            g.setColor(Color.BLACK);
+                        } else {
+                            g.setColor(Color.WHITE);
+                        }
+                    } else {
+                        g.setColor(Color.BLACK);
+                    }
+
+                    if (branch != null) {
+                        if (Lizzie.board.getData().isBlackToPlay()) {
+                            g.setColor(Color.WHITE);
+                        } else {
+                            g.setColor(Color.BLACK);
+                        }
+                    }
 
                     drawString(g, suggestionX, suggestionY, "Open Sans Semibold", Font.PLAIN, String.format("%.1f", roundedWinrate), stoneRadius, stoneRadius * 1.5, 1);
                     drawString(g, suggestionX, suggestionY + stoneRadius * 2 / 5, "Open Sans", getPlayoutsString(move.getPlayouts()), (float) (stoneRadius * 0.8), stoneRadius * 1.4);

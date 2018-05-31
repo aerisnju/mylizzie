@@ -12,6 +12,7 @@ import java.awt.*;
 import java.util.List;
 
 public class OptionSetting {
+    //<editor-fold desc="Option elements">
     public static class ColorSetting {
         private int red;
         private int green;
@@ -363,6 +364,7 @@ public class OptionSetting {
                     .toString();
         }
     }
+    //</editor-fold>
 
     private int version;
     private BoardSize boardSize;
@@ -391,6 +393,8 @@ public class OptionSetting {
     private boolean variationTransparent;
     private boolean autoStartAnalyzingAfterPlacingMoves;
     private ColorSetting bestSuggestionColor;
+    private boolean alwaysShowBlackWinrate;
+    private boolean showWhiteWinrateWithWhiteFonts;
 
     private WindowState mainWindowState;
     private WindowState analysisWindowState;
@@ -430,6 +434,8 @@ public class OptionSetting {
         variationTransparent = false;
         autoStartAnalyzingAfterPlacingMoves = true;
         bestSuggestionColor = new ColorSetting(Color.RED);
+        alwaysShowBlackWinrate = false;
+        showWhiteWinrateWithWhiteFonts = false;
 
         // on 1080p windows screens, this is a good width/height
         mainWindowState = new WindowState(false, false, false, 100, 100, 657, 687);
@@ -658,6 +664,22 @@ public class OptionSetting {
         this.autoStartAnalyzingAfterPlacingMoves = autoStartAnalyzingAfterPlacingMoves;
     }
 
+    public boolean isAlwaysShowBlackWinrate() {
+        return alwaysShowBlackWinrate;
+    }
+
+    public void setAlwaysShowBlackWinrate(boolean alwaysShowBlackWinrate) {
+        this.alwaysShowBlackWinrate = alwaysShowBlackWinrate;
+    }
+
+    public boolean isShowWhiteWinrateWithWhiteFonts() {
+        return showWhiteWinrateWithWhiteFonts;
+    }
+
+    public void setShowWhiteWinrateWithWhiteFonts(boolean showWhiteWinrateWithWhiteFonts) {
+        this.showWhiteWinrateWithWhiteFonts = showWhiteWinrateWithWhiteFonts;
+    }
+
     public WindowState getMainWindowState() {
         return mainWindowState;
     }
@@ -758,6 +780,8 @@ public class OptionSetting {
                 .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
                 .append(variationTransparent, that.variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves, that.autoStartAnalyzingAfterPlacingMoves)
+                .append(alwaysShowBlackWinrate, that.alwaysShowBlackWinrate)
+                .append(showWhiteWinrateWithWhiteFonts, that.showWhiteWinrateWithWhiteFonts)
                 .append(winrateHistogramWindowShow, that.winrateHistogramWindowShow)
                 .append(boardSize, that.boardSize)
                 .append(boardColor, that.boardColor)
@@ -803,6 +827,8 @@ public class OptionSetting {
                 .append(variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves)
                 .append(bestSuggestionColor)
+                .append(alwaysShowBlackWinrate)
+                .append(showWhiteWinrateWithWhiteFonts)
                 .append(mainWindowState)
                 .append(analysisWindowState)
                 .append(winrateHistogramWindowState)

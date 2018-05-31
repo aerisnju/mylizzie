@@ -105,6 +105,7 @@ public class TextLineManager {
     public void clear() {
         try {
             document.remove(0, document.getLength());
+            documentLines.clear();
         } catch (BadLocationException e) {
             throw new GenericLizzieException("Unexpected exception: cannot clear text.", e);
         }

@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 public class GtpConsoleDialog extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner non-commercial license
-    private JTextField textFieldGtpCommandInput;
     private JScrollPane scrollPaneGtpConsole;
     private JTextPane textPaneGtpConsole;
     private JPanel panelInfoUtil;
@@ -36,6 +35,9 @@ public class GtpConsoleDialog extends JDialog {
     private JButton buttonClear;
     private JPanel panelHint;
     private JLabel labelHint;
+    private JPanel panelGtpCommand;
+    private JLabel labelGtpCommand;
+    private JTextField textFieldGtpCommandInput;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
     private static final ImmutableSet<String> ANALYZE_COMMAND = Sets.immutable.of("lz-analyze", "lz-analyze_genmove");
@@ -142,7 +144,6 @@ public class GtpConsoleDialog extends JDialog {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner non-commercial license
         ResourceBundle bundle = ResourceBundle.getBundle("wagner.stephanie.lizzie.i18n.GuiBundle");
-        textFieldGtpCommandInput = new JTextField();
         scrollPaneGtpConsole = new JScrollPane();
         textPaneGtpConsole = new JTextPane();
         panelInfoUtil = new JPanel();
@@ -150,6 +151,9 @@ public class GtpConsoleDialog extends JDialog {
         buttonClear = new JButton();
         panelHint = new JPanel();
         labelHint = new JLabel();
+        panelGtpCommand = new JPanel();
+        labelGtpCommand = new JLabel();
+        textFieldGtpCommandInput = new JTextField();
 
         //======== this ========
         setTitle(bundle.getString("GtpConsoleDialog.this.title"));
@@ -162,11 +166,6 @@ public class GtpConsoleDialog extends JDialog {
         });
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
-
-        //---- textFieldGtpCommandInput ----
-        textFieldGtpCommandInput.setFont(textFieldGtpCommandInput.getFont().deriveFont(textFieldGtpCommandInput.getFont().getSize() + 2f));
-        textFieldGtpCommandInput.addActionListener(e -> textFieldGtpCommandInputActionPerformed(e));
-        contentPane.add(textFieldGtpCommandInput, BorderLayout.SOUTH);
 
         //======== scrollPaneGtpConsole ========
         {
@@ -215,6 +214,23 @@ public class GtpConsoleDialog extends JDialog {
             panelInfoUtil.add(panelHint, new TableLayoutConstraints(0, 1, 0, 1, TableLayoutConstraints.FULL, TableLayoutConstraints.FULL));
         }
         contentPane.add(panelInfoUtil, BorderLayout.NORTH);
+
+        //======== panelGtpCommand ========
+        {
+            panelGtpCommand.setLayout(new TableLayout(new double[][] {
+                {TableLayout.PREFERRED, TableLayout.FILL},
+                {TableLayout.PREFERRED}}));
+
+            //---- labelGtpCommand ----
+            labelGtpCommand.setText("GTP> ");
+            panelGtpCommand.add(labelGtpCommand, new TableLayoutConstraints(0, 0, 0, 0, TableLayoutConstraints.FULL, TableLayoutConstraints.FULL));
+
+            //---- textFieldGtpCommandInput ----
+            textFieldGtpCommandInput.setFont(textFieldGtpCommandInput.getFont().deriveFont(textFieldGtpCommandInput.getFont().getSize() + 2f));
+            textFieldGtpCommandInput.addActionListener(e -> textFieldGtpCommandInputActionPerformed(e));
+            panelGtpCommand.add(textFieldGtpCommandInput, new TableLayoutConstraints(1, 0, 1, 0, TableLayoutConstraints.FULL, TableLayoutConstraints.FULL));
+        }
+        contentPane.add(panelGtpCommand, BorderLayout.SOUTH);
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents

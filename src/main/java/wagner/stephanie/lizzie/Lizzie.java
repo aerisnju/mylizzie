@@ -311,7 +311,9 @@ public class Lizzie {
             String correctedMove = changeMoveDialog.getCorrectedMove().trim().toUpperCase();
             int[] convertedCoords = Board.convertDisplayNameToCoordinates(correctedMove);
             if (StringUtils.equalsIgnoreCase(correctedMove, "pass")) {
-                Lizzie.miscExecutor.execute(() -> board.changeMove(moveNumber, null));
+                Lizzie.miscExecutor.execute(() -> board.changeMove(moveNumber, (int[]) null));
+            } else if (StringUtils.equalsIgnoreCase(correctedMove, "swap") || StringUtils.startsWithIgnoreCase(correctedMove, "trans")) {
+                Lizzie.miscExecutor.execute(() -> board.swapMoveColor(moveNumber));
             } else if (Board.isValid(convertedCoords)) {
                 Lizzie.miscExecutor.execute(() -> board.changeMove(moveNumber, convertedCoords));
             } else {

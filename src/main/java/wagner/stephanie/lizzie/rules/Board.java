@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Board implements Closeable {
@@ -620,7 +621,29 @@ public class Board implements Closeable {
         }
     }
 
-    public void changeMove(int moveNumber, int[] convertedCoords) {
+    public void changeMove(int moveNumber, final int[] convertedCoords) {
+        changeMove(moveNumber, (board, nodeToChange) -> {
+            if (Board.isValid(convertedCoords)) {
+                board.place(convertedCoords[0], convertedCoords[1]);
+            } else {
+                board.pass();
+            }
+        });
+    }
+
+    public void swapMoveColor(int moveNumber) {
+        changeMove(moveNumber, (board, nodeToChange) -> {
+            BoardData boardData = nodeToChange.getData();
+            int[] coords = boardData.getLastMove();
+            if (coords == null) {
+                board.pass();
+            } else {
+                board.place(coords[0], coords[1], boardData.getLastMoveColor().opposite());
+            }
+        });
+    }
+
+    public void changeMove(int moveNumber, BiConsumer<Board, BoardHistoryNode> changeCallback) {
         if (moveNumber <= 0) {
             return;
         }
@@ -639,13 +662,10 @@ public class Board implements Closeable {
         gotoMove(moveNumber - 1);
 
         BoardHistoryNode needRestruct = history.getHead().getNext().getNext();
+        BoardHistoryNode nodeToChange = history.getHead().getNext();
 
         // Fix move
-        if (Board.isValid(convertedCoords)) {
-            place(convertedCoords[0], convertedCoords[1]);
-        } else {
-            pass();
-        }
+        changeCallback.accept(this, nodeToChange);
 
         if (needRestruct != null) {
             for (BoardData data : needRestruct) {

@@ -659,7 +659,6 @@ public class BoardRenderer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         } else {
             // simple version
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);

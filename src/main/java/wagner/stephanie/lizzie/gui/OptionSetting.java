@@ -388,7 +388,7 @@ public class OptionSetting {
     private int numberOfLastMovesShown;
     private boolean autoEnterTryPlayingMode;
     private boolean mainWindowAlwaysOnTop;
-    private int maxAnalysisTimeInMinutes;
+    private int maxAnalysisTime;
     private List<String> engineProfileList;
     private boolean variationTransparent;
     private boolean autoStartAnalyzingAfterPlacingMoves;
@@ -429,7 +429,7 @@ public class OptionSetting {
         numberOfLastMovesShown = Integer.MAX_VALUE;
         autoEnterTryPlayingMode = false;
         mainWindowAlwaysOnTop = false;
-        maxAnalysisTimeInMinutes = 2;
+        maxAnalysisTime = 120;
         engineProfileList = ImmutableList.of();
         variationTransparent = false;
         autoStartAnalyzingAfterPlacingMoves = true;
@@ -632,12 +632,12 @@ public class OptionSetting {
         this.mainWindowAlwaysOnTop = mainWindowAlwaysOnTop;
     }
 
-    public int getMaxAnalysisTimeInMinutes() {
-        return maxAnalysisTimeInMinutes;
+    public int getMaxAnalysisTime() {
+        return maxAnalysisTime;
     }
 
-    public void setMaxAnalysisTimeInMinutes(int maxAnalysisTimeInMinutes) {
-        this.maxAnalysisTimeInMinutes = maxAnalysisTimeInMinutes;
+    public void setMaxAnalysisTime(int maxAnalysisTime) {
+        this.maxAnalysisTime = maxAnalysisTime;
     }
 
     public List<String> getEngineProfileList() {
@@ -777,7 +777,7 @@ public class OptionSetting {
                 .append(numberOfLastMovesShown, that.numberOfLastMovesShown)
                 .append(autoEnterTryPlayingMode, that.autoEnterTryPlayingMode)
                 .append(mainWindowAlwaysOnTop, that.mainWindowAlwaysOnTop)
-                .append(maxAnalysisTimeInMinutes, that.maxAnalysisTimeInMinutes)
+                .append(maxAnalysisTime, that.maxAnalysisTime)
                 .append(variationTransparent, that.variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves, that.autoStartAnalyzingAfterPlacingMoves)
                 .append(alwaysShowBlackWinrate, that.alwaysShowBlackWinrate)
@@ -822,7 +822,7 @@ public class OptionSetting {
                 .append(numberOfLastMovesShown)
                 .append(autoEnterTryPlayingMode)
                 .append(mainWindowAlwaysOnTop)
-                .append(maxAnalysisTimeInMinutes)
+                .append(maxAnalysisTime)
                 .append(engineProfileList)
                 .append(variationTransparent)
                 .append(autoStartAnalyzingAfterPlacingMoves)

@@ -54,8 +54,7 @@ public class OptionDialog extends JDialog {
     private JCheckBox checkBoxMainWindowAlwaysOnTop;
     private JCheckBox checkBoxShowBlackSuggestion;
     private JLabel labelMaxAnalysisTime;
-    private JTextField textFieldMaxAnalysisTime;
-    private JLabel labelMinute;
+    private JLabel labelAnalysisTimeUnit;
     private JCheckBox checkBoxShowWhiteSuggestion;
     private JCheckBox checkBoxFancyStones;
     private JLabel labelStoneDisplay;
@@ -72,6 +71,7 @@ public class OptionDialog extends JDialog {
     private JLabel labelWinrate;
     private JCheckBox checkBoxAlwaysShowBlackWinrate;
     private JCheckBox checkBoxShowWhiteWinrateWithWhiteFonts;
+    private JSpinner spinnerMaxAnalysisTime;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
@@ -165,7 +165,7 @@ public class OptionDialog extends JDialog {
 
         checkBoxMainWindowAlwaysOnTop.setSelected(setting.isMainWindowAlwaysOnTop());
 
-        textFieldMaxAnalysisTime.setText(String.valueOf(setting.getMaxAnalysisTimeInMinutes()));
+        spinnerMaxAnalysisTime.setValue(setting.getMaxAnalysisTime());
 
         checkBoxTransparentVariation.setSelected(setting.isVariationTransparent());
 
@@ -241,14 +241,7 @@ public class OptionDialog extends JDialog {
 
         setting.setMainWindowAlwaysOnTop(checkBoxMainWindowAlwaysOnTop.isSelected());
 
-        try {
-            int maxAnalysisTime = Integer.parseInt(textFieldMaxAnalysisTime.getText());
-            if (maxAnalysisTime > 0) {
-                setting.setMaxAnalysisTimeInMinutes(maxAnalysisTime);
-            }
-        } catch (NumberFormatException e) {
-            // no operation
-        }
+        setting.setMaxAnalysisTime((Integer) spinnerMaxAnalysisTime.getValue());
 
         setting.setVariationTransparent(checkBoxTransparentVariation.isSelected());
 
@@ -360,8 +353,7 @@ public class OptionDialog extends JDialog {
         checkBoxMainWindowAlwaysOnTop = new JCheckBox();
         checkBoxShowBlackSuggestion = new JCheckBox();
         labelMaxAnalysisTime = new JLabel();
-        textFieldMaxAnalysisTime = new JTextField();
-        labelMinute = new JLabel();
+        labelAnalysisTimeUnit = new JLabel();
         checkBoxShowWhiteSuggestion = new JCheckBox();
         checkBoxFancyStones = new JCheckBox();
         labelStoneDisplay = new JLabel();
@@ -378,6 +370,7 @@ public class OptionDialog extends JDialog {
         labelWinrate = new JLabel();
         checkBoxAlwaysShowBlackWinrate = new JCheckBox();
         checkBoxShowWhiteWinrateWithWhiteFonts = new JCheckBox();
+        spinnerMaxAnalysisTime = new JSpinner();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
@@ -505,11 +498,8 @@ public class OptionDialog extends JDialog {
                 //---- labelMaxAnalysisTime ----
                 labelMaxAnalysisTime.setText(bundle.getString("OptionDialog.labelMaxAnalysisTime.text"));
 
-                //---- textFieldMaxAnalysisTime ----
-                textFieldMaxAnalysisTime.setText("2");
-
-                //---- labelMinute ----
-                labelMinute.setText(bundle.getString("OptionDialog.labelMinute.text"));
+                //---- labelAnalysisTimeUnit ----
+                labelAnalysisTimeUnit.setText(bundle.getString("OptionDialog.labelAnalysisTimeUnit.text"));
 
                 //---- checkBoxShowWhiteSuggestion ----
                 checkBoxShowWhiteSuggestion.setText(bundle.getString("OptionDialog.checkBoxShowWhiteSuggestion.text"));
@@ -580,6 +570,9 @@ public class OptionDialog extends JDialog {
 
                 //---- checkBoxShowWhiteWinrateWithWhiteFonts ----
                 checkBoxShowWhiteWinrateWithWhiteFonts.setText(bundle.getString("OptionDialog.checkBoxShowWhiteWinrateWithWhiteFonts.text"));
+
+                //---- spinnerMaxAnalysisTime ----
+                spinnerMaxAnalysisTime.setModel(new SpinnerNumberModel(120, 1, 3600, 1));
 
                 GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
                 contentPanel.setLayout(contentPanelLayout);
@@ -668,9 +661,9 @@ public class OptionDialog extends JDialog {
                                                     .addGap(18, 18, 18)
                                                     .addComponent(labelMaxAnalysisTime)
                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(spinnerMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                    .addComponent(labelMinute))))
+                                                    .addComponent(labelAnalysisTimeUnit))))
                                         .addGroup(contentPanelLayout.createSequentialGroup()
                                             .addComponent(labelSuggestion)
                                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -744,8 +737,8 @@ public class OptionDialog extends JDialog {
                                 .addComponent(checkBoxAnalysisWindowShow)
                                 .addComponent(checkBoxMouseMoveShow)
                                 .addComponent(labelMaxAnalysisTime)
-                                .addComponent(textFieldMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(labelMinute))
+                                .addComponent(labelAnalysisTimeUnit)
+                                .addComponent(spinnerMaxAnalysisTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(checkBoxAutoStartThinkingAfterPlacingMoves)
                             .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -774,7 +767,7 @@ public class OptionDialog extends JDialog {
                             .addGroup(contentPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelMainWindow)
                                 .addComponent(checkBoxMainWindowAlwaysOnTop))
-                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                             .addComponent(labelNotes)
                             .addContainerGap())
                 );

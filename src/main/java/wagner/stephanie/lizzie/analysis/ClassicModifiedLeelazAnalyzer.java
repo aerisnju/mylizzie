@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class ClassicModifiedLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
-    private static final long MILLISECONDS_IN_MINUTE = 60 * 1000; // number of milliseconds in a minute
+    private static final long MILLISECONDS_IN_SECOND = 1000;
 
     private ExecutorService notificationExecutor;
     private boolean readingPonderOutput;
@@ -97,7 +97,7 @@ public class ClassicModifiedLeelazAnalyzer extends AbstractGtpBasedAnalyzer {
         }
 
         if (line.startsWith("~begin")) {
-            if (System.currentTimeMillis() - startPonderTime > Lizzie.optionSetting.getMaxAnalysisTimeInMinutes() * MILLISECONDS_IN_MINUTE) {
+            if (System.currentTimeMillis() - startPonderTime > Lizzie.optionSetting.getMaxAnalysisTime() * MILLISECONDS_IN_SECOND) {
                 // we have pondered for enough time. pause pondering
                 notificationExecutor.execute(this::pauseAnalyzing);
             }

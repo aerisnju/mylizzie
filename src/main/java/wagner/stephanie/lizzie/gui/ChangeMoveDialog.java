@@ -4,18 +4,21 @@
 
 package wagner.stephanie.lizzie.gui;
 
-import java.awt.event.*;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
+import wagner.stephanie.lizzie.Lizzie;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
-/**
- * @author Cao Hu
- */
 public class ChangeMoveDialog extends JDialog {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner non-commercial license
@@ -36,16 +39,19 @@ public class ChangeMoveDialog extends JDialog {
     private int moveNumber;
     private String correctedMove;
 
-    public ChangeMoveDialog(Frame owner) {
+    public ChangeMoveDialog(Window owner) {
         super(owner);
         initComponents();
         initVariables();
-    }
 
-    public ChangeMoveDialog(Dialog owner) {
-        super(owner);
-        initComponents();
-        initVariables();
+        JSpinner.NumberEditor editor = (JSpinner.NumberEditor) spinnerMoveNumber.getEditor();
+        JFormattedTextField textField = editor.getTextField();
+        textField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                handleSpinnerMoveNumberEditorFocusGained(e);
+            }
+        });
     }
 
     public boolean isUserApproved() {
@@ -75,6 +81,15 @@ public class ChangeMoveDialog extends JDialog {
         userApproved = false;
         moveNumber = 0;
         correctedMove = "";
+    }
+
+    private void handleSpinnerMoveNumberEditorFocusGained(FocusEvent e) {
+        Component component = e.getComponent();
+
+        if (component instanceof JTextComponent) {
+            final JTextComponent textComponent = (JTextComponent) component;
+            Lizzie.miscExecutor.schedule(() -> SwingUtilities.invokeLater(textComponent::selectAll), 250, TimeUnit.MILLISECONDS);
+        }
     }
 
     private void initComponents() {

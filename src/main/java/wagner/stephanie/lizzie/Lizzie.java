@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -74,7 +75,7 @@ public class Lizzie {
     public static OptionDialog optionDialog;
     public static OptionSetting optionSetting;
     public static WinrateHistogramDialog winrateHistogramDialog;
-    public static ExecutorService miscExecutor = Executors.newSingleThreadExecutor();
+    public static ScheduledExecutorService miscExecutor = Executors.newSingleThreadScheduledExecutor();
     public static ScoreEstimator scoreEstimator = null;
 
     static {

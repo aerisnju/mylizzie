@@ -9,7 +9,7 @@
     <version>2.0.180603</version>
 
     <properties>
-        <app.mainClass>wagner.stephanie.lizzie.Lizzie</app.mainClass>
+        <app.mainClass>featurecat.lizzie.Lizzie</app.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <log4j.version>2.11.0</log4j.version>
     </properties>

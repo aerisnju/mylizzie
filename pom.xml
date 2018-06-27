@@ -6,7 +6,7 @@
 
     <groupId>org.github.aerisnju</groupId>
     <artifactId>mylizzie</artifactId>
-    <version>2.0.180603</version>
+    <version>2.0.180701</version>
 
     <properties>
         <app.mainClass>featurecat.lizzie.Lizzie</app.mainClass>
@@ -182,7 +182,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.3</version>
+            <version>1.4</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -327,7 +327,7 @@
         <dependency>
             <groupId>com.github.javadev</groupId>
             <artifactId>underscore</artifactId>
-            <version>1.32</version>
+            <version>1.33</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
@@ -341,7 +341,7 @@
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
-            <version>2.1.14</version>
+            <version>2.1.16</version>
         </dependency>
     </dependencies>
 </project>

@@ -296,6 +296,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonBoard15x15"
 						"text": new FormMessage( null, "OptionDialog.radioButtonBoard15x15.text" )
+						"$buttonGroup": new FormReference( "buttonGroupBoardSize" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonBoard13x13"
@@ -310,10 +311,12 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonBoard7x7"
 						"text": new FormMessage( null, "OptionDialog.radioButtonBoard7x7.text" )
+						"$buttonGroup": new FormReference( "buttonGroupBoardSize" )
 					} )
 					add( new FormComponent( "javax.swing.JRadioButton" ) {
 						name: "radioButtonBoard5x5"
 						"text": new FormMessage( null, "OptionDialog.radioButtonBoard5x5.text" )
+						"$buttonGroup": new FormReference( "buttonGroupBoardSize" )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "North"

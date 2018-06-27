@@ -2,7 +2,7 @@ JFDML JFormDesigner: "7.0.0.0.82" Java: "1.8.0_152-release" encoding: "UTF-8"
 
 new FormModel {
 	"i18n.autoExternalize": true
-	"i18n.bundlePackage": "wagner.stephanie.lizzie.i18n"
+	"i18n.bundlePackage": "featurecat.lizzie.i18n"
 	"i18n.bundleName": "GuiBundle"
 	"i18n.keyPrefix": "EngineProfileManagerDialog"
 	contentType: "form/swing"

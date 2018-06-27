@@ -2,10 +2,11 @@ package featurecat.lizzie.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Ints;
+import featurecat.lizzie.Lizzie;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import featurecat.lizzie.Lizzie;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,10 +15,10 @@ import java.util.List;
 public class OptionSetting {
     //<editor-fold desc="Option elements">
     public static class ColorSetting {
-        private int red;
-        private int green;
-        private int blue;
-        private int alpha;
+        private final int red;
+        private final int green;
+        private final int blue;
+        private final int alpha;
 
         public ColorSetting() {
             red = 255;
@@ -35,42 +36,26 @@ public class OptionSetting {
         }
 
         public ColorSetting(int red, int green, int blue, int alpha) {
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
-            this.alpha = alpha;
+            this.red = Ints.constrainToRange(red, 0, 255);
+            this.green = Ints.constrainToRange(green, 0, 255);
+            this.blue = Ints.constrainToRange(blue, 0, 255);
+            this.alpha = Ints.constrainToRange(alpha, 0, 255);
         }
 
         public int getRed() {
             return red;
         }
 
-        public void setRed(int red) {
-            this.red = Ints.constrainToRange(red, 0, 255);
-        }
-
         public int getGreen() {
             return green;
-        }
-
-        public void setGreen(int green) {
-            this.green = Ints.constrainToRange(green, 0, 255);
         }
 
         public int getBlue() {
             return blue;
         }
 
-        public void setBlue(int blue) {
-            this.blue = Ints.constrainToRange(blue, 0, 255);
-        }
-
         public int getAlpha() {
             return alpha;
-        }
-
-        public void setAlpha(int alpha) {
-            this.alpha = alpha;
         }
 
         public Color toColor() {
@@ -99,12 +84,22 @@ public class OptionSetting {
                     .append(alpha)
                     .toHashCode();
         }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("red", red)
+                    .append("green", green)
+                    .append("blue", blue)
+                    .append("alpha", alpha)
+                    .toString();
+        }
     }
 
-    public static class BoardSize {
+    public static class BoardSize implements Comparable<BoardSize> {
         public static final int DEFAULT_SIZE = 19;
-        private int width;
-        private int height;
+        private final int width;
+        private final int height;
 
         public BoardSize() {
             this(DEFAULT_SIZE, DEFAULT_SIZE);
@@ -119,16 +114,8 @@ public class OptionSetting {
             return width;
         }
 
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
         public int getHeight() {
             return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
         }
 
         @Override
@@ -148,6 +135,19 @@ public class OptionSetting {
                     .append(width)
                     .append(height)
                     .toHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("width", width)
+                    .append("height", height)
+                    .toString();
+        }
+
+        @Override
+        public int compareTo(@NotNull BoardSize o) {
+            return width * height - o.width * o.height;
         }
     }
 
@@ -193,6 +193,14 @@ public class OptionSetting {
                     .append(byoYomiTime)
                     .append(stopThinkingWhenCountingDown)
                     .toHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("byoYomiTime", byoYomiTime)
+                    .append("stopThinkingWhenCountingDown", stopThinkingWhenCountingDown)
+                    .toString();
         }
     }
 

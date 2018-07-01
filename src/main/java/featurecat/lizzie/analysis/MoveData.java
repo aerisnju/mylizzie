@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * holds the data from Leelaz's pondering mode
+ * Holds best move data
  */
 public class MoveData {
-    private String coordinate;
-    private int playouts;
-    private double winrate;
-    private double probability;
-    private List<String> variation;
+    private final String coordinate;
+    private final int playouts;
+    private final double winrate;
+    private final double probability;
+    private final List<String> variation;
 
     public MoveData(String coordinate, int playouts, double winrate, double probability, List<String> variation) {
         this.coordinate = coordinate;
@@ -30,40 +30,20 @@ public class MoveData {
         return coordinate;
     }
 
-    public void setCoordinate(String coordinate) {
-        this.coordinate = coordinate;
-    }
-
     public int getPlayouts() {
         return playouts;
-    }
-
-    public void setPlayouts(int playouts) {
-        this.playouts = playouts;
     }
 
     public double getWinrate() {
         return winrate;
     }
 
-    public void setWinrate(double winrate) {
-        this.winrate = winrate;
-    }
-
     public double getProbability() {
         return probability;
     }
 
-    public void setProbability(double probability) {
-        this.probability = probability;
-    }
-
     public List<String> getVariation() {
         return variation;
-    }
-
-    public void setVariation(List<String> variation) {
-        this.variation = variation;
     }
 
     public String getMoveDisplayString() {

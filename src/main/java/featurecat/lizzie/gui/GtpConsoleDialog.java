@@ -70,7 +70,7 @@ public class GtpConsoleDialog extends JDialog {
             }
         };
         stderrConsumer = line -> {
-            if (enableStderrDisplay) {
+            if (enableStderrDisplay && !isStderrLineFiltered(line)) {
                 SwingUtilities.invokeLater(() -> textLineManager.appendLine(line, grayText));
             }
         };
@@ -91,6 +91,11 @@ public class GtpConsoleDialog extends JDialog {
 
     private static boolean isAnalysisCommand(final String command) {
         return ANALYZE_COMMAND.anySatisfy(each -> StringUtils.containsIgnoreCase(command, each));
+    }
+
+    private static boolean isStderrLineFiltered(final String line) {
+        String trimmed = line.trim();
+        return trimmed.isEmpty() || trimmed.startsWith("info");
     }
 
     private static boolean isClassicAnalysisCommand(final String command) {

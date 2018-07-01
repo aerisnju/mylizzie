@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.apache.commons.lang3.StringUtils;
 import featurecat.lizzie.util.GenericLizzieException;
+import org.apache.commons.lang3.builder.Builder;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -12,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-public class GtpBasedAnalyzerBuilder {
+public class GtpBasedAnalyzerBuilder implements Builder<AbstractGtpBasedAnalyzer> {
     public static final String REASON = "REASON";
     public static final String ENGINE_NOT_FUNCTION = "ENGINE_NOT_FUNCTION";
     public static final String ENGINE_NOT_SUPPORTED = "ENGINE_NOT_SUPPORTED";
@@ -25,6 +26,7 @@ public class GtpBasedAnalyzerBuilder {
         return this;
     }
 
+    @Override
     public AbstractGtpBasedAnalyzer build() {
         if (!gtpClient.isRunning()) {
             gtpClient.start();
@@ -53,6 +55,8 @@ public class GtpBasedAnalyzerBuilder {
                 detectCorrectModifiedLeelazEngine();
                 return new ClassicModifiedLeelazAnalyzer(gtpClient);
             }
+        } else if (name.equals("Leela Zero Phoenix")) {
+            return new PhoenixGoAnalyzer(gtpClient);
         } else {
             throw new GenericLizzieException(ImmutableMap.of(REASON, ENGINE_NOT_SUPPORTED));
         }

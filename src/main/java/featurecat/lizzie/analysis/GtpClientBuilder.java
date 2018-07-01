@@ -4,6 +4,7 @@ import com.zaxxer.nuprocess.NuProcessBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import featurecat.lizzie.util.ArgumentTokenizer;
+import org.apache.commons.lang3.builder.Builder;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +12,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-public class GtpClientBuilder {
+public class GtpClientBuilder implements Builder<GtpClient> {
     private List<String> commandLine = null;
     private Map<String, String> environment = null;
     private Path initialCurrentDirectory = null;
@@ -41,6 +42,7 @@ public class GtpClientBuilder {
         return this;
     }
 
+    @Override
     public GtpClient build() {
         if (CollectionUtils.isEmpty(commandLine)) {
             throw new IllegalArgumentException("No command line for a GTP process.");

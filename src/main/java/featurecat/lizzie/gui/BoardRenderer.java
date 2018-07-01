@@ -1,11 +1,11 @@
 package featurecat.lizzie.gui;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import featurecat.lizzie.Lizzie;
 import featurecat.lizzie.analysis.BestMoveObserver;
 import featurecat.lizzie.analysis.MoveData;
 import featurecat.lizzie.rules.*;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
@@ -220,10 +220,16 @@ public class BoardRenderer {
      * @param g graphics2d to draw
      */
     private void drawStarPoints(Graphics2D g) {
-        if (Board.BOARD_SIZE == 9) {
+        if (Board.BOARD_SIZE == 5) {
+            drawStarPoints5x5(g);
+        } else if (Board.BOARD_SIZE == 7) {
+            drawStarPoints7x7(g);
+        } else if (Board.BOARD_SIZE == 9) {
             drawStarPoints9x9(g);
         } else if (Board.BOARD_SIZE == 13) {
             drawStarPoints13x13(g);
+        } else if (Board.BOARD_SIZE == 15) {
+            drawStarPoints15x15(g);
         } else {
             drawStarPoints19x19(g);
         }
@@ -235,6 +241,21 @@ public class BoardRenderer {
         final int NUM_STARPOINTS = 3;
         final int STARPOINT_EDGE_OFFSET = 3;
         final int STARPOINT_GRID_DISTANCE = 6;
+        for (int i = 0; i < NUM_STARPOINTS; i++) {
+            for (int j = 0; j < NUM_STARPOINTS; j++) {
+                int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
+                int centerY = y + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * j);
+                fillCircle(g, centerX, centerY, starPointRadius);
+            }
+        }
+    }
+
+    private void drawStarPoints15x15(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
+        final int NUM_STARPOINTS = 3;
+        final int STARPOINT_EDGE_OFFSET = 3;
+        final int STARPOINT_GRID_DISTANCE = 4;
         for (int i = 0; i < NUM_STARPOINTS; i++) {
             for (int j = 0; j < NUM_STARPOINTS; j++) {
                 int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
@@ -277,6 +298,38 @@ public class BoardRenderer {
                 fillCircle(g, centerX, centerY, starPointRadius);
             }
         }
+
+        // Draw center
+        int centerX = x + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;
+        int centerY = y + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;
+        fillCircle(g, centerX, centerY, starPointRadius);
+    }
+
+    private void drawStarPoints7x7(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
+        final int NUM_STARPOINTS = 2;
+        final int STARPOINT_EDGE_OFFSET = 2;
+        final int STARPOINT_GRID_DISTANCE = 2;
+        for (int i = 0; i < NUM_STARPOINTS; i++) {
+            for (int j = 0; j < NUM_STARPOINTS; j++) {
+                int centerX = x + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * i);
+                int centerY = y + scaledMargin + squareLength * (STARPOINT_EDGE_OFFSET + STARPOINT_GRID_DISTANCE * j);
+                fillCircle(g, centerX, centerY, starPointRadius);
+            }
+        }
+
+        // Draw center
+        final int STARPOINT_CENTER = 3;
+        int centerX = x + scaledMargin + squareLength * STARPOINT_CENTER;
+        int centerY = y + scaledMargin + squareLength * STARPOINT_CENTER;
+        fillCircle(g, centerX, centerY, starPointRadius);
+    }
+
+    private void drawStarPoints5x5(Graphics2D g) {
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int starPointRadius = (int) (STARPOINT_DIAMETER * boardLength) / 2;
+        final int STARPOINT_GRID_DISTANCE = 2;
 
         // Draw center
         int centerX = x + scaledMargin + squareLength * STARPOINT_GRID_DISTANCE;

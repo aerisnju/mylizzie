@@ -45,6 +45,10 @@ public class BoardHistoryList extends AbstractCollection<BoardData> {
         return initialNode;
     }
 
+    public void resetHead() {
+        head = initialNode;
+    }
+
     /**
      * Initialize a new board history list, whose first node is data
      *

@@ -1,13 +1,13 @@
 package featurecat.lizzie.rules;
 
+import featurecat.lizzie.Lizzie;
+import featurecat.lizzie.analysis.BestMoveObserver;
+import featurecat.lizzie.analysis.MoveData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jtrim2.utils.ObjectFinalizer;
-import featurecat.lizzie.Lizzie;
-import featurecat.lizzie.analysis.BestMoveObserver;
-import featurecat.lizzie.analysis.MoveData;
 
 import java.io.Closeable;
 import java.util.Arrays;
@@ -66,12 +66,15 @@ public class Board implements Closeable {
         history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
     }
 
-    public void clear() {
-        synchronized (this) {
-            // We don't use history.clear() because it will not update board size
-            initBoardHistoryList();
-            observerCollection.boardCleared(history.getInitialNode(), history.getHead());
-        }
+    public synchronized void clear() {
+        // We don't use history.clear() because it will not update board size
+        initBoardHistoryList();
+        observerCollection.boardCleared(history.getInitialNode(), history.getHead());
+    }
+
+    public synchronized void resetHead() {
+        history.resetHead();
+        observerCollection.boardCleared(history.getInitialNode(), history.getHead());
     }
 
     public BoardStateChangeObserverCollection getObserverCollection() {

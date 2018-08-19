@@ -1,9 +1,12 @@
 package featurecat.lizzie.gui;
 
 import com.jhlabs.image.GaussianFilter;
-import org.apache.commons.lang3.StringUtils;
 import featurecat.lizzie.Lizzie;
 import featurecat.lizzie.rules.Board;
+import featurecat.lizzie.rules.BoardHistoryNode;
+import featurecat.lizzie.rules.BoardStateChangeObserver;
+import featurecat.lizzie.rules.Stone;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +14,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicReference;
@@ -71,6 +73,8 @@ public class LizzieFrame extends JFrame {
 
     private JMenuBar menuBar;
     private JPanel mainPanel;
+    private JLabel statusBar;
+    private BoardStateChangeObserver boardStateChangeObserver;
 
     public boolean showControls = false;
 
@@ -100,14 +104,44 @@ public class LizzieFrame extends JFrame {
         mainPanel.addMouseListener(input);
         mainPanel.addMouseWheelListener(input);
 
-        this.addKeyListener(input);
+        addKeyListener(input);
 
         setAlwaysOnTop(Lizzie.optionSetting.isMainWindowAlwaysOnTop());
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
+        statusBar = new JLabel();
+        updateStatusBar(Stone.BLACK, 0, 0);
+        boardStateChangeObserver = new BoardStateChangeObserver() {
+            @Override
+            public void mainStreamAppended(BoardHistoryNode newNodeBegin, BoardHistoryNode head) {
+            }
+
+            @Override
+            public void mainStreamCut(BoardHistoryNode nodeBeforeCutPoint, BoardHistoryNode head) {
+            }
+
+            @Override
+            public void headMoved(BoardHistoryNode oldHead, BoardHistoryNode newHead) {
+                SwingUtilities.invokeLater(() -> updateStatusBar(
+                        newHead.getData().getLastMoveColor().opposite()
+                        , newHead.getData().getBlackPrisonersCount()
+                        , newHead.getData().getWhitePrisonersCount()
+                ));
+            }
+
+            @Override
+            public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
+                SwingUtilities.invokeLater(() -> updateStatusBar(Stone.BLACK, 0, 0));
+            }
+        };
+        Lizzie.board.registerBoardStateChangeObserver(boardStateChangeObserver);
+        getContentPane().add(statusBar, BorderLayout.SOUTH);
+
         // shut down leelaz, then shut down the program when the window is closed
-        this.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                Lizzie.board.unregisterBoardStateChangeObserver(boardStateChangeObserver);
+
                 Lizzie.readGuiPosition();
                 Lizzie.writeSettingFile();
 
@@ -423,5 +457,30 @@ public class LizzieFrame extends JFrame {
 
     public void restoreDefaultTitle() {
         setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
+    }
+
+    public void updateStatusBar(Stone nextMove, int blackPrisoners, int whitePrisoners) {
+        String statusBarText = String.format(resourceBundle.getString("LizzieFrame.statusBar.formatter")
+                , formatColor(nextMove)
+                , blackPrisoners
+                , whitePrisoners
+        );
+
+        statusBar.setText(statusBarText);
+    }
+
+    private String formatColor(Stone stone) {
+        switch (stone) {
+            case BLACK:
+            case BLACK_GHOST:
+            case BLACK_RECURSED:
+                return resourceBundle.getString("LizzieFrame.prompt.colorBlack");
+            case WHITE:
+            case WHITE_GHOST:
+            case WHITE_RECURSED:
+                return resourceBundle.getString("LizzieFrame.prompt.colorWhite");
+            default:
+                return "?";
+        }
     }
 }

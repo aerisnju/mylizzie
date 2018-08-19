@@ -6,12 +6,12 @@
 
     <groupId>org.github.aerisnju</groupId>
     <artifactId>mylizzie</artifactId>
-    <version>2.0.180706</version>
+    <version>2.0.180819</version>
 
     <properties>
         <app.mainClass>featurecat.lizzie.Lizzie</app.mainClass>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <log4j.version>2.11.0</log4j.version>
+        <log4j.version>2.11.1</log4j.version>
     </properties>
 
     <build>
@@ -161,7 +161,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <version>4.2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -175,7 +175,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
-            <version>2.5.0</version>
+            <version>2.6.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
@@ -189,7 +189,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>25.1-jre</version>
+            <version>26.0-jre</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
@@ -218,7 +218,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.10.0</version>
+            <version>3.11.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -292,7 +292,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>nuprocess</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.4</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.eclipse.collections/eclipse-collections -->
@@ -327,7 +327,7 @@
         <dependency>
             <groupId>com.github.javadev</groupId>
             <artifactId>underscore</artifactId>
-            <version>1.34</version>
+            <version>1.35</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
@@ -341,7 +341,7 @@
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
-            <version>2.1.16</version>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 </project>

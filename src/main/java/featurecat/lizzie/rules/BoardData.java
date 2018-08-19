@@ -3,6 +3,7 @@ package featurecat.lizzie.rules;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import featurecat.lizzie.analysis.MoveData;
+import org.eclipse.collections.api.set.MutableSet;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +19,13 @@ public class BoardData {
     private Zobrist zobrist;
     private int moveNumber;
     private int[] moveNumberListOnBoard;
+    private MutableSet<Coordinates> removedEnemyStoneIndexes;
+    private int blackPrisonersCount;
+    private int whitePrisonersCount;
 
     private List<VariationData> variationDataList;
 
-    public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard, List<VariationData> variationDataList) {
+    public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard, List<VariationData> variationDataList, MutableSet<Coordinates> removedEnemyStoneIndexes, int blackPrisonersCount, int whitePrisonersCount) {
         this.boardSize = boardSize;
         this.stonesOnBoard = stonesOnBoard;
         this.lastMove = lastMove;
@@ -31,14 +35,17 @@ public class BoardData {
         this.moveNumber = moveNumber;
         this.moveNumberListOnBoard = moveNumberListOnBoard;
         this.variationDataList = variationDataList;
+        this.removedEnemyStoneIndexes = removedEnemyStoneIndexes;
+        this.blackPrisonersCount = blackPrisonersCount;
+        this.whitePrisonersCount = whitePrisonersCount;
     }
 
-    public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard) {
-        this(boardSize, stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, null);
+    public BoardData(ImmutablePair<Integer, Integer> boardSize, Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard, MutableSet<Coordinates> removedEnemyStoneIndexes, int blackPrisonersCount, int whitePrisonersCount) {
+        this(boardSize, stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, null, removedEnemyStoneIndexes, blackPrisonersCount, whitePrisonersCount);
     }
 
-    public BoardData(Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard) {
-        this(ImmutablePair.of(19, 19), stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, null);
+    public BoardData(Stone[] stonesOnBoard, int[] lastMove, Stone lastMoveColor, boolean blackToPlay, Zobrist zobrist, int moveNumber, int[] moveNumberListOnBoard, MutableSet<Coordinates> removedEnemyStoneIndexes, int blackPrisonersCount, int whitePrisonersCount) {
+        this(ImmutablePair.of(19, 19), stonesOnBoard, lastMove, lastMoveColor, blackToPlay, zobrist, moveNumber, moveNumberListOnBoard, null, removedEnemyStoneIndexes, blackPrisonersCount, whitePrisonersCount);
     }
 
     public ImmutablePair<Integer, Integer> getBoardSize() {
@@ -129,6 +136,30 @@ public class BoardData {
 
     public double getWhiteWinrate() {
         return 100.0 - getBlackWinrate();
+    }
+
+    public MutableSet<Coordinates> getRemovedEnemyStoneIndexes() {
+        return removedEnemyStoneIndexes;
+    }
+
+    public void setRemovedEnemyStoneIndexes(MutableSet<Coordinates> removedEnemyStoneIndexes) {
+        this.removedEnemyStoneIndexes = removedEnemyStoneIndexes;
+    }
+
+    public int getBlackPrisonersCount() {
+        return blackPrisonersCount;
+    }
+
+    public void setBlackPrisonersCount(int blackPrisonersCount) {
+        this.blackPrisonersCount = blackPrisonersCount;
+    }
+
+    public int getWhitePrisonersCount() {
+        return whitePrisonersCount;
+    }
+
+    public void setWhitePrisonersCount(int whitePrisonersCount) {
+        this.whitePrisonersCount = whitePrisonersCount;
     }
 
     public int getCalculationCount() {

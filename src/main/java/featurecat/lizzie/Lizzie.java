@@ -76,6 +76,7 @@ public class Lizzie {
     public static WinrateHistogramDialog winrateHistogramDialog;
     public static ScheduledExecutorService miscExecutor = Executors.newSingleThreadScheduledExecutor();
     public static ScoreEstimator scoreEstimator = null;
+    public static GameStatusManager gameStatusManager = new GameStatusManager();
 
     static {
         readSettingFile();

@@ -1,0 +1,81 @@
+JFDML JFormDesigner: "7.0.0.0.117" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "featurecat.lizzie.i18n"
+	"i18n.bundleName": "GuiBundle"
+	"i18n.keyPrefix": "GameInfoDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": new FormMessage( null, "GameInfoDialog.this.title" )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, par l:::p {comp labelKomi:::::x, comp labelBlackPlayerName::l:p::p, comp labelWhitePlayerName::l:::x}, space :::p, par l {comp textFieldBlackPlayerName::::237:x, comp textFieldWhitePlayerName::::237:x, comp textFieldKomi::l::237:x}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, par b {comp labelBlackPlayerName::b:p::p, comp textFieldBlackPlayerName::b:p::p}, space :::p, par b {comp labelWhitePlayerName::b:::p, comp textFieldWhitePlayerName::b:p::p}, space :::p, par b {comp labelKomi::b:p::p, comp textFieldKomi::b:p::p}, space ::43:x}}"
+				} ) {
+					name: "contentPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelBlackPlayerName"
+						"text": new FormMessage( null, "GameInfoDialog.labelBlackPlayerName.text" )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelWhitePlayerName"
+						"text": new FormMessage( null, "GameInfoDialog.labelWhitePlayerName.text" )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldBlackPlayerName"
+						"enabled": false
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldWhitePlayerName"
+						"enabled": false
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelKomi"
+						"text": "Komi:"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldKomi"
+						"text": "7.5"
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "0:1.0, 80, 80"
+					"$rowSpecs": "0"
+					"$hGap": 5
+					"$vGap": 5
+				} ) {
+					name: "buttonBar"
+					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": new FormMessage( null, "GameInfoDialog.okButton.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 0
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "cancelButton"
+						"text": new FormMessage( null, "GameInfoDialog.cancelButton.text" )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridy": 0
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 395, 225 )
+		} )
+	}
+}

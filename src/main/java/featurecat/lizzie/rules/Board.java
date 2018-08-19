@@ -7,6 +7,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.eclipse.collections.api.set.MutableSet;
+import org.eclipse.collections.impl.factory.Sets;
 import org.jtrim2.utils.ObjectFinalizer;
 
 import java.io.Closeable;
@@ -63,7 +65,7 @@ public class Board implements Closeable {
         Stone[] stones = new Stone[BOARD_SIZE * BOARD_SIZE];
         Arrays.fill(stones, Stone.EMPTY);
 
-        history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE]));
+        history = new BoardHistoryList(new BoardData(ImmutablePair.of(BOARD_SIZE, BOARD_SIZE), stones, null, Stone.EMPTY, true, new Zobrist(), 0, new int[BOARD_SIZE * BOARD_SIZE], Sets.mutable.empty(), 0, 0));
     }
 
     public synchronized void clear() {
@@ -289,7 +291,7 @@ public class Board implements Closeable {
             int[] moveNumberList = history.getMoveNumberList().clone();
 
             // build the new game state
-            BoardData newState = new BoardData(stones, null, color, !history.isBlacksTurn(), zobrist, moveNumber, moveNumberList);
+            BoardData newState = new BoardData(stones, null, color, !history.isBlacksTurn(), zobrist, moveNumber, moveNumberList, Sets.mutable.empty(), history.getData().getBlackPrisonersCount(), history.getData().getWhitePrisonersCount());
 
             // update history with pass
             if (history.getHead().getNext() != null) {
@@ -320,6 +322,10 @@ public class Board implements Closeable {
      */
     private void place(int x, int y, Stone color) {
         synchronized (this) {
+            if (!color.equals(Stone.BLACK) && !color.equals(Stone.WHITE)) {
+                return;
+            }
+
             if (!isValid(x, y) || history.getStones()[getIndex(x, y)] != Stone.EMPTY)
                 return;
 
@@ -347,13 +353,14 @@ public class Board implements Closeable {
             zobrist.toggleStone(x, y, color);
 
             // remove enemy stones
-            removeDeadChain(x + 1, y, color.opposite(), stones, zobrist);
-            removeDeadChain(x, y + 1, color.opposite(), stones, zobrist);
-            removeDeadChain(x - 1, y, color.opposite(), stones, zobrist);
-            removeDeadChain(x, y - 1, color.opposite(), stones, zobrist);
+            MutableSet<Coordinates> removedStones = Sets.mutable.empty();
+            removeDeadChain(removedStones, x + 1, y, color.opposite(), stones, zobrist);
+            removeDeadChain(removedStones, x, y + 1, color.opposite(), stones, zobrist);
+            removeDeadChain(removedStones, x - 1, y, color.opposite(), stones, zobrist);
+            removeDeadChain(removedStones, x, y - 1, color.opposite(), stones, zobrist);
 
             // check to see if the player made a suicidal coordinate
-            boolean isSuicidal = removeDeadChain(x, y, color, stones, zobrist);
+            boolean isSuicidal = removeDeadChain(Sets.mutable.empty(), x, y, color, stones, zobrist);
 
             for (int i = 0; i < BOARD_SIZE * BOARD_SIZE; i++) {
                 if (stones[i].equals(Stone.EMPTY)) {
@@ -362,7 +369,14 @@ public class Board implements Closeable {
             }
 
             // build the new game state
-            BoardData newState = new BoardData(stones, lastMove, color, !history.isBlacksTurn(), zobrist, moveNumber, moveNumberList);
+            int blackPrisonersCount = history.getData().getBlackPrisonersCount();
+            int whitePrisonersCount = history.getData().getWhitePrisonersCount();
+            if (color.equals(Stone.BLACK)) {
+                blackPrisonersCount += removedStones.size();
+            } else {
+                whitePrisonersCount += removedStones.size();
+            }
+            BoardData newState = new BoardData(stones, lastMove, color, !history.isBlacksTurn(), zobrist, moveNumber, moveNumberList, removedStones, blackPrisonersCount, whitePrisonersCount);
 
             // don't make this coordinate if it is suicidal or violates superko
             if (isSuicidal || history.violatesSuperko(newState))
@@ -405,6 +419,8 @@ public class Board implements Closeable {
     /**
      * Removes a chain if it has no liberties
      *
+     *
+     * @param removedStones record for coords of removed stones
      * @param x       x coordinate -- needn't be valid
      * @param y       y coordinate -- needn't be valid
      * @param color   the color of the chain to remove
@@ -412,14 +428,14 @@ public class Board implements Closeable {
      * @param zobrist the zobrist object to modify
      * @return whether or not stones were removed
      */
-    private boolean removeDeadChain(int x, int y, Stone color, Stone[] stones, Zobrist zobrist) {
+    private boolean removeDeadChain(MutableSet<Coordinates> removedStones, int x, int y, Stone color, Stone[] stones, Zobrist zobrist) {
         if (!isValid(x, y) || stones[getIndex(x, y)] != color)
             return false;
 
         boolean hasLiberties = hasLibertiesHelper(x, y, color, stones);
 
         // either remove stones or reset what hasLibertiesHelper does to the board
-        cleanupHasLibertiesHelper(x, y, color.recursed(), stones, zobrist, !hasLiberties);
+        cleanupHasLibertiesHelper(removedStones, x, y, color.recursed(), stones, zobrist, !hasLiberties);
 
         // if hasLiberties is false, then we removed stones
         return !hasLiberties;
@@ -458,6 +474,7 @@ public class Board implements Closeable {
     /**
      * cleans up what hasLibertyHelper does to the board state
      *
+     * @param removedStones record for coords of removed stones
      * @param x            x coordinate -- needn't be valid
      * @param y            y coordinate -- needn't be valid
      * @param color        color to clean up. Must be a recursed stone type
@@ -465,19 +482,24 @@ public class Board implements Closeable {
      * @param zobrist      the zobrist object to modify
      * @param removeStones if true, we will remove all these stones. otherwise, we will set them to their unrecursed version
      */
-    private void cleanupHasLibertiesHelper(int x, int y, Stone color, Stone[] stones, Zobrist zobrist, boolean removeStones) {
+    private void cleanupHasLibertiesHelper(MutableSet<Coordinates> removedStones, int x, int y, Stone color, Stone[] stones, Zobrist zobrist, boolean removeStones) {
         if (!isValid(x, y) || stones[getIndex(x, y)] != color)
             return;
 
+        if (removeStones) {
+            removedStones.add(Coordinates.of(x, y));
+        }
+
         stones[getIndex(x, y)] = removeStones ? Stone.EMPTY : color.unrecursed();
-        if (removeStones)
+        if (removeStones) {
             zobrist.toggleStone(x, y, color.unrecursed());
+        }
 
         // use the flood fill algorithm to replace all adjacent recursed stones
-        cleanupHasLibertiesHelper(x + 1, y, color, stones, zobrist, removeStones);
-        cleanupHasLibertiesHelper(x, y + 1, color, stones, zobrist, removeStones);
-        cleanupHasLibertiesHelper(x - 1, y, color, stones, zobrist, removeStones);
-        cleanupHasLibertiesHelper(x, y - 1, color, stones, zobrist, removeStones);
+        cleanupHasLibertiesHelper(removedStones, x + 1, y, color, stones, zobrist, removeStones);
+        cleanupHasLibertiesHelper(removedStones, x, y + 1, color, stones, zobrist, removeStones);
+        cleanupHasLibertiesHelper(removedStones, x - 1, y, color, stones, zobrist, removeStones);
+        cleanupHasLibertiesHelper(removedStones, x, y - 1, color, stones, zobrist, removeStones);
     }
 
     /**

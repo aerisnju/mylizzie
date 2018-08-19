@@ -77,6 +77,7 @@ public class Lizzie {
     public static ScheduledExecutorService miscExecutor = Executors.newSingleThreadScheduledExecutor();
     public static ScoreEstimator scoreEstimator = null;
     public static GameStatusManager gameStatusManager = new GameStatusManager();
+    public static LiveStatus liveStatus = new LiveStatus();
 
     static {
         readSettingFile();
@@ -347,19 +348,33 @@ public class Lizzie {
 
     private static class MoveReplayer {
         private boolean nextIsBlack;
+        private int placedMoveCount;
 
         public MoveReplayer() {
             nextIsBlack = true;
+            placedMoveCount = 0;
         }
 
         public void playMove(boolean isBlack, int x, int y) {
             if (nextIsBlack == isBlack) {
                 Lizzie.board.place(x, y);
                 nextIsBlack = !nextIsBlack;
+
+                placedMoveCount += 1;
             } else {
                 Lizzie.board.pass();
                 Lizzie.board.place(x, y);
+
+                placedMoveCount += 2;
             }
+        }
+
+        public int getPlacedMoveCount() {
+            return placedMoveCount;
+        }
+
+        public void clearPlacedMoveCount () {
+            placedMoveCount = 0;
         }
     }
 
@@ -382,6 +397,7 @@ public class Lizzie {
 
                 // Process pre-placed stones
                 placePreplacedMove(replayer, game.getProperty("AB"), game.getProperty("AW"));
+                int preplacedStonesCount = replayer.getPlacedMoveCount();
 
                 do {
                     String preplacedBlack = node.getProperty("AB");
@@ -405,6 +421,8 @@ public class Lizzie {
                     }
                 }
                 while ((node = node.getNextNode()) != null);
+
+                liveStatus.setHiddenMoveCount(preplacedStonesCount);
             } catch (Exception e) {
                 // Ignore
             }
@@ -458,7 +476,7 @@ public class Lizzie {
         Game game = new Game();
 
         game.addProperty("FF", "4"); // SGF version: 4
-        game.addProperty("KM", "7.5"); // Lz only support fixed komi
+        game.addProperty("KM", String.valueOf(gameStatusManager.getGameInfo().getKomi()));
         game.addProperty("GM", "1"); // Go game
         game.addProperty("SZ", String.valueOf(BOARD_SIZE));
         game.addProperty("CA", "UTF-8");

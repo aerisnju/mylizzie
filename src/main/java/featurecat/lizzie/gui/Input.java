@@ -120,6 +120,9 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             } else {
                 Lizzie.board.enterTryPlayState();
             }
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+            JDialog dialog = new HandicapSettingDialog(Lizzie.frame);
+            dialog.setVisible(true);
         } else if (e.getKeyCode() == KeyEvent.VK_X) {
             Lizzie.board.leaveTryPlayState();
             Lizzie.board.dropSuccessiveMoves();
@@ -220,7 +223,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                     Lizzie.board.gotoMoveByDiff(moveNumber);
                 } else {
                     // Cannot be minus number
-                    Lizzie.board.gotoMove(moveNumber);
+                    Lizzie.board.gotoMove(moveNumber + Lizzie.liveStatus.getHiddenMoveCount());
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(Lizzie.frame, "Number format error.", "Lizzie", JOptionPane.ERROR_MESSAGE);

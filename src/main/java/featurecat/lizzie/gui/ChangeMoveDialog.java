@@ -68,7 +68,7 @@ public class ChangeMoveDialog extends JDialog {
 
     private void okButtonActionPerformed(ActionEvent e) {
         userApproved = true;
-        moveNumber = (int) spinnerMoveNumber.getValue();
+        moveNumber = (int) spinnerMoveNumber.getValue() + Lizzie.liveStatus.getHiddenMoveCount();
         correctedMove = textFieldCoordinates.getText();
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }

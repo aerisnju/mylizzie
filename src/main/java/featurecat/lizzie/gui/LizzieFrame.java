@@ -51,6 +51,7 @@ public class LizzieFrame extends JFrame {
             , resourceBundle.getString("LizzieFrame.controls.keyB")
             , resourceBundle.getString("LizzieFrame.controls.keyEnter")
             , resourceBundle.getString("LizzieFrame.controls.keyT")
+            , resourceBundle.getString("LizzieFrame.controls.keyD")
     };
     public static final String LIZZIE_TITLE = String.format("MyLizzie %s", StringUtils.defaultString(Lizzie.getLizzieVersion(), "dev-edition"));
     public static final String LIZZIE_TRY_PLAY_TITLE = resourceBundle.getString("LizzieFrame.title.tryPlayingMode");
@@ -216,6 +217,13 @@ public class LizzieFrame extends JFrame {
         item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.gotoMove"));
         item.addActionListener(e -> {
             input.promptForGotoMove();
+        });
+        menu.add(item);
+
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.setHandicapMoves"));
+        item.addActionListener(e -> {
+            JDialog dialog = new HandicapSettingDialog(Lizzie.frame);
+            dialog.setVisible(true);
         });
         menu.add(item);
 

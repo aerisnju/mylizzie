@@ -184,6 +184,17 @@ public class BoardData {
         }
     }
 
+    public Optional<Boolean> isWhite() {
+        switch (lastMoveColor) {
+            case BLACK:
+                return Optional.of(false);
+            case WHITE:
+                return Optional.of(true);
+            default:
+                return Optional.empty();
+        }
+    }
+
     public boolean isPass() {
         return lastMove == null || lastMove[0] < 0 || lastMove[0] >= boardSize.getLeft() || lastMove[1] < 0 || lastMove[1] >= boardSize.getRight();
     }

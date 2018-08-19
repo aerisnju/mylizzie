@@ -1,6 +1,7 @@
 package featurecat.lizzie.gui;
 
 import com.google.common.collect.ImmutableList;
+import featurecat.lizzie.Lizzie;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -102,7 +103,7 @@ public class WinrateHistogramEntry {
     public Object getDataByIndex(int index) {
         switch (index) {
             case 0:
-                return getMoveNumber();
+                return getMoveNumber() - Lizzie.liveStatus.getHiddenMoveCount();
             case 1:
                 return getColor();
             case 2:

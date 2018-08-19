@@ -1,0 +1,80 @@
+JFDML JFormDesigner: "7.0.0.0.117" Java: "1.8.0_152-release" encoding: "UTF-8"
+
+new FormModel {
+	"i18n.autoExternalize": true
+	"i18n.bundlePackage": "featurecat.lizzie.i18n"
+	"i18n.bundleName": "GuiBundle"
+	"i18n.keyPrefix": "HandicapSettingDialog"
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+			name: "this"
+			"title": new FormMessage( null, "HandicapSettingDialog.this.title" )
+			"modalityType": enum java.awt.Dialog$ModalityType APPLICATION_MODAL
+			"defaultCloseOperation": 2
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+				name: "dialogPane"
+				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, par l {comp labelHelp::l::382:x, seq l {comp labelMoveNumberToMask:::p::p, space :::p, comp spinnerMoveNumberToMark::::166:x}}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, comp labelHelp:::p::p, space u:::p, par b {comp labelMoveNumberToMask::b:p::p, comp spinnerMoveNumberToMark::b:p::p}, space ::152:x}}"
+				} ) {
+					name: "contentPanel"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelHelp"
+						"text": new FormMessage( null, "HandicapSettingDialog.labelHelp.text" )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelMoveNumberToMask"
+						"text": new FormMessage( null, "HandicapSettingDialog.labelMoveNumberToMask.text" )
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerMoveNumberToMark"
+						"model": new javax.swing.SpinnerNumberModel( 1, 1, 99, 1 )
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "Center"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "176:1.0, 80, 80"
+					"$rowSpecs": "0"
+					"$hGap": 5
+					"$vGap": 5
+				} ) {
+					name: "buttonBar"
+					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonReset"
+						"text": new FormMessage( null, "HandicapSettingDialog.buttonReset.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonResetActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"hAlign": 4
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "okButton"
+						"text": new FormMessage( null, "HandicapSettingDialog.okButton.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 0
+						"gridx": 1
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "cancelButton"
+						"text": new FormMessage( null, "HandicapSettingDialog.cancelButton.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelButtonActionPerformed", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 2
+						"gridy": 0
+					} )
+				}, new FormLayoutConstraints( class java.lang.String ) {
+					"value": "South"
+				} )
+			}, new FormLayoutConstraints( class java.lang.String ) {
+				"value": "Center"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 420, 320 )
+		} )
+	}
+}

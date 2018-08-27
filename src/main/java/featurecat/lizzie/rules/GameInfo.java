@@ -1,7 +1,7 @@
 package featurecat.lizzie.rules;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.math3.util.MathUtils;
+import org.apache.commons.math3.util.Precision;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,7 +79,7 @@ public class GameInfo {
     }
 
     public void setKomi(double komi) {
-        boolean notify = !MathUtils.equals(this.komi, komi);
+        boolean notify = !Precision.equals(this.komi, komi, 0.001);
 
         this.komi = komi;
 

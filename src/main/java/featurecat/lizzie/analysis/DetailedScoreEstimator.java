@@ -1,27 +1,32 @@
 package featurecat.lizzie.analysis;
 
+import org.apache.commons.math3.util.Precision;
+
 import java.util.Objects;
 
 public interface DetailedScoreEstimator extends ScoreEstimator {
     class DetailedScore {
-        private int blackTerritoryCount;
-        private int whiteTerritoryCount;
-        private int blackDeadCount;
-        private int whiteDeadCount;
-        private int blackPrisonerCount;
-        private int whitePrisonerCount;
-        private double score;
+        private final int blackTerritoryCount;
+        private final int whiteTerritoryCount;
+        private final int blackDeadCount;
+        private final int whiteDeadCount;
+        private final int blackPrisonerCount;
+        private final int whitePrisonerCount;
+        private final int blackAreaCount;
+        private final int whiteAreaCount;
+        private final int dameCount;
+        private final double score;
 
-        public DetailedScore() {
-        }
-
-        public DetailedScore(int blackTerritoryCount, int whiteTerritoryCount, int blackDeadCount, int whiteDeadCount, int blackPrisonerCount, int whitePrisonerCount, double score) {
+        public DetailedScore(int blackTerritoryCount, int whiteTerritoryCount, int blackDeadCount, int whiteDeadCount, int blackPrisonerCount, int whitePrisonerCount, int blackAreaCount, int whiteAreaCount, int dameCount, double score) {
             this.blackTerritoryCount = blackTerritoryCount;
             this.whiteTerritoryCount = whiteTerritoryCount;
             this.blackDeadCount = blackDeadCount;
             this.whiteDeadCount = whiteDeadCount;
             this.blackPrisonerCount = blackPrisonerCount;
             this.whitePrisonerCount = whitePrisonerCount;
+            this.blackAreaCount = blackAreaCount;
+            this.whiteAreaCount = whiteAreaCount;
+            this.dameCount = dameCount;
             this.score = score;
         }
 
@@ -29,56 +34,40 @@ public interface DetailedScoreEstimator extends ScoreEstimator {
             return blackTerritoryCount;
         }
 
-        public void setBlackTerritoryCount(int blackTerritoryCount) {
-            this.blackTerritoryCount = blackTerritoryCount;
-        }
-
         public int getWhiteTerritoryCount() {
             return whiteTerritoryCount;
-        }
-
-        public void setWhiteTerritoryCount(int whiteTerritoryCount) {
-            this.whiteTerritoryCount = whiteTerritoryCount;
         }
 
         public int getBlackDeadCount() {
             return blackDeadCount;
         }
 
-        public void setBlackDeadCount(int blackDeadCount) {
-            this.blackDeadCount = blackDeadCount;
-        }
-
         public int getWhiteDeadCount() {
             return whiteDeadCount;
-        }
-
-        public void setWhiteDeadCount(int whiteDeadCount) {
-            this.whiteDeadCount = whiteDeadCount;
         }
 
         public int getBlackPrisonerCount() {
             return blackPrisonerCount;
         }
 
-        public void setBlackPrisonerCount(int blackPrisonerCount) {
-            this.blackPrisonerCount = blackPrisonerCount;
-        }
-
         public int getWhitePrisonerCount() {
             return whitePrisonerCount;
         }
 
-        public void setWhitePrisonerCount(int whitePrisonerCount) {
-            this.whitePrisonerCount = whitePrisonerCount;
+        public int getBlackAreaCount() {
+            return blackAreaCount;
+        }
+
+        public int getWhiteAreaCount() {
+            return whiteAreaCount;
+        }
+
+        public int getDameCount() {
+            return dameCount;
         }
 
         public double getScore() {
             return score;
-        }
-
-        public void setScore(double score) {
-            this.score = score;
         }
 
         @Override
@@ -92,12 +81,15 @@ public interface DetailedScoreEstimator extends ScoreEstimator {
                     whiteDeadCount == that.whiteDeadCount &&
                     blackPrisonerCount == that.blackPrisonerCount &&
                     whitePrisonerCount == that.whitePrisonerCount &&
-                    Double.compare(that.score, score) == 0;
+                    blackAreaCount == that.blackAreaCount &&
+                    whiteAreaCount == that.whiteAreaCount &&
+                    dameCount == that.dameCount &&
+                    Precision.equals(that.score, score, 0.001);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(blackTerritoryCount, whiteTerritoryCount, blackDeadCount, whiteDeadCount, blackPrisonerCount, whitePrisonerCount, score);
+            return Objects.hash(blackTerritoryCount, whiteTerritoryCount, blackDeadCount, whiteDeadCount, blackPrisonerCount, whitePrisonerCount, blackAreaCount, whiteAreaCount, dameCount, score);
         }
 
         @Override
@@ -109,6 +101,9 @@ public interface DetailedScoreEstimator extends ScoreEstimator {
             sb.append(", whiteDeadCount=").append(whiteDeadCount);
             sb.append(", blackPrisonerCount=").append(blackPrisonerCount);
             sb.append(", whitePrisonerCount=").append(whitePrisonerCount);
+            sb.append(", blackAreaCount=").append(blackAreaCount);
+            sb.append(", whiteAreaCount=").append(whiteAreaCount);
+            sb.append(", dameCount=").append(dameCount);
             sb.append(", score=").append(score);
             sb.append('}');
             return sb.toString();

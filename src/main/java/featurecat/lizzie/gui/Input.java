@@ -183,12 +183,18 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 DetailedScoreEstimator detailedScoreEstimator = (DetailedScoreEstimator) Lizzie.scoreEstimator;
                 DetailedScoreEstimator.DetailedScore detailedScore = detailedScoreEstimator.estimateDetailedScore();
 
-                String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(detailedScore.getScore() > 0 ? "B" : "W", "?");
-                double absoluteScore = Math.abs(detailedScore.getScore());
+                double score = detailedScore.getScore();
+                double absoluteScore = Math.abs(score);
+                double stoneDiff = detailedScore.getBlackAreaCount() - detailedScore.getWhiteAreaCount() - detailedScoreEstimator.getKomi();
+                double absoluteStoneDiff = Math.abs(stoneDiff);
+                String scoreLeaderColorDescription = COLOR_DISPLAY_STRING.getOrDefault(score > 0 ? "B" : "W", "?");
+                String stoneDiffLeaderColorDescription = COLOR_DISPLAY_STRING.getOrDefault(stoneDiff > 0 ? "B" : "W", "?");
 
                 String detailedScoreDescription = String.format(
                         resourceBundle.getString("LizzieFrame.prompt.detailedScoreEstimation")
-                        , Lizzie.scoreEstimator.getEstimatorName(), Lizzie.scoreEstimator.getKomi(), colorDescription, absoluteScore
+                        , Lizzie.scoreEstimator.getEstimatorName(), Lizzie.scoreEstimator.getKomi()
+                        , scoreLeaderColorDescription, absoluteScore
+                        , stoneDiffLeaderColorDescription, absoluteStoneDiff
                         , detailedScore.getBlackTerritoryCount()
                         , detailedScore.getWhiteTerritoryCount()
                         , detailedScore.getBlackDeadCount()

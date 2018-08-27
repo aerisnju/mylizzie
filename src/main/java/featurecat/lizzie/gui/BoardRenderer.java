@@ -467,7 +467,7 @@ public class BoardRenderer {
                 || Lizzie.board.isInTryPlayState()) { // at this time, isShowMoveNumber is true, or is in try play state
             // draw existing stones
             int[] moveNumberList = Lizzie.board.getMoveNumberList();
-            int moveNumberBaseFix = Lizzie.liveStatus.getHiddenMoveCount();
+            int moveNumberBaseFix = Lizzie.gameInfo.getHiddenMoveCount();
             if (Lizzie.board.isInTryPlayState()) {
                 moveNumberBaseFix = Lizzie.board.getTryPlayStateBeginMoveNumber();
             }

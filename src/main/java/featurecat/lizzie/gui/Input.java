@@ -1,10 +1,9 @@
 package featurecat.lizzie.gui;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import featurecat.lizzie.Lizzie;
 import featurecat.lizzie.analysis.DetailedScoreEstimator;
-import featurecat.lizzie.rules.Board;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -120,8 +119,8 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
             } else {
                 Lizzie.board.enterTryPlayState();
             }
-        } else if (e.getKeyCode() == KeyEvent.VK_D) {
-            JDialog dialog = new HandicapSettingDialog(Lizzie.frame);
+        } else if (e.getKeyCode() == KeyEvent.VK_I) {
+            JDialog dialog = new GameInfoDialog(Lizzie.frame);
             dialog.setVisible(true);
         } else if (e.getKeyCode() == KeyEvent.VK_X) {
             Lizzie.board.leaveTryPlayState();
@@ -189,7 +188,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
 
                 String detailedScoreDescription = String.format(
                         resourceBundle.getString("LizzieFrame.prompt.detailedScoreEstimation")
-                        , Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, absoluteScore
+                        , Lizzie.scoreEstimator.getEstimatorName(), Lizzie.scoreEstimator.getKomi(), colorDescription, absoluteScore
                         , detailedScore.getBlackTerritoryCount()
                         , detailedScore.getWhiteTerritoryCount()
                         , detailedScore.getBlackDeadCount()
@@ -206,7 +205,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                 String colorDescription = COLOR_DISPLAY_STRING.getOrDefault(estimatedScore.getLeft(), "?");
                 double score = estimatedScore.getRight();
                 JOptionPane.showMessageDialog(Lizzie.frame
-                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Board.BOARD_SIZE == 19 ? 7.5 : 6.5, colorDescription, score)
+                        , String.format(resourceBundle.getString("LizzieFrame.prompt.scoreEstimation"), Lizzie.scoreEstimator.getEstimatorName(), Lizzie.scoreEstimator.getKomi(), colorDescription, score)
                         , "Lizzie"
                         , JOptionPane.INFORMATION_MESSAGE);
             }
@@ -223,7 +222,7 @@ public class Input implements MouseListener, KeyListener, MouseWheelListener, Mo
                     Lizzie.board.gotoMoveByDiff(moveNumber);
                 } else {
                     // Cannot be minus number
-                    Lizzie.board.gotoMove(moveNumber + Lizzie.liveStatus.getHiddenMoveCount());
+                    Lizzie.board.gotoMove(moveNumber + Lizzie.gameInfo.getHiddenMoveCount());
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(Lizzie.frame, "Number format error.", "Lizzie", JOptionPane.ERROR_MESSAGE);

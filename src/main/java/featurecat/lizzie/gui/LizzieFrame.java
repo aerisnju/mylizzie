@@ -2,10 +2,7 @@ package featurecat.lizzie.gui;
 
 import com.jhlabs.image.GaussianFilter;
 import featurecat.lizzie.Lizzie;
-import featurecat.lizzie.rules.Board;
-import featurecat.lizzie.rules.BoardHistoryNode;
-import featurecat.lizzie.rules.BoardStateChangeObserver;
-import featurecat.lizzie.rules.Stone;
+import featurecat.lizzie.rules.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -51,7 +48,7 @@ public class LizzieFrame extends JFrame {
             , resourceBundle.getString("LizzieFrame.controls.keyB")
             , resourceBundle.getString("LizzieFrame.controls.keyEnter")
             , resourceBundle.getString("LizzieFrame.controls.keyT")
-            , resourceBundle.getString("LizzieFrame.controls.keyD")
+            , resourceBundle.getString("LizzieFrame.controls.keyI")
     };
     public static final String LIZZIE_TITLE = String.format("MyLizzie %s", StringUtils.defaultString(Lizzie.getLizzieVersion(), "dev-edition"));
     public static final String LIZZIE_TRY_PLAY_TITLE = resourceBundle.getString("LizzieFrame.title.tryPlayingMode");
@@ -75,7 +72,8 @@ public class LizzieFrame extends JFrame {
     private JMenuBar menuBar;
     private JPanel mainPanel;
     private JLabel statusBar;
-    private BoardStateChangeObserver boardStateChangeObserver;
+    private final BoardStateChangeObserver boardStateChangeObserver;
+    private final GameInfo.GameInfoChangeListener gameInfoChangeListener;
 
     public boolean showControls = false;
 
@@ -111,7 +109,7 @@ public class LizzieFrame extends JFrame {
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
         statusBar = new JLabel();
-        updateStatusBar(Stone.BLACK, 0, 0);
+        updateStatusBar(Stone.BLACK, 0, 0, Lizzie.gameInfo.getKomi());
         boardStateChangeObserver = new BoardStateChangeObserver() {
             @Override
             public void mainStreamAppended(BoardHistoryNode newNodeBegin, BoardHistoryNode head) {
@@ -127,20 +125,34 @@ public class LizzieFrame extends JFrame {
                         newHead.getData().getLastMoveColor().opposite()
                         , newHead.getData().getBlackPrisonersCount()
                         , newHead.getData().getWhitePrisonersCount()
+                        , Lizzie.gameInfo.getKomi()
                 ));
             }
 
             @Override
             public void boardCleared(BoardHistoryNode initialNode, BoardHistoryNode initialHead) {
-                SwingUtilities.invokeLater(() -> updateStatusBar(Stone.BLACK, 0, 0));
+                SwingUtilities.invokeLater(() -> updateStatusBar(Stone.BLACK, 0, 0, Lizzie.gameInfo.getKomi()));
             }
         };
+        gameInfoChangeListener = (info, changedItemTypes) -> {
+            if (changedItemTypes.contains(GameInfo.StateChangedItemType.KOMI)) {
+                SwingUtilities.invokeLater(() -> updateStatusBar(
+                        Lizzie.board.getData().getLastMoveColor().opposite()
+                        , Lizzie.board.getData().getBlackPrisonersCount()
+                        , Lizzie.board.getData().getWhitePrisonersCount()
+                        , info.getKomi()
+                ));
+            }
+        };
+
         Lizzie.board.registerBoardStateChangeObserver(boardStateChangeObserver);
+        Lizzie.gameInfo.registerGameInfoChangeListener(gameInfoChangeListener);
         getContentPane().add(statusBar, BorderLayout.SOUTH);
 
         // shut down leelaz, then shut down the program when the window is closed
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                Lizzie.gameInfo.unregisterGameInfoChangeListener(gameInfoChangeListener);
                 Lizzie.board.unregisterBoardStateChangeObserver(boardStateChangeObserver);
 
                 Lizzie.readGuiPosition();
@@ -220,9 +232,9 @@ public class LizzieFrame extends JFrame {
         });
         menu.add(item);
 
-        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.setHandicapMoves"));
+        item = new JMenuItem(resourceBundle.getString("LizzieFrame.menu.navigate.setGameInfo"));
         item.addActionListener(e -> {
-            JDialog dialog = new HandicapSettingDialog(Lizzie.frame);
+            JDialog dialog = new GameInfoDialog(Lizzie.frame);
             dialog.setVisible(true);
         });
         menu.add(item);
@@ -467,8 +479,9 @@ public class LizzieFrame extends JFrame {
         setTitle(LIZZIE_TITLE + " - [" + engineProfile + "]");
     }
 
-    public void updateStatusBar(Stone nextMove, int blackPrisoners, int whitePrisoners) {
+    public void updateStatusBar(Stone nextMove, int blackPrisoners, int whitePrisoners, double komi) {
         String statusBarText = String.format(resourceBundle.getString("LizzieFrame.statusBar.formatter")
+                , komi
                 , formatColor(nextMove)
                 , blackPrisoners
                 , whitePrisoners

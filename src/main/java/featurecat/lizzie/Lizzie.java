@@ -76,8 +76,7 @@ public class Lizzie {
     public static WinrateHistogramDialog winrateHistogramDialog;
     public static ScheduledExecutorService miscExecutor = Executors.newSingleThreadScheduledExecutor();
     public static ScoreEstimator scoreEstimator = null;
-    public static GameStatusManager gameStatusManager = new GameStatusManager();
-    public static LiveStatus liveStatus = new LiveStatus();
+    public static GameInfo gameInfo;
 
     static {
         readSettingFile();
@@ -179,6 +178,8 @@ public class Lizzie {
             }
         }
 
+        gameInfo = new GameInfo();
+
         gtpConsole = new GtpConsoleDialog(null);
         optionSetting.getGtpConsoleWindowState().applyStateTo(gtpConsole);
         gtpConsole.setVisible(true);
@@ -221,6 +222,9 @@ public class Lizzie {
     }
 
     public static void clearBoardAndState() {
+        // Should be before board.clear() because board.clear() will trigger some callbacks, and these callbacks
+        // may try to get the komi settings.
+        gameInfo.reset();
         board.clear();
     }
 
@@ -422,7 +426,7 @@ public class Lizzie {
                 }
                 while ((node = node.getNextNode()) != null);
 
-                liveStatus.setHiddenMoveCount(preplacedStonesCount);
+                gameInfo.setHiddenMoveCount(preplacedStonesCount);
             } catch (Exception e) {
                 // Ignore
             }
@@ -476,7 +480,7 @@ public class Lizzie {
         Game game = new Game();
 
         game.addProperty("FF", "4"); // SGF version: 4
-        game.addProperty("KM", String.valueOf(gameStatusManager.getGameInfo().getKomi()));
+        game.addProperty("KM", String.valueOf(gameInfo.getKomi()));
         game.addProperty("GM", "1"); // Go game
         game.addProperty("SZ", String.valueOf(BOARD_SIZE));
         game.addProperty("CA", "UTF-8");

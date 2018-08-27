@@ -10,12 +10,14 @@ new FormModel {
 		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 			name: "this"
 			"title": new FormMessage( null, "GameInfoDialog.this.title" )
+			"defaultCloseOperation": 2
+			"modalityType": enum java.awt.Dialog$ModalityType APPLICATION_MODAL
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-					"$horizontalGroup": "par l {seq {space :::p, par l:::p {comp labelKomi:::::x, comp labelBlackPlayerName::l:p::p, comp labelWhitePlayerName::l:::x}, space :::p, par l {comp textFieldBlackPlayerName::::237:x, comp textFieldWhitePlayerName::::237:x, comp textFieldKomi::l::237:x}, space :::p}}"
-					"$verticalGroup": "par l {seq l {space :::p, par b {comp labelBlackPlayerName::b:p::p, comp textFieldBlackPlayerName::b:p::p}, space :::p, par b {comp labelWhitePlayerName::b:::p, comp textFieldWhitePlayerName::b:p::p}, space :::p, par b {comp labelKomi::b:p::p, comp textFieldKomi::b:p::p}, space ::43:x}}"
+					"$horizontalGroup": "par l {seq {space :::p, par l {comp labelMoveNumberHint::::502:x, seq {par l:::p {comp labelBlackPlayerName::l:p::p, comp labelWhitePlayerName::l:::x, comp labelKomi::l:::x}, space :::p, par l {comp textFieldBlackPlayerName:::::x, comp textFieldWhitePlayerName:::::x, comp textFieldKomi::l:::x}}, seq l {comp labelDoNotShowFirstNMoveNumbers:::p::p, space :::p, comp spinnerMoveNumberStartsAt::::282:x, space :::p, comp buttonAutoDetermine:::p::p}, seq l {comp labelKomiNote:::p::p, space :0:499:x}}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, par b {comp labelBlackPlayerName::b:p::p, comp textFieldBlackPlayerName::b:p::p}, space :::p, par b {comp labelWhitePlayerName::b:::p, comp textFieldWhitePlayerName::b:p::p}, space :::p, par b {comp textFieldKomi::b:p::p, comp labelKomi::b:p::p}, space :::p, par b {comp labelDoNotShowFirstNMoveNumbers::b:p::p, comp spinnerMoveNumberStartsAt::b:p::p, comp buttonAutoDetermine::b:p::p}, space :::p, comp labelMoveNumberHint:::p::p, space :::p, comp labelKomiNote:::p::p, space ::55:x}}"
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
@@ -36,11 +38,32 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "labelKomi"
-						"text": "Komi:"
+						"text": new FormMessage( null, "GameInfoDialog.labelKomi.text" )
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "textFieldKomi"
 						"text": "7.5"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelDoNotShowFirstNMoveNumbers"
+						"text": new FormMessage( null, "GameInfoDialog.labelDoNotShowFirstNMoveNumbers.text" )
+					} )
+					add( new FormComponent( "javax.swing.JSpinner" ) {
+						name: "spinnerMoveNumberStartsAt"
+						"model": new javax.swing.SpinnerNumberModel( 1, 1, 361, 1 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelMoveNumberHint"
+						"text": new FormMessage( null, "GameInfoDialog.labelMoveNumberHint.text" )
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonAutoDetermine"
+						"text": new FormMessage( null, "GameInfoDialog.buttonAutoDetermine.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonAutoDetermineActionPerformed", true ) )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "labelKomiNote"
+						"text": new FormMessage( null, "GameInfoDialog.labelKomiNote.text" )
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
@@ -56,6 +79,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "okButton"
 						"text": new FormMessage( null, "GameInfoDialog.okButton.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "okButtonActionPerformed", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 0
@@ -63,6 +87,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "cancelButton"
 						"text": new FormMessage( null, "GameInfoDialog.cancelButton.text" )
+						addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "cancelButtonActionPerformed", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
 						"gridy": 0
@@ -75,7 +100,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 395, 225 )
+			"size": new java.awt.Dimension( 540, 365 )
 		} )
 	}
 }

@@ -1,12 +1,13 @@
 package featurecat.lizzie.analysis;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import featurecat.lizzie.Lizzie;
+import featurecat.lizzie.rules.GameInfo;
+import featurecat.lizzie.util.GenericLizzieException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
-import featurecat.lizzie.Lizzie;
-import featurecat.lizzie.util.GenericLizzieException;
 
 import javax.swing.*;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Leelaz implements AutoCloseable {
     private boolean normalExit;
     private String commandLine;
     private ImmutableList<BestMoveObserver> registeredBestMoveObservers;
+    private final GameInfo.GameInfoChangeListener infoChangeListener;
 
     /**
      * Initializes the leelaz process and starts reading output
@@ -35,6 +37,11 @@ public class Leelaz implements AutoCloseable {
         analyzer = null;
         this.commandLine = commandline;
         registeredBestMoveObservers = Lists.immutable.empty();
+        infoChangeListener = (info, changedItemTypes) -> {
+            if (changedItemTypes.contains(GameInfo.StateChangedItemType.KOMI) && analyzer != null) {
+                analyzer.postGtpCommand(String.format("komi %.1f", info.getKomi()));
+            }
+        };
     }
 
     public boolean isNormalExit() {
@@ -91,8 +98,7 @@ public class Leelaz implements AutoCloseable {
     @Override
     public void close() {
         if (analyzer != null) {
-            setNormalExit(true);
-            analyzer.shutdown(60, TimeUnit.SECONDS);
+            shutdownEngine();
             analyzer = null;
         }
     }
@@ -104,6 +110,10 @@ public class Leelaz implements AutoCloseable {
     }
 
     public void startEngine() {
+        if (analyzer != null) {
+            throw new IllegalStateException("analyzer is not null when starting engine!");
+        }
+
         setNormalExit(false);
 
         // Create gtp client
@@ -118,10 +128,13 @@ public class Leelaz implements AutoCloseable {
             Lizzie.gtpConsole.linkToGtpClient(analyzeGtpClient);
             analyzeGtpClient.start();
 
-            analyzer = new GtpBasedAnalyzerBuilder()
+            AbstractGtpBasedAnalyzer newAnalyzer = new GtpBasedAnalyzerBuilder()
                     .setGtpClient(analyzeGtpClient)
                     .build();
-            analyzer.registerListOfBestMoveObserver(registeredBestMoveObservers);
+            newAnalyzer.registerListOfBestMoveObserver(registeredBestMoveObservers);
+
+            // Set only if successful
+            analyzer = newAnalyzer;
         } catch (GenericLizzieException e) {
             String reason = String.valueOf(e.get(GtpBasedAnalyzerBuilder.REASON));
             switch (reason) {
@@ -142,6 +155,10 @@ public class Leelaz implements AutoCloseable {
             JOptionPane.showMessageDialog(null, resourceBundle.getString("Leelaz.prompt.engineNotStart"), "Lizzie", JOptionPane.ERROR_MESSAGE);
             analyzeGtpClient.unregisterEngineExitObserver(exitListener);
             analyzeGtpClient.shutdown(60, TimeUnit.SECONDS);
+        } finally {
+            if (analyzer != null) {
+                Lizzie.gameInfo.registerGameInfoChangeListener(infoChangeListener);
+            }
         }
     }
 
@@ -149,6 +166,7 @@ public class Leelaz implements AutoCloseable {
         setNormalExit(true);
 
         if (analyzer != null) {
+            Lizzie.gameInfo.unregisterGameInfoChangeListener(infoChangeListener);
             analyzer.shutdown(timeout, timeUnit);
             analyzer = null;
         }

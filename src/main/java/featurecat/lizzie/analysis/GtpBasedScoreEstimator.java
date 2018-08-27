@@ -1,32 +1,22 @@
 package featurecat.lizzie.analysis;
 
 import featurecat.lizzie.Lizzie;
-import featurecat.lizzie.rules.*;
+import featurecat.lizzie.rules.Board;
+import featurecat.lizzie.rules.BoardHistoryNode;
+import featurecat.lizzie.rules.BoardStateChangeObserver;
+import featurecat.lizzie.rules.GameInfo;
 
-import java.io.IOException;
-import java.util.OptionalInt;
 import java.util.function.Consumer;
 
 public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
     protected BoardStateChangeObserver boardStateChangeObserver;
     protected Consumer<Integer> boardSizeChangeObserver;
+    protected GameInfo.GameInfoChangeListener gameInfoChangeListener;
 
     protected GeneralGtpClient gtpClient;
     protected double komi;
 
     public GtpBasedScoreEstimator(String commandLine) {
-        gtpClient = new GeneralGtpClient(commandLine);
-        gtpClient.start();
-
-        gtpClient.postCommand("boardsize " + Board.BOARD_SIZE);
-        if (Board.BOARD_SIZE == 19) {
-            gtpClient.postCommand("komi 7.5");
-            komi = 7.5;
-        } else {
-            gtpClient.postCommand("komi 6.5");
-            komi = 6.5;
-        }
-
         boardStateChangeObserver = new BoardStateSynchronizer() {
             @Override
             public void headMoved(BoardHistoryNode oldHead, BoardHistoryNode newHead) {
@@ -50,23 +40,29 @@ public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
 
         boardSizeChangeObserver = newSize -> {
             gtpClient.postCommand("boardsize " + newSize);
-            if (newSize == 19) {
-                gtpClient.postCommand("komi 7.5");
-                komi = 7.5;
-            } else {
-                gtpClient.postCommand("komi 6.5");
-                komi = 6.5;
+        };
+
+        gameInfoChangeListener = (info, changedItemTypes) -> {
+            if (changedItemTypes.contains(GameInfo.StateChangedItemType.KOMI)) {
+                setKomi(info.getKomi());
             }
         };
 
+        gtpClient = new GeneralGtpClient(commandLine);
+        gtpClient.start();
+
+        gtpClient.postCommand("boardsize " + Board.BOARD_SIZE);
+        setKomi(Lizzie.gameInfo.getKomi());
+
         Lizzie.board.registerBoardStateChangeObserver(boardStateChangeObserver);
         Board.registerBoardSizeChangeObserver(boardSizeChangeObserver);
+        Lizzie.gameInfo.registerGameInfoChangeListener(gameInfoChangeListener);
     }
 
     @Override
     public void setKomi(double komi) {
-        gtpClient.postCommand("komi " + komi);
         this.komi = komi;
+        gtpClient.postCommand(String.format("komi %.1f", komi));
     }
 
     @Override
@@ -82,8 +78,9 @@ public abstract class GtpBasedScoreEstimator implements ScoreEstimator {
     @Override
     public void close() {
         if (gtpClient != null) {
-            Lizzie.board.unregisterBoardStateChangeObserver(boardStateChangeObserver);
+            Lizzie.gameInfo.unregisterGameInfoChangeListener(gameInfoChangeListener);
             Board.unregisterBoardSizeChangeObserver(boardSizeChangeObserver);
+            Lizzie.board.unregisterBoardStateChangeObserver(boardStateChangeObserver);
             gtpClient.close();
 
             gtpClient = null;

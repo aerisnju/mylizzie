@@ -129,7 +129,7 @@ public class OfficialLeelazAnalyzerV2 extends AbstractGtpBasedAnalyzer {
                     String coordinate = (String) data.get("MOVE");
                     int playouts = Integer.parseInt((String) data.get("CALCULATION"));
                     double winrate = Double.parseDouble((String) data.get("VALUE")) / 100.0;
-                    double probability = getRate((String) data.get("POLICY"));
+                    double probability = Double.parseDouble((String) data.get("POLICY")) / 100.0;
 
                     return new MoveData(coordinate, playouts, winrate, probability, variation);
                 })
@@ -178,7 +178,7 @@ public class OfficialLeelazAnalyzerV2 extends AbstractGtpBasedAnalyzer {
                     , DoubleNumber(), saveMatchToValueMap("VALUE")
                     , Optional(
                             Spaces()
-                            , FirstOf(String("network"), String("N"))
+                            , FirstOf(String("network"), String("prior"))
                             , Spaces()
                             , DoubleNumber(), saveMatchToValueMap("POLICY")
                     )

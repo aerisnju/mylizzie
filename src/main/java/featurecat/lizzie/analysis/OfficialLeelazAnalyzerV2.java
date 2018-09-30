@@ -129,7 +129,7 @@ public class OfficialLeelazAnalyzerV2 extends AbstractGtpBasedAnalyzer {
                     String coordinate = (String) data.get("MOVE");
                     int playouts = Integer.parseInt((String) data.get("CALCULATION"));
                     double winrate = Double.parseDouble((String) data.get("VALUE")) / 100.0;
-                    double probability = Double.parseDouble((String) data.get("POLICY")) / 100.0 + getRate((String) data.get("OLDPOLICY"));
+                    double probability = getRate((String) data.get("POLICY")) / 100.0 + getRate((String) data.get("OLDPOLICY"));
 
                     return new MoveData(coordinate, playouts, winrate, probability, variation);
                 })

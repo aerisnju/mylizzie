@@ -178,15 +178,15 @@ public class OfficialLeelazAnalyzerV2 extends AbstractGtpBasedAnalyzer {
                     , DoubleNumber(), saveMatchToValueMap("VALUE")
                     , Optional(
                             Spaces()
-                            , FirstOf(String("network"), String("prior"))
+                            , FirstOf(String("network"), String("N"))
                             , Spaces()
-                            , DoubleNumber(), saveMatchToValueMap("POLICY")
+                            , DoubleNumber(), saveMatchToValueMap("OLDPOLICY")
                     )
                     , Optional(
                             Spaces()
-                            , String("N")
+                            , String("prior")
                             , Spaces()
-                            , DoubleNumber(), saveMatchToValueMap("OLDPOLICY")
+                            , DoubleNumber(), saveMatchToValueMap("POLICY")
                     )
                     , Optional(
                             Spaces()

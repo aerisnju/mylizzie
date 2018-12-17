@@ -6,7 +6,7 @@
 
     <groupId>org.github.aerisnju</groupId>
     <artifactId>mylizzie</artifactId>
-    <version>2.0.180828</version>
+    <version>2.0.181218</version>
 
     <properties>
         <app.mainClass>featurecat.lizzie.Lizzie</app.mainClass>
@@ -154,7 +154,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8</version>
+            <version>3.8.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
@@ -182,7 +182,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.4</version>
+            <version>1.6</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
@@ -196,7 +196,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>26.0-jre</version>
+            <version>27.0.1-jre</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
@@ -210,7 +210,7 @@
         <dependency>
             <groupId>org.pcollections</groupId>
             <artifactId>pcollections</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/junit/junit -->
@@ -225,7 +225,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.11.0</version>
+            <version>3.11.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -241,7 +241,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>3.6</version>
+            <version>4.0.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -257,7 +257,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>16.0.2</version>
+            <version>16.0.3</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
@@ -306,7 +306,7 @@
         <dependency>
             <groupId>org.eclipse.collections</groupId>
             <artifactId>eclipse-collections</artifactId>
-            <version>9.2.0</version>
+            <version>10.0.0.M2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.jtrim2/jtrim-image-transform -->
@@ -327,14 +327,14 @@
         <dependency>
             <groupId>org.parboiled</groupId>
             <artifactId>parboiled-java</artifactId>
-            <version>1.1.8</version>
+            <version>1.2.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.javadev/underscore -->
         <dependency>
             <groupId>com.github.javadev</groupId>
             <artifactId>underscore</artifactId>
-            <version>1.35</version>
+            <version>1.39</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.vavr/vavr -->
@@ -348,7 +348,7 @@
         <dependency>
             <groupId>io.reactivex.rxjava2</groupId>
             <artifactId>rxjava</artifactId>
-            <version>2.2.1</version>
+            <version>2.2.4</version>
         </dependency>
     </dependencies>
 </project>
